@@ -1,0 +1,41 @@
+.app-container {
+    height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 50px;
+  }
+  
+  .center-content {
+    text-align: center;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-form input {
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px;
+    font-size: 16px;
+    width: 300px;
+  }
+  
+  .login-form button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 100px;
+  }
+  
+  .login-form button:hover {
+    background-color: #45a049;
+  }
