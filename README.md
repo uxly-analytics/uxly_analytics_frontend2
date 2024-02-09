@@ -1,3 +1,9 @@
+# Testing Setup
+
+To test functionality with auth0, run: 
+
+## 'npm install @auth0/auth0-react'
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
