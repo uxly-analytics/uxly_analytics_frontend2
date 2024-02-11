@@ -1,23 +1,21 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
-import Login from "./Components/Login";
 import "./Components/landingPage.css";
-import Logo from "./Components/UXlyLogo.png";
+import LoginButton from './LoginButton';
+import Header from './Header';
+
 
 function LandingPage(){
-    const navigate = useNavigate();
-    const handleLoginSubmit = (email: string, password: string) => {
-        console.log("Email: ", email);
-        console.log("Password: ", password);
-        navigate("/home")
-    };
 
     return(
         <div className="app-container">
+            <section className="header-section">
+              <Header />
+            </section>
+            <section className="login-section">
             <div className="center-content">
-                <img src={Logo} alt="UXly Logo"/>
-                <Login onSubmit={handleLoginSubmit}/>
+                <LoginButton />
             </div>
+            </section>
         </div>
     )
 }

@@ -5,7 +5,7 @@ import Home from "./Components/HomePage/Home";
 
 function App() {
   return (
-    <Router>
+      <Router>
         <Routes>
             {/* Redirect from "/" to "/login" */}
             <Route path="/" element={<Navigate to="/login" />}/>
