@@ -2,6 +2,41 @@ import axios from "axios";
 
 const HOST = "http://localhost:8888";
 
+interface SingleAddressData{
+    activeChains: any;
+    simplifiedActiveChains: any;
+    nativeBalance: any;
+    ercBalance: any;
+    nft: any;
+}
+
+export async function getSingleAddressData(address: string): Promise<SingleAddressData> {
+    try{
+        const activeChains = await sActiveChains(address);
+        const simplifiedActiveChains = await sSimplifiedActiveChains(address);
+        const nativeBalance = await sNativeBalance(address);
+        const ercBalance = await sErcBalance(address);
+        const nft = await sNFT(address);
+
+        return{
+            activeChains,
+            simplifiedActiveChains,
+            nativeBalance,
+            ercBalance,
+            nft
+        }
+    }catch(error){
+        console.error("Error:", error);
+        return {
+            activeChains: {},
+            simplifiedActiveChains: {},
+            nativeBalance: {},
+            ercBalance: {},
+            nft: {}
+        };
+    }
+}
+
 //the "s" at the beginning denotes a single address
 //"m" denotes multiple addresses
 //open to change
@@ -48,7 +83,6 @@ export async function sErcBalance(address: string){
 export async function sNFT(address: string){
     try{
         const response = await axios.get(`${HOST}/nft/${address}`);
-        console.log(response);
         return response.data.nfts;
     }catch(error){
         console.error('Error:', error);
