@@ -1,41 +1,46 @@
 .app-container {
-    height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 50px;
-  }
-  
-  .center-content {
-    text-align: center;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 50px;
+}
 
-  .search-form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  
-  .search-form input {
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    padding: 10px;
-    margin: 10px;
-    font-size: 16px;
-    width: 300px;
-  }
-  
-  .search-form button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 18px;
-    width: 100px;
-  }
-  
-  .search-form button:hover {
-    background-color: #45a049;
-  }
+.center-content {
+  text-align: center;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.search-form input {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
+  font-size: 16px;
+  width: 300px;
+}
+
+.search-form button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  width: 100px;
+}
+
+.search-form button:hover {
+  background-color: #45a049;
+}
+
+.loaded-data {
+  margin-left: 50px;
+  width: 100%;
+}

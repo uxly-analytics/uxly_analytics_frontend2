@@ -17,6 +17,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
     setChain(e.target.value);
   }
 
+
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     onSubmit(address, chain);
@@ -39,10 +40,8 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
           placeholder="Chain"
           value={chain}
           onChange={handleChainChange}
-          required
+          //required
         />
-      </div>
-      <div>
         <button type="submit">Search</button>
       </div>
     </form>
