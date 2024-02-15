@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const HOST = "http://54.219.64.148:5000/";
+//const HOST = "http://54.219.64.148:5000/";
+const HOST = "http://localhost:8888";
 
 interface SingleAddressData{
     activeChains: any;

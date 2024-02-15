@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Search from "./Components/Search";
-import * as Service from "../../Services/Services";
+import * as Service from "../../Services/WalletServices";
 import "./Components/home.css";
 
 function Home() {
@@ -26,9 +26,9 @@ function Home() {
     <div>
       <div className="app-container">
         <div className="center-content">
-          <h1>Blockchain Analytics</h1>
+          <h1>Wallet Analytics</h1>
           <Search onSubmit={handleSearchSubmit} />
-          <ul>0x26fcbd3afebbe28d0a8684f790c48368d21665b5</ul>
+          <ul>Test Address: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5</ul>
           {loading && <p>Fetching Data...</p>}
         </div>
       </div>
