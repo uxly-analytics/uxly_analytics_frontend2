@@ -18,11 +18,11 @@ export async function getWalletData(address: string, chain:string): Promise<Wall
         console.log(response);
         return {
             address: response.data.walletStats.address,
-            activeChainsSimplified: response.data.walletStats.activeChainsSimplified,
-            nativeBalance: response.data.walletStats.nativeBalance,
-            nft: response.data.walletStats.nft,
-            tokenBalance: response.data.walletStats.tokenBalance,
-            transactions: response.data.walletStats.transactions,
+            activeChainsSimplified: response.data.walletStats.activeChainsSimplified.chains,
+            nativeBalance: response.data.walletStats.nativeBalance.balance,
+            nft: response.data.walletStats.nft.nfts,
+            tokenBalance: response.data.walletStats.tokenBalance.tokens,
+            transactions: response.data.walletStats.transactions.transactions,
         }
     }catch (error){
         console.log('Error: ', error);
