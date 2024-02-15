@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Search from "./Components/Search";
 import * as Service from "../../Services/WalletServices";
+//import DisplayWalletData from "./Components/DisplayWallet";
 import "./Components/home.css";
 
 function Home() {
@@ -35,7 +36,6 @@ function Home() {
       <div>
         {!loading && data && (
           <div className="loaded-data">
-            <strong>Address {searchInput?.address}'s Data: </strong>
             {Object.entries(data).map(([key, value]) => (
                 <div key={key}>
                     <strong>{key}:</strong>
