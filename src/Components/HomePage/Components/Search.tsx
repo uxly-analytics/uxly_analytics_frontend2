@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import "./home.css";
+import ChainSelect from './ChainSelect';
 
 interface SearchForm {
   onSubmit: (address: string, chain: string) => void;
@@ -13,11 +14,6 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
     setAddress(e.target.value);
   }
 
-  function handleChainChange(e: ChangeEvent<HTMLInputElement>): void {
-    setChain(e.target.value);
-  }
-
-
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     onSubmit(address, chain);
@@ -28,22 +24,17 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
       <div>
         <input
           type="text"
-          placeholder="Address"
+          placeholder="Wallet Address"
           value={address}
           onChange={handleAddressChange}
           required
         />
       </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Chain"
+        <ChainSelect
           value={chain}
-          onChange={handleChainChange}
-          //required
+          onChange={setChain}
         />
         <button type="submit">Search</button>
-      </div>
     </form>
   );
 }
