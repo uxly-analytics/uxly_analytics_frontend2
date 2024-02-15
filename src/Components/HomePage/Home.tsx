@@ -14,7 +14,7 @@ function Home() {
     console.log("Chain: ", chain);
     setSearchInput({ address, chain});
     try{
-      setData(await Service.getSingleAddressData(address));
+      setData(await Service.getSingleAddressData(address, chain));
     }catch(error){
       console.error("Error Fetching Data: ", error);
     }

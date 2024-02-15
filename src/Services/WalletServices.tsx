@@ -11,13 +11,13 @@ interface SingleAddressData{
     nft: any;
 }
 
-export async function getSingleAddressData(address: string): Promise<SingleAddressData> {
+export async function getSingleAddressData(address: string, chain:string): Promise<SingleAddressData> {
     try{
         const activeChains = await sActiveChains(address);
         const simplifiedActiveChains = await sSimplifiedActiveChains(address);
-        const nativeBalance = await sNativeBalance(address);
-        const ercBalance = await sErcBalance(address);
-        const nft = await sNFT(address);
+        const nativeBalance = await sNativeBalance(address, chain);
+        const ercBalance = await sErcBalance(address, chain);
+        const nft = await sNFT(address, chain);
 
         return{
             activeChains,
@@ -61,9 +61,9 @@ export async function sSimplifiedActiveChains(address: string){
     }
 }
 
-export async function sNativeBalance(address: string){
+export async function sNativeBalance(address: string, chain:string){
     try{
-        const response = await axios.get(`${HOST}/native-balance/${address}`);
+        const response = await axios.get(`${HOST}/native-balance/${address}/${chain}`);
         return response.data.balance;
     }catch(error){
         console.error('Error:', error);
@@ -71,9 +71,9 @@ export async function sNativeBalance(address: string){
     }
 }
 
-export async function sErcBalance(address: string){
+export async function sErcBalance(address: string, chain:string){
     try{
-        const response = await axios.get(`${HOST}/erc-balance/${address}`);
+        const response = await axios.get(`${HOST}/erc-balance/${address}/${chain}`);
         return response.data.tokens;
     }catch(error){
         console.error('Error:', error);
@@ -81,9 +81,9 @@ export async function sErcBalance(address: string){
     }
 }
 
-export async function sNFT(address: string){
+export async function sNFT(address: string, chain:string){
     try{
-        const response = await axios.get(`${HOST}/nft/${address}`);
+        const response = await axios.get(`${HOST}/nft/${address}/${chain}`);
         return response.data.nfts;
     }catch(error){
         console.error('Error:', error);
