@@ -56,12 +56,12 @@ function ChainSelect({ value, onChange }: ChainSelectProps): JSX.Element {
     }),
   };
 
-  const selectedValue = value === "" ? null : { value: value, label: value };
+  const selectedOption = getOptions().find(option => option.value === value);
 
   return (
     <Select
       options={getOptions()}
-      value={selectedValue}
+      value={selectedOption}
       onChange={handleChainChange}
       placeholder="Select Chain"
       isSearchable
