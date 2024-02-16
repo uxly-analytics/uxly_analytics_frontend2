@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Search from "./Components/Search";
 import * as Service from "../../Services/WalletServices";
-//import DisplayWalletData from "./Components/DisplayWallet";
+import DisplayWalletData from "./Components/DisplayWallet";
 import "./Components/home.css";
 
 function Home() {
@@ -36,30 +36,7 @@ function Home() {
       <div>
         {!loading && data && (
           <div className="loaded-data">
-            {Object.entries(data).map(([key, value]) => (
-                <div key={key}>
-                    <strong>{key}:</strong>
-                    {Array.isArray(value) ? (
-                        <ul>
-                          {value.map((item: any, index: number) => (
-                            <li key={index}>
-                              {typeof item === 'string' ? (
-                                item
-                              ) : (
-                                Object.entries(item).map(([key, value]) => (
-                                  <span key={key}>
-                                    <strong>{key}:</strong> {JSON.stringify(value)}<br />
-                                  </span>
-                                ))
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p>{JSON.stringify(value)}</p>
-                      )}
-                </div>
-            ))}
+            <DisplayWalletData walletData={data}/>
           </div>
           )}
       </div>

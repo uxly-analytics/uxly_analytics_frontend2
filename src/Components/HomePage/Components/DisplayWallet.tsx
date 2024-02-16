@@ -20,61 +20,53 @@ const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData })
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Active Chains:</span> 
                     <ul>
-                        {Object.entries(walletData.activeChainsSimplified).map(([key, value]) => (
-                            <li key={key}>{key}: {Array.isArray(value) ? 
-                                (value as ReactNode[]).map((item: ReactNode, index: number) => (
-                                    <div key={index}>{item}</div>
-                                )) :
-                                value as ReactNode}</li>
+                        {walletData.activeChainsSimplified.map((item: any, index: number) => (
+                            <li key={index}>
+                                {item}
+                            </li>
                         ))}
                     </ul>
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Native Balance:</span> 
                     <ul>
-                        {Object.entries(walletData.nativeBalance).map(([key, value]) => (
-                            <li key={key}>{key}: {Array.isArray(value) ? 
-                                (value as ReactNode[]).map((item: ReactNode, index: number) => (
-                                    <div key={index}>{item}</div>
-                                )) :
-                                value as ReactNode}</li>
-                        ))}
+                        Balance Formatted: {walletData.nativeBalance.balance_formatted}
                     </ul>
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>NFTs:</span>
                     <ul>
-                        {Object.entries(walletData.nft).map(([key, value]) => (
-                            <li key={key}>{key}: {Array.isArray(value) ? 
-                                (value as ReactNode[]).map((item: ReactNode, index: number) => (
-                                    <div key={index}>{item}</div>
-                                )) :
-                                value as ReactNode}</li>
+                        {walletData.nft.map((obj:any, index:string) =>(
+                            <div key={index}>
+                                <strong>Name: {obj.name}</strong>
+                                <p>Amount: {obj.amount}</p>
+                                {obj.metadata && obj.metadata.image ? (
+                                    <img>src={obj.metadata.image} alt={obj.name}</img>
+                                ) : (
+                                    <p>Image not available</p>
+                                )}
+                                {obj.metadata && obj.metadata.description ? (
+                                    <p>Description: {obj.metadata.description}</p> 
+                                ) : (
+                                    <p>No Description available</p>
+                                )}
+                            </div>
                         ))}
                     </ul> 
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Token Balance:</span>
                     <ul>
-                        {Object.entries(walletData.tokenBalance).map(([key, value]) => (
-                            <li key={key}>{key}: {Array.isArray(value) ? 
-                                (value as ReactNode[]).map((item: ReactNode, index: number) => (
-                                    <div key={index}>{item}</div>
-                                )) :
-                                value as ReactNode}</li>
+                        {walletData.tokenBalance.map((item: any, index: number) => (
+                            <li key={index}>
+                                {item}
+                            </li>
                         ))}
                     </ul> 
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Transaction History:</span>
                     <ul>
-                        {Object.entries(walletData.transactions).map(([key, value]) => (
-                            <li key={key}>{key}: {Array.isArray(value) ? 
-                                (value as ReactNode[]).map((item: ReactNode, index: number) => (
-                                    <div key={index}>{item}</div>
-                                )) :
-                                value as ReactNode}</li>
-                        ))}
                     </ul> 
                 </div>
             </>
