@@ -1,4 +1,6 @@
 import React from 'react';
+import TruncatedText from './TruncateText';
+import "./displaywallet.css";
 
 interface WalletData {
     address: string;
@@ -21,7 +23,8 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
         return (
             <>
                 <div>
-                    <span style={{ fontWeight: 'bold' }}>Address:</span> {walletData.address}
+                    <strong>Address:</strong>
+                    <TruncatedText text={walletData.address} maxLength={15}/>
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Active Chains:</span> 
@@ -41,29 +44,33 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>NFTs:</span>
-                    <ul>
+                    <ul className="nft-container">
                         {walletData.nft.map((obj:any, index:string) =>(
-                            <div key={index}>
-                                <strong>Name: {obj.name}</strong>
-                                <p>Amount: {obj.amount}</p>
+                            <div key={index} className="nft-item">
+                                <div className='text-container'>
+                                    <span className='large-text'>{obj.name}</span>
+                                    <span className='small-text'>Amount: {obj.amount}</span>
+                                </div>
                                 {obj.metadata && obj.metadata.image ? (
                                     obj.metadata.image.startsWith('ipfs://') ? (
-                                        <img src={`https://ipfs.io/ipfs/${obj.metadata.image.slice(7)}`} alt={obj.name} height={300}/>
+                                        <img src={`https://ipfs.io/ipfs/${obj.metadata.image.slice(7)}`} alt={obj.name} className="nft-image"/>
                                     ) : (
                                         videoExtensions.test(obj.metadata.image) ? (
-                                            <video controls height={300}>
+                                            <video controls className="nft-video">
                                                 <source src={obj.metadata.image} type={`video/${obj.metadata.image.split('.').pop()}`} />
                                                 Your browser does not support the video.
                                             </video>
                                         ) : (
-                                            <img src={obj.metadata.image} alt={obj.name} height={300}/>
+                                            <img src={obj.metadata.image} alt={obj.name} className="nft-image"/>
                                         )
                                     )
                                 ) : (
                                     <p>Image not available</p>
                                 )}
                                 {obj.metadata && obj.metadata.description ? (
-                                    <p>Description: {obj.metadata.description}</p> 
+                                    <span>
+                                        <TruncatedText text={`Description: ${obj.metadata.description}`} maxLength={30}/>
+                                    </span>
                                 ) : (
                                     <p>No Description available</p>
                                 )}

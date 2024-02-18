@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
-import DisplayWalletData from "./SearchComponents/DisplayWallet";
+import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
 import "./SearchComponents/home.css";
 
 interface Chain{
