@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 
 interface WalletData {
@@ -9,6 +9,8 @@ interface WalletData {
     tokenBalance: any;
     transactions: any;
 }
+
+const videoExtensions = /\.(mp4|webm|ogg|ogv)$/i;
 
 const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
     const renderWalletData = () => {
@@ -41,7 +43,18 @@ const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData })
                                 <strong>Name: {obj.name}</strong>
                                 <p>Amount: {obj.amount}</p>
                                 {obj.metadata && obj.metadata.image ? (
-                                    <img>src={obj.metadata.image} alt={obj.name}</img>
+                                    obj.metadata.image.startsWith('ipfs://') ? (
+                                        <img src={`https://ipfs.io/ipfs/${obj.metadata.image.slice(7)}`} alt={obj.name} height={300}/>
+                                    ) : (
+                                        videoExtensions.test(obj.metadata.image) ? (
+                                            <video controls height={300}>
+                                                <source src={obj.metadata.image} type={`video/${obj.metadata.image.split('.').pop()}`} />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        ) : (
+                                            <img src={obj.metadata.image} alt={obj.name} height={300}/>
+                                        )
+                                    )
                                 ) : (
                                     <p>Image not available</p>
                                 )}
