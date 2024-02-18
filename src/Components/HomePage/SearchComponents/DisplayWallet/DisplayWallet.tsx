@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import TruncatedText from './TruncateText';
 import "./displaywallet.css";
 
@@ -25,22 +25,14 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                 <strong className='text-container'>
                     Address: {walletData.address}
                 </strong>
+                <br/>
                 <div>
-                    <span style={{ fontWeight: 'bold' }}>Active Chains:</span> 
-                    <ul>
-                        {walletData.activeChainsSimplified.map((item: any, index: number) => (
-                            <li key={index}>
-                                {item}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div>
-                    <span style={{ fontWeight: 'bold' }}>Native Balance: </span> 
+                    <span style={{ fontWeight: 'bold' }}>Balance: </span> 
                     <strong className='text-container'>
                         {walletData.nativeBalance.balance_formatted} {chain.label}
                     </strong>
                 </div>
+                <br/>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>NFTs:</span>
                     <ul className="nft-container">
@@ -89,8 +81,19 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>Transaction History:</span>
-                    <ul>
-                    </ul> 
+                        <ul>
+                            {walletData.transactions.map((item: any, index: number) => (
+                                <li key={index}>
+                                <ul>
+                                    {Object.keys(item).map((key: string) => (
+                                    <li key={key}>
+                                        <strong>{key}:</strong> {typeof item[key] === 'object' ? JSON.stringify(item[key]) : item[key]}
+                                    </li>
+                                    ))}
+                                </ul>
+                                </li>
+                            ))}
+                        </ul>
                 </div>
             </>
         );

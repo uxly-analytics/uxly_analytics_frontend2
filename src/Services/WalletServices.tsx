@@ -22,7 +22,7 @@ export async function getWalletData(address: string, chain:string): Promise<Wall
             nativeBalance: response.data.walletStats.nativeBalance.balance,
             nft: response.data.walletStats.nft.nfts,
             tokenBalance: response.data.walletStats.tokenBalance.tokens,
-            transactions: response.data.walletStats.transactions.transactions,
+            transactions: response.data.walletStats.transactions.transactions.result,
         }
     }catch (error){
         console.log('Error: ', error);
