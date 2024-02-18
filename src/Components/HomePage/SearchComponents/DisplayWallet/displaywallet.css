@@ -1,18 +1,18 @@
 .text-container {
     display: flex;
-    align-items: center; /* Align items vertically in case texts have different heights */
+    align-items: center;
     width: 300px;
   }
   
   .large-text {
-    font-size:larger; /* Adjust font size as needed */
+    font-size:large;
     font-weight: bold;
     margin: 5px;
   }
   
   .small-text {
     margin-left: 15px;
-    font-size: x-small; /* Adjust font size as needed */
+    font-size: x-small;
   }
 
   .nft-container {
@@ -36,17 +36,17 @@
   @media (max-width: 800px) {
     .text-container {
       display: flex;
-      align-items: center; /* Align items vertically in case texts have different heights */
+      align-items: center;
       font-size: xx-small;
     }
 
     .large-text {
-      font-size: xx-small; /* Adjust font size as needed */
+      font-size: xx-small;
       font-weight: bold;
     }
     
     .small-text {
-      font-size: xx-small; /* Adjust font size as needed */
+      font-size: xx-small;
     }
 
   }
