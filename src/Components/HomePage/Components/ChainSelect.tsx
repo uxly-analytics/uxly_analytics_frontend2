@@ -1,40 +1,47 @@
 import React from 'react';
 import Select from 'react-select';
 
-interface ChainSelectProps {
+interface Chain{
   value: string;
-  onChange: (chain: string) => void;
+  label: string;
+}
+
+interface ChainSelectProps {
+  value: Chain;
+  onChange: (chain: Chain) => void;
+}
+
+// Options for the dropdown
+function getChainOptions(): Chain[] {
+  return [
+      { value: '0x1', label: 'ETH' },
+      { value: "0x5", label: "Goerli" },
+      { value: "0xaa36a7", label: "Sepolia" },
+      { value: "0x89", label: "Polygon" },
+      { value: "0x13881", label: "Mumbai" },
+      { value: "0x38", label: "BSC" },
+      { value: "0x61", label: "BSC testnet" },
+      { value: "0xa86a", label: "Avalanche" },
+      { value: "0xfa", label: "Fantom" },
+      { value: "0x2a15c308d", label: "Palm" },
+      { value: "0x19", label: "Cronos" },
+      { value: "0xa4b1", label: "Arbitrum" },
+      { value: "0x64", label: "Gnosis" },
+      { value: "0x27d8", label: "Gnosis testnet" },
+      { value: "0x15b38", label: "Chiliz" },
+      { value: "0x15b32", label: "Chiliz testnet" },
+      { value: "0x2105", label: "Base" },
+      { value: "0x14a33", label: "Base testnet" },
+      { value: "0xa", label: "Optimism" },
+    // Add more options as needed
+  ];
 }
 
 function ChainSelect({ value, onChange }: ChainSelectProps): JSX.Element {
-  function handleChainChange(selectedOption: any): void {
-    onChange(selectedOption.value);
-  }
-
-  // Options for the dropdown
-  function getOptions(): { value: string; label: string }[] {
-    return [
-        { value: '0x1', label: 'eth' },
-        { value: "0x5", label: "goerli" },
-        { value: "0xaa36a7", label: "sepolia" },
-        { value: "0x89", label: "polygon" },
-        { value: "0x13881", label: "mumbai" },
-        { value: "0x38", label: "bsc" },
-        { value: "0x61", label: "bsc testnet" },
-        { value: "0xa86a", label: "avalanche" },
-        { value: "0xfa", label: "fantom" },
-        { value: "0x2a15c308d", label: "palm" },
-        { value: "0x19", label: "cronos" },
-        { value: "0xa4b1", label: "arbitrum" },
-        { value: "0x64", label: "gnosis" },
-        { value: "0x27d8", label: "gnosis testnet" },
-        { value: "0x15b38", label: "chiliz" },
-        { value: "0x15b32", label: "chiliz testnet" },
-        { value: "0x2105", label: "base" },
-        { value: "0x14a33", label: "base testnet" },
-        { value: "0xa", label: "optimism" },
-      // Add more options as needed
-    ];
+  function handleChainChange(selectedChain: Chain | null): void {
+    if (selectedChain){
+      onChange(selectedChain);
+    }
   }
 
   const customStyles = {
@@ -56,11 +63,11 @@ function ChainSelect({ value, onChange }: ChainSelectProps): JSX.Element {
     }),
   };
 
-  const selectedOption = getOptions().find(option => option.value === value);
+  const selectedOption = value && Object.values(value).every(val => val === "") ? null : value;
 
   return (
     <Select
-      options={getOptions()}
+      options={getChainOptions()}
       value={selectedOption}
       onChange={handleChainChange}
       placeholder="Select Chain"

@@ -49,7 +49,7 @@ const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData })
                                         videoExtensions.test(obj.metadata.image) ? (
                                             <video controls height={300}>
                                                 <source src={obj.metadata.image} type={`video/${obj.metadata.image.split('.').pop()}`} />
-                                                Your browser does not support the video tag.
+                                                Your browser does not support the video.
                                             </video>
                                         ) : (
                                             <img src={obj.metadata.image} alt={obj.name} height={300}/>
