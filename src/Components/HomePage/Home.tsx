@@ -41,7 +41,7 @@ function Home() {
       <div>
         {!loading && data && (
           <div className="loaded-data">
-            <DisplayWalletData walletData={data}/>
+            <DisplayWalletData walletData={data} chain={searchInput?.chain || { value: '', label: '' }} />
           </div>
           )}
       </div>

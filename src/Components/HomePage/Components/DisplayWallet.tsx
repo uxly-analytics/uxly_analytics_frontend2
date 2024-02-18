@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 interface WalletData {
     address: string;
     activeChainsSimplified: any;
@@ -10,9 +9,14 @@ interface WalletData {
     transactions: any;
 }
 
+interface DisplayWalletDataProps {
+    walletData: WalletData;
+    chain: { value: string; label: string };
+}
+
 const videoExtensions = /\.(mp4|webm|ogg|ogv)$/i;
 
-const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
+const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain}) => {
     const renderWalletData = () => {
         return (
             <>
@@ -30,10 +34,10 @@ const DisplayWalletData: React.FC<{ walletData: WalletData }> = ({ walletData })
                     </ul>
                 </div>
                 <div>
-                    <span style={{ fontWeight: 'bold' }}>Native Balance:</span> 
-                    <ul>
-                        Balance Formatted: {walletData.nativeBalance.balance_formatted}
-                    </ul>
+                    <span style={{ fontWeight: 'bold' }}>Native Balance: </span> 
+                    <strong>
+                        {walletData.nativeBalance.balance_formatted} {chain.label}
+                    </strong>
                 </div>
                 <div>
                     <span style={{ fontWeight: 'bold' }}>NFTs:</span>
