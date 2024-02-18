@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Search from "./Components/Search";
+import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
-import DisplayWalletData from "./Components/DisplayWallet";
-import "./Components/home.css";
+import DisplayWalletData from "./SearchComponents/DisplayWallet";
+import "./SearchComponents/home.css";
 
 interface Chain{
   value: string;
