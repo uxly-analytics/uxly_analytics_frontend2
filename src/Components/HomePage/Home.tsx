@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
-import "./SearchComponents/home.css";
+import Header from "./HomeComponents/HomeHeader";
+import "./HomeComponents/home.css";
 
 interface Chain{
   value: string;
@@ -31,6 +32,9 @@ function Home() {
   return (
     <div>
       <div className="app-container">
+          <section className="header-section">
+            <Header />
+          </section>
         <div className="center-content">
           <h1>Wallet Analytics</h1>
           <Search onSubmit={handleSearchSubmit} />

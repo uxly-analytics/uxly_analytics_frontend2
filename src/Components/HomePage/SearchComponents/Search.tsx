@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import "./home.css";
+import "../HomeComponents/home.css";
 import ChainSelect from './ChainSelect';
 
 interface Chain{
