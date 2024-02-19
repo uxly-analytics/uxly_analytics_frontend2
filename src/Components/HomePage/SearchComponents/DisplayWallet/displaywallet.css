@@ -4,6 +4,12 @@
     width: 300px;
   }
   
+  .address-info{
+    display: flex;
+    align-items: center;
+    font-size: x-large;
+  }
+  
   .large-text {
     font-size:large;
     font-weight: bold;
@@ -47,6 +53,12 @@
     
     .small-text {
       font-size: xx-small;
+    }
+
+    .address-info{
+      display: flex;
+      align-items: center;
+      font-size: x-small;
     }
 
   }

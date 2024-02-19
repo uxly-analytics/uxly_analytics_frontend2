@@ -22,15 +22,19 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
     const renderWalletData = () => {
         return (
             <>
-                <strong className='text-container'>
-                    Address: {walletData.address}
-                </strong>
+                <div className='address-info'>
+                    <span>Address: </span>&nbsp;
+                    <strong>{walletData.address}</strong>
+                </div>
                 <br/>
                 <div>
-                    <span style={{ fontWeight: 'bold' }}>Balance: </span> 
-                    <strong className='text-container'>
-                        {walletData.nativeBalance.balance_formatted} {chain.label}
-                    </strong>
+                    <div className='address-info'>
+                        <span>Balance: </span>&nbsp;
+                        <strong>
+                        {walletData.nativeBalance.balance_formatted}&nbsp;
+                        <span style={{ color: "#EB5763"}}>{chain.label}</span>
+                        </strong>
+                    </div>
                 </div>
                 <br/>
                 <div>
