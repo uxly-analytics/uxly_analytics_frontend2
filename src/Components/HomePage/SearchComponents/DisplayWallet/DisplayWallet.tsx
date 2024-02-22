@@ -29,11 +29,15 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                 <br/>
                 <div>
                     <div className='address-info'>
-                        <span>Balance: </span>&nbsp;
-                        <strong>
-                        {walletData.nativeBalance.balance_formatted}&nbsp;
-                        <span style={{ color: "#EB5763"}}>{chain.label}</span>
-                        </strong>
+                        <span>Native Balances: </span>&nbsp;
+                            <ul>
+                                {walletData.nativeBalance.map((item: any, index: number) => (
+                                    <li key={index}>
+                                        
+                                        {item.balance} {item.chain}
+                                    </li>
+                                ))}
+                            </ul>
                     </div>
                 </div>
                 <br/>
