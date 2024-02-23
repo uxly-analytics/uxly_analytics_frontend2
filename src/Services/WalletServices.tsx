@@ -19,7 +19,7 @@ export async function getWalletData(address: string, chain:string): Promise<Wall
         return {
             address: response.data.walletStats.address,
             activeChainsSimplified: response.data.walletStats.activeChainsSimplified.chains,
-            nativeBalance: response.data.walletStats.nativeBalance.balance,
+            nativeBalance: response.data.walletStats.nativeBalance,
             nft: response.data.walletStats.nft.nfts,
             tokenBalance: response.data.walletStats.tokenBalance.tokens,
             transactions: response.data.walletStats.transactions.transactions.result,

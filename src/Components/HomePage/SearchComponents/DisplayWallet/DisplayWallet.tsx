@@ -29,11 +29,15 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                 <br/>
                 <div>
                     <div className='address-info'>
-                        <span>Balance: </span>&nbsp;
-                        <strong>
-                        {walletData.nativeBalance.balance_formatted}&nbsp;
-                        <span style={{ color: "#EB5763"}}>{chain.label}</span>
-                        </strong>
+                        <span>Native Balances: </span>&nbsp;
+                            <ul>
+                                {walletData.nativeBalance.map((item: any, index: number) => (
+                                    <li key={index}>
+                                        
+                                        {item.balance} {item.chain}
+                                    </li>
+                                ))}
+                            </ul>
                     </div>
                 </div>
                 <br/>
@@ -46,25 +50,25 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                                     <span className='large-text'>{obj.name}</span>
                                     <span className='small-text'>Amount: {obj.amount}</span>
                                 </div>
-                                {obj.metadata && obj.metadata.image ? (
-                                    obj.metadata.image.startsWith('ipfs://') ? (
-                                        <img src={`https://ipfs.io/ipfs/${obj.metadata.image.slice(7)}`} alt={obj.name} className="nft-image"/>
+                                {obj.image ? (
+                                    obj.image.startsWith('ipfs://') ? (
+                                        <img src={`https://ipfs.io/ipfs/${obj.image.slice(7)}`} alt={obj.name} className="nft-image"/>
                                     ) : (
-                                        videoExtensions.test(obj.metadata.image) ? (
+                                        videoExtensions.test(obj.image) ? (
                                             <video controls className="nft-video">
-                                                <source src={obj.metadata.image} type={`video/${obj.metadata.image.split('.').pop()}`} />
+                                                <source src={obj.image} type={`video/${obj.image.split('.').pop()}`} />
                                                 Your browser does not support the video.
                                             </video>
                                         ) : (
-                                            <img src={obj.metadata.image} alt={obj.name} className="nft-image"/>
+                                            <img src={obj.image} alt={obj.name} className="nft-image"/>
                                         )
                                     )
                                 ) : (
                                     <p>Image not available</p>
                                 )}
-                                {obj.metadata && obj.metadata.description ? (
+                                {obj.description ? (
                                     <span>
-                                        <TruncatedText text={`Description: ${obj.metadata.description}`} maxLength={30}/>
+                                        <TruncatedText text={`Description: ${obj.description}`} maxLength={30}/>
                                     </span>
                                 ) : (
                                     <p>No Description available</p>
