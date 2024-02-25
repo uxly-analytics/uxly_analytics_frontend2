@@ -56,6 +56,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
   function handleRetry(): void {
     setFileUploaded(false);
     setFileName("");
+    setAddress([]); // Clear the address input
     // Clear the file input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
