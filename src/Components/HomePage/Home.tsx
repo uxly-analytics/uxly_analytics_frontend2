@@ -12,17 +12,19 @@ interface Chain{
 }
 
 function Home() {
-  const [searchInput, setSearchInput] = useState<{ address: string; chain: Chain } | null>(null);
+  const [searchInput, setSearchInput] = useState<{ address: string[]; chain: Chain } | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSearchSubmit = async (address: string, chain: Chain) => {
+  const handleSearchSubmit = async (address: string[], chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
     console.log("Address ", address);
     console.log("Chain: ", chain.label, chain.value);
     setSearchInput({ address, chain });
     try{
-      setData(await Service.getWalletData(address, chain.value));
+      if (address.length === 1){
+        setData(await Service.getWalletData(address[0], chain.value));
+      }
     }catch(error){
       console.error("Error Fetching Data: ", error);
     }

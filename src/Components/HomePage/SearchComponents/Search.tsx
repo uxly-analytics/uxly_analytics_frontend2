@@ -8,15 +8,17 @@ interface Chain{
 }
 
 interface SearchForm {
-  onSubmit: (address: string, chain: Chain) => void;
+  onSubmit: (address: string[], chain: Chain) => void;
 }
 
 function Search({ onSubmit }: SearchForm): JSX.Element {
-  const [address, setAddress] = useState<string>('');
+  const [address, setAddress] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain>({ value: "", label: "" });
 
   function handleAddressChange(e: ChangeEvent<HTMLInputElement>): void {
-    setAddress(e.target.value);
+    const addresses: string = e.target.value;
+    const addressesArray: string[] = addresses.split(",").map(address => address.trim());
+    setAddress(addressesArray);
   }
 
   function handleSubmit(e: FormEvent): void {
