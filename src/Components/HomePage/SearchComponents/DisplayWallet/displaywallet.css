@@ -39,6 +39,19 @@
     max-height: 300px;
   }
 
+  .centered{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .balance-graph{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+  }
+
   @media (max-width: 800px) {
     .text-container {
       display: flex;
@@ -62,3 +75,4 @@
     }
 
   }
+
