@@ -39,6 +39,12 @@
     max-height: 300px;
   }
 
+  .balance-graph{
+    max-width: 80%;
+    height: 30%;
+    justify-content: center;
+  }
+
   @media (max-width: 800px) {
     .text-container {
       display: flex;
@@ -62,3 +68,4 @@
     }
 
   }
+
