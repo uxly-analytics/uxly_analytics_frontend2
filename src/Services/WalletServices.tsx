@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const HOST = "http://18.223.123.138:5000/";
-//const HOST = "http://localhost:8888";
+//const HOST = "http://18.223.123.138:5000/";
+const HOST = "http://localhost:8888";
 
 interface WalletData{
     address:string;
@@ -22,7 +22,7 @@ export async function getWalletData(address: string, chain:string): Promise<Wall
             nativeBalance: response.data.walletStats.nativeBalance,
             nft: response.data.walletStats.nft.nfts,
             tokenBalance: response.data.walletStats.tokenBalance.tokens,
-            transactions: response.data.walletStats.transactions.transactions.result,
+            transactions: response.data.walletStats.transactions,
         }
     }catch (error){
         console.log('Error: ', error);
