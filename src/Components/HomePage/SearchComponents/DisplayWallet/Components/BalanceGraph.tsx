@@ -29,9 +29,9 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
         };
     }, [data, labels]);
 
-    // Filter out labels with corresponding values of 0
-    const filteredData = data.filter((value, index) => value !== 0);
-    const filteredLabels = labels.filter((_, index) => data[index] !== 0);
+    // Filter out subsequent labels with corresponding values of 0
+    const filteredData = data.map((value, index) => (index === 0 || value !== 0 ? value : null)).filter(value => value !== null);
+    const filteredLabels = labels.map((label, index) => (index === 0 || data[index] !== 0 ? label : null)).filter(label => label !== null);
 
     // Combine filtered data and labels into an array of objects
     const combinedData = filteredData.map((value, index) => ({ value, label: filteredLabels[index] }));
@@ -41,11 +41,11 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
     const firstLabels = firstData.map(item => item.label);
 
     // Sort the rest of the combined data and labels by value in descending order
-    const restData = combinedData.slice(1).sort((a, b) => b.value - a.value);
+    const restData = combinedData.slice(1).sort((a, b) => (b.value || 0) - (a.value || 0));
     const restLabels = restData.map(item => item.label);
 
     // Combine the sorted rest of the data with the first data
-    const sortedData = firstData.concat(restData).map(item => item.value);
+    const sortedData = firstData.concat(restData).map(item => item.value || 0);
     const sortedLabels = firstLabels.concat(restLabels);
 
     const chartConfig: ChartConfiguration = {
