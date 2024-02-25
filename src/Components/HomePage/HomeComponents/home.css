@@ -16,7 +16,7 @@
   align-items: center;
 }
 
-.search-form input {
+.wallet-input {
   border: 2px solid #EB5763;
   border-radius: 20px;
   padding: 10px;
@@ -25,18 +25,22 @@
   width: 400px;
 }
 
-.search-form button {
+.search-form button,
+.file-upload-button {
   background-color: #EB5763;
   color: white;
   border: 1px solid #EB5763;
   padding: 10px 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 15px;
   cursor: pointer;
   font-size: 18px;
   width: 100px;
 }
 
-.search-form button:hover {
+.search-form button:hover,
+.file-upload-button:hover {
   background-color: #e76772;
 }
 
