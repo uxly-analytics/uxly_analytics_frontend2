@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "./displaywallet.css";
+import "../displaywallet.css";
 
 interface TruncatedTextProps {
   text: string;

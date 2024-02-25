@@ -39,10 +39,17 @@
     max-height: 300px;
   }
 
-  .balance-graph{
-    max-width: 80%;
-    height: 30%;
+  .centered{
+    display: flex;
     justify-content: center;
+    align-items: center;
+  }
+
+  .balance-graph{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
   }
 
   @media (max-width: 800px) {

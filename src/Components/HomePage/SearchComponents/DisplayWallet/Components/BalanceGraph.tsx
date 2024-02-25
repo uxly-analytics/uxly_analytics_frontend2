@@ -29,29 +29,59 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
         };
     }, [data, labels]);
 
+    // Combine data and labels into an array of objects
+    const combinedData = data.map((value, index) => ({ value, label: labels[index] }));
+
+    // Separate the first data and labels
+    const firstData = combinedData.slice(0, 1);
+    const firstLabels = firstData.map(item => item.label);
+
+    // Sort the rest of the combined data and labels by value in descending order
+    const restData = combinedData.slice(1).sort((a, b) => b.value - a.value);
+    const restLabels = restData.map(item => item.label);
+
+    // Combine the sorted rest of the data with the first data
+    const sortedData = firstData.concat(restData).map(item => item.value);
+    const sortedLabels = firstLabels.concat(restLabels);
+
     const chartConfig: ChartConfiguration = {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: sortedLabels,
             datasets: [{
-                label: 'Balance',
-                data: data,
-                backgroundColor: 'rgba(131, 182, 176, 0.6)',
+                label: 'Native Balance',
+                data: sortedData,
+                backgroundColor: 'rgba(131, 182, 176, 1)',
                 borderColor: 'rgba(131, 182, 176, 1)',
                 borderWidth: 2
             }]
         },
         options: {
             scales: {
+                x: {
+                    ticks: {
+                        color: 'black' // Set x-axis text color to black
+                    }
+                },
                 y: {
-                    beginAtZero: true
+                    ticks: {
+                        color: 'black' // Set y-axis text color to black
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
                 }
             }
         }
     };
+    
 
     return (
-        <div className='bar-graph'>
+        <div className='balance-graph'>
             <canvas ref={chartRef} style={{ maxWidth: '100%', maxHeight: '100%' }} />
         </div>
     );
