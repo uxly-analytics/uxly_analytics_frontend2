@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import TruncatedText from './TruncateText';
-import BalanceGraph from './BalanceGraph';
 import "../displaywallet.css";
 
 interface WalletData {

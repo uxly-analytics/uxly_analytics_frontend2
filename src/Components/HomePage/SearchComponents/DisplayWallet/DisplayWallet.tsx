@@ -1,5 +1,5 @@
 import React from 'react';
-import BalanceGraph from './Components/BalanceGraph';
+import DisplayBalance from './Components/DisplayBalance';
 import DisplayNFTs from './Components/DisplayNFTs';
 import "./displaywallet.css";
 
@@ -12,19 +12,12 @@ interface WalletData {
     transactions: any;
 }
 
-interface ChainBalance{
-    chain:string;
-    balance:string;
-}
-
 interface DisplayWalletDataProps {
     walletData: WalletData;
     chain: { value: string; label: string };
 }
 
 const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain}) => {
-    const labels: string[] = walletData.nativeBalance.map((obj:ChainBalance) => obj.chain);
-    const balances: number[] = walletData.nativeBalance.map((obj:ChainBalance) => parseFloat(obj.balance));
     const renderWalletData = () => {
         return (
             <>
@@ -32,9 +25,7 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({ walletData, chain
                     <strong>{walletData.address}'s Data</strong>
                 </div>
                 <br/>
-                    <div className='centered'>
-                        <BalanceGraph data={balances} labels={labels} />
-                    </div>
+                    <DisplayBalance walletData={walletData}/>
                 <br/>
                 <div>
                     <DisplayNFTs walletData={walletData}/>
