@@ -3,6 +3,7 @@ import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
 import Header from "./HomeComponents/HomeHeader";
+import LoadScreen from "./HomeComponents/LoadScreen";
 import "./HomeComponents/home.css";
 
 interface Chain{
@@ -39,7 +40,7 @@ function Home() {
           <h1>Wallet Analytics</h1>
           <Search onSubmit={handleSearchSubmit} />
           <ul>Test Address: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5</ul>
-          {loading && <p>Fetching Data...</p>}
+          {loading && <LoadScreen/>}
         </div>
       </div>
       <div>
