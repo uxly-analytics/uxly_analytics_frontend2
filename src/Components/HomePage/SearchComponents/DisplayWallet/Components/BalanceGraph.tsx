@@ -29,8 +29,12 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
         };
     }, [data, labels]);
 
-    // Combine data and labels into an array of objects
-    const combinedData = data.map((value, index) => ({ value, label: labels[index] }));
+    // Filter out labels with corresponding values of 0
+    const filteredData = data.filter((value, index) => value !== 0);
+    const filteredLabels = labels.filter((_, index) => data[index] !== 0);
+
+    // Combine filtered data and labels into an array of objects
+    const combinedData = filteredData.map((value, index) => ({ value, label: filteredLabels[index] }));
 
     // Separate the first data and labels
     const firstData = combinedData.slice(0, 1);
