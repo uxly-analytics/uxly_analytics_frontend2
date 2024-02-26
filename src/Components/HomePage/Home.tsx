@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
@@ -16,6 +16,12 @@ function Home() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (data !== null) {
+      console.log(data);
+    }
+  }, [data]);
+
   const handleSearchSubmit = async (address: string[], chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
     console.log("Address ", address);
@@ -31,7 +37,6 @@ function Home() {
     }catch(error){
       console.error("Error Fetching Data: ", error);
     }
-    console.log(data);
     setLoading(false); // Set loading state to false when submit finishes
   };
 
