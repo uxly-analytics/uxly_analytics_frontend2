@@ -13,7 +13,7 @@ interface Chain {
 
 function Home() {
   const [searchInput, setSearchInput] = useState<{
-    address: string;
+    address: string[];
     chain: Chain;
   } | null>(null);
   const [data, setData] = useState<any>(null);

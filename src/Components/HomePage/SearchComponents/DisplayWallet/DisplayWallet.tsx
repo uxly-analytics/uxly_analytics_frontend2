@@ -35,6 +35,7 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <br />
         <div>
           <span style={{ fontWeight: "bold" }}>Transaction History:</span>
+          <br /><br /> 
           <TransactionTable walletData={walletData} />
         </div>
         <div>
