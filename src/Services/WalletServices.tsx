@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//const HOST = "http://18.223.123.138:5000/";
-const HOST = "http://localhost:8888";
+const HOST = "http://18.223.123.138:5000/";
+//const HOST = "http://localhost:8888";
 
 interface WalletData{
     address:string;
@@ -15,7 +15,6 @@ interface WalletData{
 export async function getWalletData(address: string, chain:string): Promise<WalletData>{
     try{
         const response = await axios.get(`${HOST}/wallet?address=${address}&chain=${chain}`);
-        console.log(response);
         return {
             address: response.data.walletStats.address,
             activeChainsSimplified: response.data.walletStats.activeChainsSimplified.chains,
@@ -35,4 +34,17 @@ export async function getWalletData(address: string, chain:string): Promise<Wall
             transactions: {},
         };
     }
+}
+
+export async function getMultipleWalletData(addresses: string[], chain:string): Promise<WalletData[]> {
+    const walletDataArray: WalletData[]=[];
+    for (const address of addresses){
+        try{
+            const walletData = await getWalletData(address, chain);
+            walletDataArray.push(walletData);
+        } catch (error){
+            console.log(`Error fetching wallet data for address ${address}:`, error);
+        }
+    }
+    return walletDataArray;
 }

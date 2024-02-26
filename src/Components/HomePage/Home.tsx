@@ -20,10 +20,13 @@ function Home() {
     setLoading(true); // Set loading state to true when submit starts
     console.log("Address ", address);
     console.log("Chain: ", chain.label, chain.value);
-    setSearchInput({ address, chain });
+    const uniqueAddresses = Array.from(new Set(address));
+    setSearchInput({ address: uniqueAddresses, chain });
     try{
-      if (address.length === 1){
-        setData(await Service.getWalletData(address[0], chain.value));
+      if (uniqueAddresses.length === 1){
+        setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
+      }else{
+        setData(await Service.getMultipleWalletData(uniqueAddresses, chain.value));
       }
     }catch(error){
       console.error("Error Fetching Data: ", error);
