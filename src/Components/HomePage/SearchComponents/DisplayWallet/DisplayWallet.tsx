@@ -1,6 +1,7 @@
 import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
 import DisplayNFTs from "./Components/DisplayNFTs";
+import TransactionDetailsTable from "./Components/TransactionDetailsTable";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 
@@ -11,6 +12,7 @@ interface WalletData {
   nft: any;
   tokenBalance: any;
   transactions: any;
+  transactionsData: any;
 }
 
 interface DisplayWalletDataProps {
@@ -35,8 +37,17 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <br />
         <div>
           <span style={{ fontWeight: "bold" }}>Transaction History:</span>
-          <br /><br /> 
+          <br />
+          <br />
           <TransactionTable walletData={walletData} />
+        </div>
+        <div>
+          <span style={{ fontWeight: "bold" }}>
+            Transaction Details (last 100)
+          </span>
+          <br />
+          <br />
+          <TransactionDetailsTable walletData={walletData} />
         </div>
         <div>
           <DisplayNFTs walletData={walletData} />
