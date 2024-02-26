@@ -8,7 +8,8 @@ interface WalletData {
     nft: any;
     tokenBalance: any;
     transactions: any;
-}
+    transactionsData: any;
+  }
 
 interface DisplayMultipleWalletProps {
     wallets: WalletData[];

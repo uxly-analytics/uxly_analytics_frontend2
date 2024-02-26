@@ -9,6 +9,7 @@ interface WalletData {
   nft: any;
   tokenBalance: any;
   transactions: any;
+  transactionsData: any;
 }
 
 const DisplayNFTs: React.FC<{ walletData: WalletData }> = ({ walletData }) => {

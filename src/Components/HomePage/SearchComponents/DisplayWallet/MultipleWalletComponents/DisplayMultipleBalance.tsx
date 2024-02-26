@@ -9,7 +9,8 @@ interface WalletData {
     nft: any;
     tokenBalance: any;
     transactions: any;
-}
+    transactionsData: any;
+  }
 
 interface ChainBalance{
     chain:string;
