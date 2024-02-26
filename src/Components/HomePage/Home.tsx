@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
+import DisplayMultipleWallet from "./SearchComponents/DisplayWallet/DisplayMultipleWallet";
 import Header from "./HomeComponents/HomeHeader";
 import LoadScreen from "./HomeComponents/LoadScreen";
 import "./HomeComponents/home.css";
@@ -62,12 +63,29 @@ function Home() {
       </div>
       <div>
         {!loading && data && (
-          <div className="loaded-data">
-            <DisplayWalletData
-              walletData={data}
-              chain={searchInput?.chain || { value: "", label: "" }}
-            />
-          </div>
+          Array.isArray(data) ? (
+              data.length !== 0 ? (
+                <div className="loaded-data">
+                  <DisplayMultipleWallet
+                    wallets={data}
+                    chain={searchInput?.chain || { value: "", label: "" }}
+                  />
+                </div>
+              ) : (
+                <strong className="loaded-data">Error fetching data. Try again</strong>
+              )
+          ):(
+            data.address !== "null" ? (
+              <div className="loaded-data">
+                <DisplayWalletData
+                  walletData={data}
+                  chain={searchInput?.chain || { value: "", label: "" }}
+                />
+              </div>
+            ) : (
+              <strong className="loaded-data">Error fetching data. Try again</strong>
+            )
+          )
         )}
       </div>
     </div>

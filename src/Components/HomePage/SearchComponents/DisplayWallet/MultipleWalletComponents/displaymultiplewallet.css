@@ -1,0 +1,12 @@
+.centered-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .balancemedian-graph{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+  }
