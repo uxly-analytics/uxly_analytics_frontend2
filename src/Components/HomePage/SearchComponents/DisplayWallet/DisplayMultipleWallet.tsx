@@ -22,6 +22,7 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
     const renderWalletData = () => {
         return (
             <>
+            <strong>Aggregated Data</strong>
             <DisplayMultipleBalance wallets={wallets} />
             </>
         );
