@@ -62,13 +62,13 @@ export async function getMultipleWalletData(addresses: string[], chain:string): 
               nft: response.data.walletStats.nft.nfts,
               tokenBalance: response.data.walletStats.tokenBalance.tokens,
               transactions: response.data.walletStats.transactions,
+              transactionsData: response.data.walletStats.transactionsData,
             });
         } catch (error){
             console.log(`Error fetching wallet data for address ${address}:`, error);
             return [];
         }
     }
-  }
   return walletDataArray;
 }
 
