@@ -38,7 +38,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
           // Split CSV data by newline
           const lines: string[] = csvData.split('\n');
           // Process each line
-          const addressesArray: string[] = lines.flatMap(line => line.split(',').map(item => item.trim()));
+          const addressesArray: string[] = lines.flatMap(line => line.split(',').map(item => item.trim())).filter(item => item !== "");
           setAddress(addressesArray);
         }
       };
