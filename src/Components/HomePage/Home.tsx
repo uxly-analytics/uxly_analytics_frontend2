@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
 import Header from "./HomeComponents/HomeHeader";
+import LoadScreen from "./HomeComponents/LoadScreen";
 import "./HomeComponents/home.css";
 
 interface Chain {
@@ -18,17 +19,27 @@ function Home() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSearchSubmit = async (address: string, chain: Chain) => {
+  useEffect(() => {
+    if (data !== null) {
+      console.log(data);
+    }
+  }, [data]);
+
+  const handleSearchSubmit = async (address: string[], chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
     console.log("Address ", address);
     console.log("Chain: ", chain.label, chain.value);
-    setSearchInput({ address, chain });
-    try {
-      setData(await Service.getWalletData(address, chain.value));
-    } catch (error) {
+    const uniqueAddresses = Array.from(new Set(address));
+    setSearchInput({ address: uniqueAddresses, chain });
+    try{
+      if (uniqueAddresses.length === 1){
+        setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
+      }else{
+        setData(await Service.getMultipleWalletData(uniqueAddresses, chain.value));
+      }
+    }catch(error){
       console.error("Error Fetching Data: ", error);
     }
-    console.log(data);
     setLoading(false); // Set loading state to false when submit finishes
   };
 
@@ -46,7 +57,7 @@ function Home() {
             Test Address for transactions:
             0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326
           </ul>
-          {loading && <p>Fetching Data...</p>}
+          {loading && <LoadScreen/>}
         </div>
       </div>
       <div>

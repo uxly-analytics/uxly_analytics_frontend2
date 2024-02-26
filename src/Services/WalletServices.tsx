@@ -42,3 +42,16 @@ export async function getWalletData(
     };
   }
 }
+
+export async function getMultipleWalletData(addresses: string[], chain:string): Promise<WalletData[]> {
+    const walletDataArray: WalletData[]=[];
+    for (const address of addresses){
+        try{
+            const walletData = await getWalletData(address, chain);
+            walletDataArray.push(walletData);
+        } catch (error){
+            console.log(`Error fetching wallet data for address ${address}:`, error);
+        }
+    }
+    return walletDataArray;
+}
