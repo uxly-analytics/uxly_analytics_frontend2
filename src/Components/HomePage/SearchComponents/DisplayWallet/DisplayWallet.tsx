@@ -1,6 +1,7 @@
 import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
 import DisplayNFTs from "./Components/DisplayNFTs";
+import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 
 interface WalletData {
@@ -33,6 +34,10 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <DisplayBalance walletData={walletData} />
         <br />
         <div>
+          <span style={{ fontWeight: "bold" }}>Transaction History:</span>
+          <TransactionTable walletData={walletData} />
+        </div>
+        <div>
           <DisplayNFTs walletData={walletData} />
         </div>
         <div>
@@ -42,22 +47,6 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
               Array.isArray(walletData.tokenBalance) &&
               walletData.tokenBalance.map((item: any, index: number) => (
                 <li key={index}>{item}</li>
-              ))}
-          </ul>
-        </div>
-        <div>
-          <span style={{ fontWeight: "bold" }}>Transaction History:</span>
-          <ul>
-            {walletData.transactions &&
-              Array.isArray(walletData.transactions) &&
-              walletData.transactions.map((transaction, index) => (
-                <li key={index}>
-                  <div>Timestamp: {transaction.block_timestamp}</div>
-                  <div>Value: {transaction.value}</div>
-                  <div>Decimal Value: {transaction.decimal_value}</div>
-                  <div>To: {transaction.to_address}</div>
-                  <div>From: {transaction.from_address}</div>
-                </li>
               ))}
           </ul>
         </div>
