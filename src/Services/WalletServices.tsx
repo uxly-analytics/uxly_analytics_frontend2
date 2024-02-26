@@ -10,6 +10,7 @@ interface WalletData {
   nft: any;
   tokenBalance: any;
   transactions: any;
+  transactionsData: any;
 }
 
 export async function getWalletData(
@@ -29,6 +30,7 @@ export async function getWalletData(
       nft: response.data.walletStats.nft.nfts,
       tokenBalance: response.data.walletStats.tokenBalance.tokens,
       transactions: response.data.walletStats.transactions,
+      transactionsData: response.data.walletStats.transactionsData,
     };
   } catch (error) {
     console.log("Error: ", error);
@@ -39,19 +41,24 @@ export async function getWalletData(
       nft: {},
       tokenBalance: { tokens: [] },
       transactions: {},
+      transactionsData: {},
     };
   }
 }
 
-export async function getMultipleWalletData(addresses: string[], chain:string): Promise<WalletData[]> {
-    const walletDataArray: WalletData[]=[];
-    for (const address of addresses){
-        try{
-            const walletData = await getWalletData(address, chain);
-            walletDataArray.push(walletData);
-        } catch (error){
-            console.log(`Error fetching wallet data for address ${address}:`, error);
-        }
+export async function getMultipleWalletData(
+  addresses: string[],
+  chain: string,
+): Promise<WalletData[]> {
+  const walletDataArray: WalletData[] = [];
+  for (const address of addresses) {
+    try {
+      const walletData = await getWalletData(address, chain);
+      walletDataArray.push(walletData);
+    } catch (error) {
+      console.log(`Error fetching wallet data for address ${address}:`, error);
     }
-    return walletDataArray;
+  }
+  return walletDataArray;
 }
+
