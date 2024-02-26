@@ -33,7 +33,7 @@ export async function getWalletData(
   } catch (error) {
     console.log("Error: ", error);
     return {
-      address: address,
+      address: "null",
       activeChainsSimplified: {},
       nativeBalance: {},
       nft: {},
@@ -47,10 +47,22 @@ export async function getMultipleWalletData(addresses: string[], chain:string): 
     const walletDataArray: WalletData[]=[];
     for (const address of addresses){
         try{
-            const walletData = await getWalletData(address, chain);
-            walletDataArray.push(walletData);
+            const response = await axios.get(
+              `${HOST}/wallet?address=${address}&chain=${chain}`,
+            );
+            console.log(response);
+             walletDataArray.push({
+              address: response.data.walletStats.address,
+              activeChainsSimplified:
+                response.data.walletStats.activeChainsSimplified.chains,
+              nativeBalance: response.data.walletStats.nativeBalance,
+              nft: response.data.walletStats.nft.nfts,
+              tokenBalance: response.data.walletStats.tokenBalance.tokens,
+              transactions: response.data.walletStats.transactions,
+            });
         } catch (error){
             console.log(`Error fetching wallet data for address ${address}:`, error);
+            return [];
         }
     }
     return walletDataArray;

@@ -64,19 +64,27 @@ function Home() {
       <div>
         {!loading && data && (
           Array.isArray(data) ? (
-            <div className="loaded-data">
-              <DisplayMultipleWallet
-                wallets={data}
-                chain={searchInput?.chain || { value: "", label: "" }}
-              />
-            </div>
+              data.length !== 0 ? (
+                <div className="loaded-data">
+                  <DisplayMultipleWallet
+                    wallets={data}
+                    chain={searchInput?.chain || { value: "", label: "" }}
+                  />
+                </div>
+              ) : (
+                <strong className="loaded-data">Error fetching data. Try again</strong>
+              )
           ):(
-            <div className="loaded-data">
-              <DisplayWalletData
-                walletData={data}
-                chain={searchInput?.chain || { value: "", label: "" }}
-              />
-            </div>
+            data.address !== "null" ? (
+              <div className="loaded-data">
+                <DisplayWalletData
+                  walletData={data}
+                  chain={searchInput?.chain || { value: "", label: "" }}
+                />
+              </div>
+            ) : (
+              <strong className="loaded-data">Error fetching data. Try again</strong>
+            )
           )
         )}
       </div>
