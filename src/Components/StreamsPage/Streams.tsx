@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import DisplayStreamsData from './StreamsGraph'; 
 
 const Streams: React.FC = () => {
   const [rawData, setRawData] = useState<any>(null);
@@ -32,6 +32,7 @@ const Streams: React.FC = () => {
         <div>
           <h2>
             Received Data:<pre>{JSON.stringify(rawData, null, 2)}</pre>
+            <DisplayStreamsData graphData={rawData} />
           </h2>
         </div>
       )}
