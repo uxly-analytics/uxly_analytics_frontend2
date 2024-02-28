@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
@@ -20,6 +21,9 @@ function Home() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // useNavigate hook for navigation
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (data !== null) {
       console.log(data);
@@ -32,16 +36,22 @@ function Home() {
     console.log("Chain: ", chain.label, chain.value);
     const uniqueAddresses = Array.from(new Set(address));
     setSearchInput({ address: uniqueAddresses, chain });
-    try{
-      if (uniqueAddresses.length === 1){
+    try {
+      if (uniqueAddresses.length === 1) {
         setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
-      }else{
-        setData(await Service.getMultipleWalletData(uniqueAddresses, chain.value));
+      } else {
+        setData(
+          await Service.getMultipleWalletData(uniqueAddresses, chain.value),
+        );
       }
-    }catch(error){
+    } catch (error) {
       console.error("Error Fetching Data: ", error);
     }
     setLoading(false); // Set loading state to false when submit finishes
+  };
+
+  const goToStreams = () => {
+    navigate("/streams");
   };
 
   return (
@@ -58,39 +68,43 @@ function Home() {
             Test Address for transactions:
             0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326
           </ul>
-          {loading && <LoadScreen/>}
+          <button onClick={goToStreams} className="navigate-button">
+            Go to Streams
+          </button>
+          {loading && <LoadScreen />}
         </div>
       </div>
       <div>
-        {!loading && data && (
-          Array.isArray(data) ? (
-              data.length !== 0 ? (
-                <div className="loaded-data">
-                  <DisplayMultipleWallet
-                    wallets={data}
-                    chain={searchInput?.chain || { value: "", label: "" }}
-                  />
-                </div>
-              ) : (
-                <strong className="loaded-data">Error fetching data. Try again</strong>
-              )
-          ):(
-            data.address !== "null" ? (
+        {!loading &&
+          data &&
+          (Array.isArray(data) ? (
+            data.length !== 0 ? (
               <div className="loaded-data">
-                <DisplayWalletData
-                  walletData={data}
+                <DisplayMultipleWallet
+                  wallets={data}
                   chain={searchInput?.chain || { value: "", label: "" }}
                 />
               </div>
             ) : (
-              <strong className="loaded-data">Error fetching data. Try again</strong>
+              <strong className="loaded-data">
+                Error fetching data. Try again
+              </strong>
             )
-          )
-        )}
+          ) : data.address !== "null" ? (
+            <div className="loaded-data">
+              <DisplayWalletData
+                walletData={data}
+                chain={searchInput?.chain || { value: "", label: "" }}
+              />
+            </div>
+          ) : (
+            <strong className="loaded-data">
+              Error fetching data. Try again
+            </strong>
+          ))}
       </div>
     </div>
   );
 }
 
 export default Home;
-
