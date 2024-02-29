@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import "../displaywallet.css";
 
 interface TransactionDetailsTableProps {
   walletData: {
@@ -11,13 +12,60 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
   walletData,
 }) => {
   const columns: GridColDef[] = [
-    { field: "chain", headerName: "Chain", width: 150 },
-    { field: "inbound_value", headerName: "Inbound Value", width: 200 },
-    { field: "inbound_count", headerName: "Inbound Count", width: 150 },
-    { field: "inbound_mean", headerName: "Inbound Mean Value", width: 200 },
-    { field: "outbound_value", headerName: "Outbound Value", width: 200 },
-    { field: "outbound_count", headerName: "Outbound Count", width: 150 },
-    { field: "outbound_mean", headerName: "Outbound Mean Value", width: 200 },
+    {
+      field: "chain",
+      headerName: "Chain",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
+    {
+      field: "inbound_value",
+      headerName: "In Val",
+      description: "Inbound Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "inbound-cell",
+    },
+    {
+      field: "inbound_count",
+      headerName: "In Count",
+      description: "Inbound Count",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "inbound-cell",
+    },
+    {
+      field: "inbound_mean",
+      headerName: "Mean In Val",
+      description: "Mean Inbound Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "inbound-cell",
+    },
+    {
+      field: "outbound_value",
+      headerName: "Out Val",
+      description: "Outbound Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "outbound-cell",
+    },
+    {
+      field: "outbound_count",
+      headerName: "Out Count",
+      description: "Outbound Count",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "outbound-cell",
+    },
+    {
+      field: "outbound_mean",
+      headerName: "Mean Out Val",
+      description: "Mean Outbound Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+      cellClassName: "outbound-cell",
+    },
   ];
 
   const rows = walletData.transactionsData.map((chainData, index) => ({
@@ -30,15 +78,63 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
     outbound_count: chainData.outbound_count,
     outbound_mean: chainData.outbound_mean,
   }));
-
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div className="" style={{ height: 500, width: "650px" }}>
       <DataGrid
         rows={rows}
         columns={columns}
         pageSizeOptions={[5, 10]}
         checkboxSelection
-        // ... other DataGrid properties as needed
+        getRowClassName={(params) =>
+          `${params.row.inbound_value < params.row.outbound_value ? "outbound" : params.row.inbound_value == params.row.outbound_value ? "equal" : "inbound"}`
+        }
+        style={{
+          backgroundClip: "content-box",
+          borderRadius: "20px",
+        }}
+        sx={[
+          {
+            border: 5,
+            borderColor: "#EB5763",
+          },
+          {
+            "& .MuiDataGrid-row:hover": {
+              bgcolor: "rgb(240, 240, 255)",
+            },
+          },
+          {
+            "& .MuiDataGrid-cell:hover": {
+              bgcolor: "rgb(239, 239, 255)",
+            },
+          },
+          {
+            "& .inbound .Mui-selected": {
+              bgcolor: "rgb(230, 245, 230) !important",
+            },
+            "& .inbound .Mui-selected:hover": {
+              bgcolor: "rgb(225, 245, 225) !important",
+            },
+          },
+          {
+            "& .outbound .Mui-selected": {
+              bgcolor: "rgb(245, 230, 230) !important",
+            },
+            "& .outbound .Mui-selected:hover": {
+              bgcolor: "rgb(245, 225, 225) !important",
+            },
+          },
+          {
+            "& .Mui-hovered": {
+              bgcolor: "rgb(232, 232, 232)",
+            },
+          },
+          {
+            "& .MuiDataGrid-columnHeader": {
+              fontWeight: "bold !important",
+              bgcolor: "#EB5763",
+            },
+          },
+        ]}
       />
     </div>
   );

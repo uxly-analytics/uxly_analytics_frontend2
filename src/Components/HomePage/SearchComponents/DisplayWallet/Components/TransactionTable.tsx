@@ -1,24 +1,73 @@
 import * as React from "react";
-import { DataGrid, GridColDef} from "@mui/x-data-grid";
+import {
+  DataGrid,
+  DataGridProps,
+  GridColDef,
+  GridRowId,
+  GridRowModel,
+} from "@mui/x-data-grid";
+import "../displaywallet.css";
+import MyContext from "../DisplayWallet";
+import { format } from "path";
+import { formGroupClasses } from "@mui/material";
 
 interface TransactionTableProps {
   walletData: {
     transactions: any[];
   };
+  address: string;
 }
 
-const TransactionTable: React.FC<TransactionTableProps> = ({ walletData }) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({
+  walletData,
+  address,
+}) => {
+  console.log("address", address.toLowerCase());
+  console.log(
+    "walletData.transactions",
+    walletData.transactions[0].from_address,
+  );
+  console.log(
+    "walletData.transactions = address?",
+    walletData.transactions[0].from_address === address.toLowerCase(),
+  );
   const columns: GridColDef[] = [
-    { field: "from_address", headerName: "From Address", width: 375 },
-    { field: "to_address", headerName: "To Address", width: 375 },
-    { field: "value", headerName: "Value", width: 200 },
-    { field: "decimal_value", headerName: "Decimal Value", width: 200 },
+    {
+      field: "from_address",
+      headerName: "From Address",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
+    {
+      field: "to_address",
+      headerName: "To Address",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
+    {
+      field: "value",
+      headerName: "Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
+    {
+      field: "decimal_value",
+      headerName: "Decimal Value",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
     {
       field: "block_timestamp",
       headerName: "Block Timestamp (+0)",
-      width: 200,
+      flex: 1,
+      headerClassName: "transactionHeader",
     },
-    { field: "block_hash", headerName: "Block Hash", width: 550 },
+    {
+      field: "block_hash",
+      headerName: "Block Hash",
+      flex: 1,
+      headerClassName: "transactionHeader",
+    },
   ];
 
   const rows = walletData.transactions.map((transaction, index) => ({
@@ -32,34 +81,67 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ walletData }) => {
   }));
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div className="" style={{ height: 500, width: "650px" }}>
       <DataGrid
         rows={rows}
         columns={columns}
         pageSizeOptions={[5, 10]}
         checkboxSelection
-        // ... other DataGrid properties as needed
+        getRowClassName={(params) =>
+          `${params.row.from_address === address.toLowerCase() ? "outbound" : "inbound"}`
+        }
+        style={{
+          backgroundClip: "content-box",
+          borderRadius: "20px",
+          textOverflow: "ellipsis",
+        }}
+        sx={[
+          {
+            border: 5,
+            borderColor: "#EB5763",
+            width: "auto",
+          },
+          {
+            "& .MuiDataGrid-row:hover": {
+              bgcolor: "rgb(240, 240, 255)",
+            },
+          },
+          {
+            "& .MuiDataGrid-cell:hover": {
+              bgcolor: "rgb(239, 239, 255)",
+            },
+          },
+          {
+            "& .inbound .Mui-selected": {
+              bgcolor: "rgb(230, 245, 230) !important",
+            },
+            "& .inbound .Mui-selected:hover": {
+              bgcolor: "rgb(225, 245, 225) !important",
+            },
+          },
+          {
+            "& .outbound .Mui-selected": {
+              bgcolor: "rgb(245, 230, 230) !important",
+            },
+            "& .outbound .Mui-selected:hover": {
+              bgcolor: "rgb(245, 225, 225) !important",
+            },
+          },
+          {
+            "& .Mui-hovered": {
+              bgcolor: "rgb(232, 232, 232)",
+            },
+          },
+          {
+            "& .MuiDataGrid-columnHeader": {
+              fontWeight: "bold !important",
+              bgcolor: "#EB5763",
+            },
+          },
+        ]}
       />
     </div>
   );
 };
 
 export default TransactionTable;
-
-//export default function DataTable() {
-//  return (
-//    <div style={{ height: 400, width: "100%" }}>
-//      <DataGrid
-//        rows={rows}
-//        columns={columns}
-//        initialState={{
-//          pagination: {
-//            paginationModel: { page: 0, pageSize: 5 },
-//          },
-//        }}
-//        pageSizeOptions={[5, 10]}
-//        checkboxSelection
-//      />
-//    </div>
-//  );
-//}
