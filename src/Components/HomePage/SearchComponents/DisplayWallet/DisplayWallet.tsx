@@ -35,19 +35,33 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <br />
         <DisplayBalance walletData={walletData} />
         <br />
-        <div>
-          <span style={{ fontWeight: "bold" }}>Transaction History:</span>
-          <br />
-          <br />
-          <TransactionTable walletData={walletData} />
-        </div>
-        <div>
-          <span style={{ fontWeight: "bold" }}>
-            Transaction Details (last 100)
-          </span>
-          <br />
-          <br />
-          <TransactionDetailsTable walletData={walletData} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            maxWidth: "1350px",
+          }}
+        >
+          {/* Left column */}
+          <div>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ fontWeight: "bold" }}>Transaction History:</span>
+            </div>
+            <TransactionTable
+              walletData={walletData}
+              address={walletData.address}
+            />
+          </div>
+
+          {/* Right column */}
+          <div>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ fontWeight: "bold" }}>
+                Transaction Summary (last 100)
+              </span>
+            </div>
+            <TransactionDetailsTable walletData={walletData} />
+          </div>
         </div>
         <div>
           <DisplayNFTs walletData={walletData} />

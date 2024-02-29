@@ -4,40 +4,42 @@ import MultipleTransactionDetailsTable from "./MultipleWalletComponents/Multiple
 import BalanceDistribution from "./MultipleWalletComponents/BalanceDistribution";
 
 interface WalletData {
-    address: string;
-    activeChainsSimplified: any;
-    nativeBalance: any;
-    nft: any;
-    tokenBalance: any;
-    transactions: any;
-    transactionsData: any;
-  }
+  address: string;
+  activeChainsSimplified: any;
+  nativeBalance: any;
+  nft: any;
+  tokenBalance: any;
+  transactions: any;
+  transactionsData: any;
+}
 
 interface DisplayMultipleWalletProps {
-    wallets: WalletData[];
-    chain: { value: string; label: string };
+  wallets: WalletData[];
+  chain: { value: string; label: string };
 }
 
 const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
-    wallets,
-    chain,
+  wallets,
+  chain,
 }) => {
-    const renderWalletData = () => {
-        return (
-            <>
-            <strong>Aggregated Data</strong>
-            <DisplayMultipleBalance wallets={wallets} />
-            <br/><br/>
-            <strong>Native Balance Distribution</strong>
-            <BalanceDistribution wallets={wallets}/>
-            <br/><br/>
-            <strong>Transaction Data</strong>
-            <MultipleTransactionDetailsTable wallets={wallets} />
-            </>
-        );
-    };
+  const renderWalletData = () => {
+    return (
+      <>
+        <strong>Aggregated Data</strong>
+        <DisplayMultipleBalance wallets={wallets} />
+        <br />
+        <br />
+        <strong>Native Balance Distribution</strong>
+        <BalanceDistribution wallets={wallets} />
+        <br />
+        <br />
+        <strong>Transaction Data</strong>
+        <MultipleTransactionDetailsTable wallets={wallets} />
+      </>
+    );
+  };
 
-    return <div>{renderWalletData()}</div>;
+  return <div>{renderWalletData()}</div>;
 };
 
 export default DisplayMultipleWallet;

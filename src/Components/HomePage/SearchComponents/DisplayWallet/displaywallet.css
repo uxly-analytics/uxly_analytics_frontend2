@@ -1,78 +1,126 @@
 .text-container {
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
+
+.address-info {
+  display: flex;
+  align-items: center;
+  font-size: x-large;
+}
+
+.large-text {
+  font-size: large;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.small-text {
+  margin-left: 15px;
+  font-size: x-small;
+}
+
+.nft-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nft-item {
+  width: calc(33.33% - 10px);
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nft-image,
+.nft-video {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.balance-graph {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+
+@media (max-width: 800px) {
+  .text-container {
     display: flex;
     align-items: center;
-    width: 300px;
+    font-size: xx-small;
   }
-  
-  .address-info{
-    display: flex;
-    align-items: center;
-    font-size: x-large;
-  }
-  
+
   .large-text {
-    font-size:large;
+    font-size: xx-small;
     font-weight: bold;
-    margin: 5px;
   }
-  
+
   .small-text {
-    margin-left: 15px;
+    font-size: xx-small;
+  }
+
+  .address-info {
+    display: flex;
+    align-items: center;
     font-size: x-small;
   }
+}
 
-  .nft-container {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.transTable {
+  border: 2px solid #eb5763;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: inset 0 0 0 35px lightGreen;
+  background-clip: content-box;
+}
 
-  .nft-item {
-    width: calc(33.33% - 10px);
-    margin: 5px;
-    display: flex;
-    flex-direction: column;
-  }
+.transactionHeader {
+  color: white;
+  font-weight: bold !important;
+  background-color: #eb5763;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: initial !important;
+  height: 1000px;
+}
 
-  .nft-image,
-  .nft-video {
-    max-width: 300px;
-    max-height: 300px;
-  }
+.inbound {
+  background-color: rgb(240, 255, 240);
+}
 
-  .centered{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.outbound {
+  background-color: rgb(255, 240, 240);
+}
 
-  .balance-graph{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-  }
+.inbound:hover {
+  background-color: #95db99;
+}
 
-  @media (max-width: 800px) {
-    .text-container {
-      display: flex;
-      align-items: center;
-      font-size: xx-small;
-    }
+.outbound:hover {
+  background-color: rgb(206, 206, 206);
+}
 
-    .large-text {
-      font-size: xx-small;
-      font-weight: bold;
-    }
-    
-    .small-text {
-      font-size: xx-small;
-    }
+.transaction-table {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  background-color: #95db99 !important;
+}
 
-    .address-info{
-      display: flex;
-      align-items: center;
-      font-size: x-small;
-    }
-
-  }
-
+.outbound-cell {
+  color: rgb(130, 0, 0);
+}
+.inbound-cell {
+  color: rgb(0, 130, 0);
+}
