@@ -78,10 +78,22 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
     outbound_count: chainData.outbound_count,
     outbound_mean: chainData.outbound_mean,
   }));
+  // Filter out rows where only the numeric columns are all 0
+  const filteredRows = rows.filter((row) => {
+    // Exclude rows where only the numeric columns are all 0
+    return (
+      row.inbound_value !== 0 ||
+      row.inbound_count !== 0 ||
+      row.inbound_mean !== 0 ||
+      row.outbound_value !== 0 ||
+      row.outbound_count !== 0 ||
+      row.outbound_mean !== 0
+    );
+  });
   return (
     <div className="" style={{ height: 500, width: "650px" }}>
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         pageSizeOptions={[5, 10]}
         checkboxSelection
