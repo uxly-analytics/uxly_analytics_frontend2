@@ -38,8 +38,8 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            maxWidth: "1350px",
+            justifyContent: "space-evenly",
+            width: "100%",
           }}
         >
           {/* Left column */}
