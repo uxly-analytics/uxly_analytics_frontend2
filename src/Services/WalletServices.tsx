@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
-const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
+// const HOST = "http://18.223.123.138:5000/";
+const HOST = 'https://uxly-analytics-717cfb342dbd.herokuapp.com/';
 //const HOST = "http://localhost:8888";
 
 interface WalletData {
@@ -33,9 +34,9 @@ export async function getWalletData(
       transactionsData: response.data.walletStats.transactionsData,
     };
   } catch (error) {
-    console.log("Error: ", error);
+    console.log('Error: ', error);
     return {
-      address: "null",
+      address: 'null',
       activeChainsSimplified: {},
       nativeBalance: {},
       nft: {},
