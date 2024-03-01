@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import TruncatedText from "./TruncateText";
 import "../displaywallet.css";
+import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import WidgetBox from "../../../HomeComponents/WidgetBox/WidgetBox";
 
 interface WalletData {
   address: string;
@@ -28,54 +30,32 @@ const DisplayNFTs: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
     };
   }, []);
   return (
-    <div>
-      <span style={{ fontWeight: "bold" }}>NFTs:</span>
-      <ul className="nft-container">
+    <WidgetBox title="NFT'S" titleSX={{ textAlign: "center", mb: 3 }}>
+      <Grid container spacing={3}>
         {walletData.nft.map((obj: any, index: string) => (
-          <div key={index} className="nft-item">
-            <div className="text-container">
-              <span className="large-text">{obj.name}</span>
-              <span className="small-text">Amount: {obj.amount}</span>
-            </div>
-            {obj.image ? (
-              obj.image.startsWith("ipfs://") ? (
-                <img
-                  src={`https://ipfs.io/ipfs/${obj.image.slice(7)}`}
-                  alt={obj.name}
-                  className="nft-image"
+          <Grid item xs={3} key={index}>
+            <Card sx={{ background: "#3D3D3D", height: "100%" }}>
+              {obj.image && (
+                <CardMedia
+                  sx={{ height: 265 }}
+                  image={
+                    obj.image.startsWith("ipfs://")
+                      ? `https://ipfs.io/ipfs/${obj.image.slice(7)}`
+                      : obj.image
+                  }
+                  title={obj.name}
                 />
-              ) : videoExtensions.test(obj.image) ? (
-                <video controls className="nft-video">
-                  <source
-                    src={obj.image}
-                    type={`video/${obj.image.split(".").pop()}`}
-                  />
-                  Your browser does not support the video.
-                </video>
-              ) : (
-                <img src={obj.image} alt={obj.name} className="nft-image" />
-              )
-            ) : (
-              <p>Image not available</p>
-            )}
-            {obj.description ? (
-              <span>
-                {isMobile ? (
-                  <span>...</span>
-                ) : (
-                  <TruncatedText
-                    text={`Description: ${obj.description}`}
-                    maxLength={25}
-                  />
-                )}
-              </span>
-            ) : (
-              <TruncatedText text="No Description" maxLength={20} />
-            )}
-          </div>
+              )}
+              <CardContent>
+                <Typography variant="subtitle1" color="white">
+                  {obj.name}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </ul>
-    </div>
+      </Grid>
+    </WidgetBox>
   );
 };
 

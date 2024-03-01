@@ -4,6 +4,9 @@ import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionDetailsTable from "./Components/TransactionDetailsTable";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
+import { Grid } from "@mui/material";
+import WidgetBox from "../../HomeComponents/WidgetBox/WidgetBox";
+import TokenBalance from "./Components/TokenBalance";
 
 interface WalletData {
   address: string;
@@ -28,55 +31,40 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
   console.log("Tokens are:", walletData.tokenBalance);
   const renderWalletData = () => {
     return (
-      <>
-        <div className="address-info">
-          <strong>{walletData.address}'s Data</strong>
-        </div>
-        <br />
-        <DisplayBalance walletData={walletData} />
-        <br />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            width: "100%",
-          }}
-        >
-          {/* Left column */}
-          <div>
-            <div style={{ marginBottom: "10px" }}>
-              <span style={{ fontWeight: "bold" }}>Transaction History:</span>
-            </div>
+      <Grid container item spacing={3}>
+        <Grid item xs={12}>
+          <DisplayBalance walletData={walletData} />
+        </Grid>
+        {/* Left column */}
+        <Grid item xs={12}>
+          <WidgetBox
+            title="Transaction History"
+            titleSX={{ textAlign: "center", mb: 3 }}
+          >
             <TransactionTable
               walletData={walletData}
               address={walletData.address}
             />
-          </div>
-
-          {/* Right column */}
-          <div>
-            <div style={{ marginBottom: "10px" }}>
-              <span style={{ fontWeight: "bold" }}>
-                Transaction Summary (last 100)
-              </span>
-            </div>
-            <TransactionDetailsTable walletData={walletData} />
-          </div>
-        </div>
-        <div>
+          </WidgetBox>
+        </Grid>
+        <Grid container item xs={12}>
           <DisplayNFTs walletData={walletData} />
-        </div>
-        <div>
-          <span style={{ fontWeight: "bold" }}>Token Balance:</span>
-          <ul>
-            {walletData.tokenBalance &&
-              Array.isArray(walletData.tokenBalance) &&
-              walletData.tokenBalance.map((item: any, index: number) => (
-                <li key={index}>{item}</li>
-              ))}
-          </ul>
-        </div>
-      </>
+        </Grid>
+        {walletData.tokenBalance && Array.isArray(walletData.tokenBalance) && (
+          <Grid item xs={12}>
+            <WidgetBox
+              title="Token Balance"
+              titleSX={{ textAlign: "center", mb: 3 }}
+            >
+              <TokenBalance
+                data={walletData.tokenBalance.filter(
+                  (x: any) => x.split(" ").length > 2 || x.includes("$")
+                )}
+              />
+            </WidgetBox>
+          </Grid>
+        )}
+      </Grid>
     );
   };
 

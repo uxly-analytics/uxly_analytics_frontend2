@@ -3,74 +3,32 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../displaywallet.css";
 import { Grid } from "@mui/material";
 
-interface TransactionTableProps {
-  walletData: {
-    transactions: any[];
-  };
-  address: string;
+interface TokenBalanceProps {
+  data: any;
 }
 
-const TransactionTable: React.FC<TransactionTableProps> = ({
-  walletData,
-  address,
-}) => {
-  console.log("address", address.toLowerCase());
-  console.log(
-    "walletData.transactions",
-    walletData.transactions[0].from_address
-  );
-  console.log(
-    "walletData.transactions = address?",
-    walletData.transactions[0].from_address === address.toLowerCase()
-  );
+const TokenBalance: React.FC<TokenBalanceProps> = ({ data }) => {
+  console.log(data);
   const columns: GridColDef[] = [
     {
-      field: "from_address",
-      headerName: "From Address",
+      field: "token",
+      headerName: "Token",
       flex: 1,
-      headerClassName: "transactionHeader",
     },
     {
-      field: "to_address",
-      headerName: "To Address",
+      field: "balance",
+      headerName: "Balance",
       flex: 1,
-      headerClassName: "transactionHeader",
-    },
-    {
-      field: "value",
-      headerName: "Value",
-      flex: 1,
-      headerClassName: "transactionHeader",
-    },
-    {
-      field: "decimal_value",
-      headerName: "Decimal Value",
-      flex: 1,
-      headerClassName: "transactionHeader",
-    },
-    {
-      field: "block_timestamp",
-      headerName: "Block Timestamp (+0)",
-      flex: 1,
-      headerClassName: "transactionHeader",
-    },
-    {
-      field: "block_hash",
-      headerName: "Block Hash",
-      flex: 1,
-      headerClassName: "transactionHeader",
     },
   ];
 
-  const rows = walletData.transactions.map((transaction, index) => ({
-    id: index,
-    from_address: transaction.from_address,
-    to_address: transaction.to_address,
-    value: transaction.value,
-    decimal_value: transaction.decimal_value,
-    block_timestamp: transaction.block_timestamp,
-    block_hash: transaction.block_hash,
-  }));
+  const rows = data.map((item: any, index: number) => {
+    return {
+      id: index,
+      token: item.substring(item.indexOf(" ") + 1),
+      balance: item.substring(0, item.indexOf(" ")),
+    };
+  });
 
   return (
     <Grid item xs={12}>
@@ -82,13 +40,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
         }}
-        getRowClassName={(params) =>
-          `${
-            params.row.from_address === address.toLowerCase()
-              ? "outbound"
-              : "inbound"
-          }`
-        }
         style={{
           backgroundClip: "content-box",
           borderRadius: "20px",
@@ -177,4 +128,4 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   );
 };
 
-export default TransactionTable;
+export default TokenBalance;

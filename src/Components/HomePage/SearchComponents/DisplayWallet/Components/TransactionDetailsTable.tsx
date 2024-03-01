@@ -1,6 +1,7 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../displaywallet.css";
+import { Grid } from "@mui/material";
 
 interface TransactionDetailsTableProps {
   walletData: {
@@ -91,7 +92,7 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
     );
   });
   return (
-    <div className="" style={{ height: 500, width: "650px" }}>
+    <Grid item xs={12}>
       <DataGrid
         rows={filteredRows}
         columns={columns}
@@ -109,6 +110,7 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
         style={{
           backgroundClip: "content-box",
           borderRadius: "20px",
+          background: "#3D3D3D",
         }}
         sx={[
           {
@@ -154,7 +156,7 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
           },
         ]}
       />
-    </div>
+    </Grid>
   );
 };
 

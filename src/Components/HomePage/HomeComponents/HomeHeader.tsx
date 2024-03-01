@@ -1,20 +1,22 @@
-import React from 'react';
-import './home.css'; 
-import Logo from "./UXlyLogo.png";
-import LogoutButton from './LogoutButton';
-import Profile from "./UserProfile";
+import React from "react";
+import "./home.css";
+import Logo from "./images/Logo.png";
+import { Link } from "@mui/material";
 
 const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="logo-container">
-      <img src={Logo} alt="UXly Logo"className="logo"/>
+        <img src={Logo} alt="UXly Logo" className="logo" />
       </div>
-      <div className="profile-container">
-      <Profile />
-      </div>
-      <div className="logout-button-container">
-        <LogoutButton />
+      <div>
+        <Link
+          target="_blank"
+          href="https://uxly.software/"
+          className="about-us"
+        >
+          About Us
+        </Link>
       </div>
     </header>
   );

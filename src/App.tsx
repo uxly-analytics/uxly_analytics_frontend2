@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import LandingPage from "./Components/LandingPage/LandingPage";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Components/HomePage/Home";
 import Streams from "./Components/StreamsPage/Streams";
 
@@ -14,9 +8,8 @@ function App() {
     <Router>
       <Routes>
         {/* Redirect from "/" to "/login" */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<LandingPage />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        {/*<Route path="/login" element={<LandingPage />} */}
         <Route path="/streams" element={<Streams />} />
         {/* Add more routes as needed */}
       </Routes>
