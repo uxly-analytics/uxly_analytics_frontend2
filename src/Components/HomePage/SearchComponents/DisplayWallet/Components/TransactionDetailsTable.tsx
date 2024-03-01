@@ -98,7 +98,13 @@ const TransactionDetailsTable: React.FC<TransactionDetailsTableProps> = ({
         pageSizeOptions={[5, 10]}
         checkboxSelection
         getRowClassName={(params) =>
-          `${params.row.inbound_value < params.row.outbound_value ? "outbound" : params.row.inbound_value == params.row.outbound_value ? "equal" : "inbound"}`
+          `${
+            params.row.inbound_value < params.row.outbound_value
+              ? "outbound"
+              : params.row.inbound_value === params.row.outbound_value
+              ? "equal"
+              : "inbound"
+          }`
         }
         style={{
           backgroundClip: "content-box",

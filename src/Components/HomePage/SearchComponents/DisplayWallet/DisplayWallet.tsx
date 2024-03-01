@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
 import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionDetailsTable from "./Components/TransactionDetailsTable";

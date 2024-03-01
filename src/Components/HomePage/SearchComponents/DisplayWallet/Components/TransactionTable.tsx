@@ -1,15 +1,6 @@
 import * as React from "react";
-import {
-  DataGrid,
-  DataGridProps,
-  GridColDef,
-  GridRowId,
-  GridRowModel,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../displaywallet.css";
-import MyContext from "../DisplayWallet";
-import { format } from "path";
-import { formGroupClasses } from "@mui/material";
 
 interface TransactionTableProps {
   walletData: {
@@ -25,11 +16,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   console.log("address", address.toLowerCase());
   console.log(
     "walletData.transactions",
-    walletData.transactions[0].from_address,
+    walletData.transactions[0].from_address
   );
   console.log(
     "walletData.transactions = address?",
-    walletData.transactions[0].from_address === address.toLowerCase(),
+    walletData.transactions[0].from_address === address.toLowerCase()
   );
   const columns: GridColDef[] = [
     {
@@ -88,7 +79,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         pageSizeOptions={[5, 10]}
         checkboxSelection
         getRowClassName={(params) =>
-          `${params.row.from_address === address.toLowerCase() ? "outbound" : "inbound"}`
+          `${
+            params.row.from_address === address.toLowerCase()
+              ? "outbound"
+              : "inbound"
+          }`
         }
         style={{
           backgroundClip: "content-box",
