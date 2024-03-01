@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
 import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
@@ -27,9 +26,6 @@ function Home() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // useNavigate hook for navigation
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (data !== null) {
       console.log(data);
@@ -54,10 +50,6 @@ function Home() {
       console.error("Error Fetching Data: ", error);
     }
     setLoading(false); // Set loading state to false when submit finishes
-  };
-
-  const goToStreams = () => {
-    navigate("/streams");
   };
 
   return (

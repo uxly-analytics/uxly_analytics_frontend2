@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, SxProps, Typography } from "@mui/material";
 
-interface WrapperProps {
+interface WidgetBoxProps {
   children?: JSX.Element[] | JSX.Element;
   title: string;
   boxSX?: SxProps;
@@ -10,7 +10,7 @@ interface WrapperProps {
   value?: React.ReactNode | string;
 }
 
-const WidgetBox: React.FC<WrapperProps> = ({
+const WidgetBox: React.FC<WidgetBoxProps> = ({
   children,
   title,
   value,
