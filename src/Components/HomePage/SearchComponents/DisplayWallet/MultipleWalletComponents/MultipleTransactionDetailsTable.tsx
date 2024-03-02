@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Grid } from "@mui/material";
 
 interface WalletData {
   transactionsData: {
@@ -13,17 +14,16 @@ interface WalletData {
   }[];
 }
 interface GrandTotals {
-    [key: string]: {
-      chain: string;
-      inbound_value: number;
-      inbound_count: number;
-      inbound_mean: number;
-      outbound_value: number;
-      outbound_count: number;
-      outbound_mean: number;
-    };
-  }
-  
+  [key: string]: {
+    chain: string;
+    inbound_value: number;
+    inbound_count: number;
+    inbound_mean: number;
+    outbound_value: number;
+    outbound_count: number;
+    outbound_mean: number;
+  };
+}
 
 interface MultipleTransactionTableProps {
   wallets: WalletData[];
@@ -47,7 +47,7 @@ const MultipleTransactionTable: React.FC<MultipleTransactionTableProps> = ({
   const grandTotals: GrandTotals = wallets.reduce((acc, wallet) => {
     wallet.transactionsData.forEach((transaction) => {
       const chain = transaction.chain;
-  
+
       if (!acc[chain]) {
         acc[chain] = {
           chain: chain,
@@ -59,32 +59,36 @@ const MultipleTransactionTable: React.FC<MultipleTransactionTableProps> = ({
           outbound_mean: 0,
         };
       }
-  
+
       acc[chain].inbound_value += transaction.inbound_value;
       acc[chain].inbound_count += transaction.inbound_count;
       acc[chain].outbound_value += transaction.outbound_value;
       acc[chain].outbound_count += transaction.outbound_count;
     });
-  
+
     return acc;
   }, {} as GrandTotals);
 
-    // Calculate means
+  // Calculate means
   Object.values(grandTotals).forEach((totals) => {
-    totals.inbound_mean = totals.inbound_count > 0 ? totals.inbound_value / totals.inbound_count : 0;
-    totals.outbound_mean = totals.outbound_count > 0 ? totals.outbound_value / totals.outbound_count : 0;
+    totals.inbound_mean =
+      totals.inbound_count > 0
+        ? totals.inbound_value / totals.inbound_count
+        : 0;
+    totals.outbound_mean =
+      totals.outbound_count > 0
+        ? totals.outbound_value / totals.outbound_count
+        : 0;
   });
-  
 
   // Format grand totals into rows for DataGrid
   const rows = Object.values(grandTotals).map((row, index) => ({
     id: index,
     ...row,
   }));
-  
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <Grid item xs={12} sx={{ height: 400 }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -92,7 +96,7 @@ const MultipleTransactionTable: React.FC<MultipleTransactionTableProps> = ({
         checkboxSelection
         // ... other DataGrid properties as needed
       />
-    </div>
+    </Grid>
   );
 };
 

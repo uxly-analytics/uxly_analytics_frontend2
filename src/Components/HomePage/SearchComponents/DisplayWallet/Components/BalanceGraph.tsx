@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo } from "react";
 import Chart, { ChartConfiguration } from "chart.js/auto";
 import "../displaywallet.css";
 import { Box, Grid } from "@mui/material";
-import WidgetBox from "../../../HomeComponents/WidgetBox/WidgetBox";
+import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface BarGraphProps {
   data: number[];
@@ -120,14 +120,14 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
 
   return (
     <Grid item xs={12}>
-      <WidgetBox title="Token Balances" titleSX={{ textAlign: "center" }}>
+      <BoxWrapper title="Token Balances" titleSX={{ textAlign: "center" }}>
         <Box maxHeight={300}>
           <canvas
             ref={chartRef}
             style={{ maxWidth: "100%", maxHeight: "100%" }}
           />
         </Box>
-      </WidgetBox>
+      </BoxWrapper>
     </Grid>
   );
 };

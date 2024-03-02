@@ -6,12 +6,11 @@ import DisplayMultipleWallet from "./SearchComponents/DisplayWallet/DisplayMulti
 import Header from "./HomeComponents/HomeHeader";
 import LoadScreen from "./HomeComponents/LoadScreen";
 import "./HomeComponents/home.css";
-import { Box, Grid, Stack, Typography } from "@mui/material";
-import WidgetBox from "./HomeComponents/WidgetBox/WidgetBox";
-import AvalancheLogo from "./HomeComponents/images/Avalanche.png";
-import EthereumLogo from "./HomeComponents/images/Ethereum.png";
-import AndroidLogo from "./HomeComponents/images/android.png";
-import FranceFlag from "./HomeComponents/images/france-flag.png";
+import { Grid, Typography } from "@mui/material";
+
+import WalletInfo from "./SearchComponents/DisplayWallet/Components/WalletInfo";
+import WalletAge from "./SearchComponents/DisplayWallet/Components/WalletAge";
+import AudienceGrowth from "./SearchComponents/DisplayWallet/Components/AudienceGrowth";
 
 interface Chain {
   value: string;
@@ -63,162 +62,44 @@ function Home() {
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
         </Typography>
       </div>
-      <Grid container maxWidth="85%" mt={4} columnSpacing={3} rowSpacing={4}>
+      <Grid container maxWidth="1198px" mt={4} columnSpacing={3} rowSpacing={4}>
         {loading && <LoadScreen />}
         {!loading && data && (
           <>
-            <Grid item xs={6}>
-              <WidgetBox title="Wallet Value" value="$5,349,788" />
-            </Grid>
-            <Grid item xs={3}>
-              <WidgetBox title="Number of Wallet" value="1235" />
-            </Grid>
-            <Grid item xs={3}>
-              <WidgetBox title="Number of Active Users" value="132" />
-            </Grid>
-            <Grid item xs={12}>
-              <WidgetBox
-                title="Wallet Age"
-                titleSX={{ textAlign: "center", mb: 9 }}
-              >
-                <Grid container spacing={2}>
-                  <Grid item xs={2}>
-                    <WidgetBox title="New" value="6235" />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <WidgetBox title="Young" value="434" />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <WidgetBox title="Medium" value="43" />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <WidgetBox title="Mature" value="766" />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <WidgetBox title="Established" value="545" />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <WidgetBox title="Veteran" value="43" />
-                  </Grid>
-                </Grid>
-              </WidgetBox>
-            </Grid>
-            <Grid item xs={12}>
-              <WidgetBox
-                title="Audience Growth"
-                boxSX={{ border: 0 }}
-                titleSX={{ textAlign: "center", mb: 9 }}
-              >
-                <Grid container item spacing={3}>
-                  <Grid item xs={12}>
-                    <WidgetBox
-                      title="Your audience is growing!"
-                      titleSX={{ fontSize: 36 }}
-                      boxSX={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                      value="66%"
-                      valueSX={{ color: "#01A643", fontSize: 96 }}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <WidgetBox title="Wallet Info" titleSX={{ mb: 3 }}>
-                      <Stack direction="row" spacing={3} alignItems="center">
-                        <Box
-                          component="img"
-                          width={75}
-                          height={75}
-                          src={AvalancheLogo}
-                          sx={{ objectFit: "contain" }}
-                        />
-                        <Typography color="white" fontSize="36px">
-                          %43 of your audience has more than 3 AVAX
-                        </Typography>
-                      </Stack>
-                    </WidgetBox>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <WidgetBox title="Device Usage" titleSX={{ mb: 3 }}>
-                      <Stack direction="row" spacing={3} alignItems="center">
-                        <Box
-                          component="img"
-                          width={75}
-                          height={75}
-                          src={EthereumLogo}
-                          sx={{ objectFit: "contain" }}
-                        />
-                        <Typography color="white" fontSize="36px">
-                          %13 of your audience has more than 50 USDT
-                        </Typography>
-                      </Stack>
-                    </WidgetBox>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <WidgetBox title="Country" titleSX={{ mb: 3 }}>
-                      <Stack direction="row" spacing={3} alignItems="center">
-                        <Box
-                          component="img"
-                          width={75}
-                          height={75}
-                          src={AndroidLogo}
-                          sx={{ objectFit: "contain" }}
-                        />
-                        <Typography color="white" fontSize="36px">
-                          %55 of your audience uses ANDROID
-                        </Typography>
-                      </Stack>
-                    </WidgetBox>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <WidgetBox title="Country" titleSX={{ mb: 3 }}>
-                      <Stack direction="row" spacing={3} alignItems="center">
-                        <Box
-                          component="img"
-                          width={75}
-                          height={75}
-                          sx={{ objectFit: "contain" }}
-                          src={FranceFlag}
-                        />
-                        <Typography color="white" fontSize="36px">
-                          Your audience growing in FRANCE %5
-                        </Typography>
-                      </Stack>
-                    </WidgetBox>
-                  </Grid>
-                </Grid>
-              </WidgetBox>
-            </Grid>
             {Array.isArray(data) ? (
               data.length !== 0 ? (
-                <Grid item xs={12}>
-                  <DisplayMultipleWallet
-                    wallets={data}
-                    chain={searchInput?.chain || { value: "", label: "" }}
-                  />
-                </Grid>
+                <DisplayMultipleWallet
+                  wallets={data}
+                  chain={searchInput?.chain || { value: "", label: "" }}
+                />
               ) : (
-                <strong className="loaded-data">
-                  Error fetching data. Try again
-                </strong>
+                <Grid item xs={12}>
+                  <strong className="loaded-data">
+                    Error fetching data. Try again
+                  </strong>
+                </Grid>
               )
             ) : data.address !== "null" ? (
-              <Grid item xs={12}>
+              <>
+                <WalletInfo />
+                <WalletAge />
+                <AudienceGrowth />
                 <DisplayWalletData
                   walletData={data}
                   chain={searchInput?.chain || { value: "", label: "" }}
                 />
-              </Grid>
+              </>
             ) : (
-              <Typography
-                variant="subtitle1"
-                mt={2}
-                className="loaded-data"
-                color="white"
-              >
-                Error fetching data. Try again
-              </Typography>
+              <Grid item xs={12}>
+                <Typography
+                  variant="subtitle1"
+                  mt={2}
+                  className="loaded-data"
+                  color="white"
+                >
+                  Error fetching data. Try again
+                </Typography>
+              </Grid>
             )}
           </>
         )}
