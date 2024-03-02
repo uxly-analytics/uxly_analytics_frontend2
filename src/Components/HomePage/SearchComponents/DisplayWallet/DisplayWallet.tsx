@@ -4,7 +4,6 @@ import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 import TokenBalance from "./Components/TokenBalance";
-import { Grid } from "@mui/material";
 
 interface WalletData {
   address: string;
