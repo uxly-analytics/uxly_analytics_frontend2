@@ -58,7 +58,7 @@ function Home() {
       </section>
       <div className="center-content">
         <Search onSubmit={handleSearchSubmit} />
-        <Typography variant="subtitle1" color="white">
+        <Typography variant="subtitle1" color="white" mt={3}>
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
         </Typography>
       </div>
@@ -68,10 +68,15 @@ function Home() {
           <>
             {Array.isArray(data) ? (
               data.length !== 0 ? (
-                <DisplayMultipleWallet
-                  wallets={data}
-                  chain={searchInput?.chain || { value: "", label: "" }}
-                />
+                <>
+                  <WalletInfo />
+                  <WalletAge />
+                  <AudienceGrowth />
+                  <DisplayMultipleWallet
+                    wallets={data}
+                    chain={searchInput?.chain || { value: "", label: "" }}
+                  />
+                </>
               ) : (
                 <Grid item xs={12}>
                   <strong className="loaded-data">
@@ -80,15 +85,10 @@ function Home() {
                 </Grid>
               )
             ) : data.address !== "null" ? (
-              <>
-                <WalletInfo />
-                <WalletAge />
-                <AudienceGrowth />
-                <DisplayWalletData
-                  walletData={data}
-                  chain={searchInput?.chain || { value: "", label: "" }}
-                />
-              </>
+              <DisplayWalletData
+                walletData={data}
+                chain={searchInput?.chain || { value: "", label: "" }}
+              />
             ) : (
               <Grid item xs={12}>
                 <Typography

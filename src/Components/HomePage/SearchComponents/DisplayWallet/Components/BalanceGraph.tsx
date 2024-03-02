@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import Chart, { ChartConfiguration } from "chart.js/auto";
 import "../displaywallet.css";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface BarGraphProps {
@@ -33,7 +33,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
         scales: {
           x: {
             ticks: {
-              color: "#8C8C8C", // Set x-axis text color to black
+              color: "white", // Set x-axis text color to black
             },
             grid: {
               display: false,
@@ -95,7 +95,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
     .filter((label) => label !== null);
 
   // Combine filtered data and labels into an array of objects
-  const combinedData = filteredData.slice(0, 5).map((value, index) => ({
+  const combinedData = filteredData.map((value, index) => ({
     value,
     label: filteredLabels[index],
   }));
@@ -120,8 +120,28 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels }) => {
 
   return (
     <Grid item xs={12}>
-      <BoxWrapper title="Token Balances" titleSX={{ textAlign: "center" }}>
-        <Box maxHeight={300}>
+      <BoxWrapper
+        title="Most Popular Five Token"
+        titleSX={{ textAlign: "center" }}
+      >
+        <Grid container item mt={3} mb={3}>
+          {combinedData.slice(0, 5).map((token, index) => (
+            <Grid item xs={2.4} key={index} spacing={3} display="flex">
+              <Stack spacing={1}>
+                <Typography variant="subtitle1" color="white">
+                  {token.label}
+                </Typography>
+                <Typography variant="subtitle2" color="#9E9E9E">
+                  {token.value}
+                </Typography>
+              </Stack>
+            </Grid>
+          ))}
+        </Grid>
+        <Typography variant="h6" textAlign="center" color="white">
+          Token Balances
+        </Typography>
+        <Box maxHeight={300} mt={3}>
           <canvas
             ref={chartRef}
             style={{ maxWidth: "100%", maxHeight: "100%" }}

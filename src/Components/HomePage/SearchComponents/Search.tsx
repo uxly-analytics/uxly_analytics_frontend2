@@ -1,14 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import "../HomeComponents/home.css";
 import ChainSelect from "./ChainSelect";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, TextField, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 interface Chain {
@@ -79,7 +72,9 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
     <form onSubmit={handleSubmit} className="search-form">
       {fileUploaded ? (
         <div>
-          <span>{fileName}</span>
+          <Typography variant="subtitle1" color="white">
+            {fileName}
+          </Typography>
           <button type="button" onClick={handleRetry}>
             Retry
           </button>
@@ -102,7 +97,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
         </>
       )}
       {!fileUploaded && (
-        <Box mb={3} width="100%" display="flex">
+        <Box width="100%" display="flex">
           <Stack>
             <Typography
               variant="body2"
