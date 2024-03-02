@@ -2,6 +2,7 @@ import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../displaywallet.css";
 import { Grid } from "@mui/material";
+import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface TokenBalanceProps {
   data: any;
@@ -32,98 +33,103 @@ const TokenBalance: React.FC<TokenBalanceProps> = ({ data }) => {
 
   return (
     <Grid item xs={12}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSizeOptions={[5, 10]}
-        disableRowSelectionOnClick
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
-        }}
-        style={{
-          backgroundClip: "content-box",
-          borderRadius: "20px",
-          textOverflow: "ellipsis",
-          background: "#3D3D3D",
-          border: "1px solid white",
-        }}
-        sx={[
-          {
-            border: "none",
-            outline: "none",
-          },
-          {
-            "& .MuiDataGrid-cell": {
+      <BoxWrapper
+        title="Token Balance"
+        titleSX={{ textAlign: "center", mb: 3 }}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSizeOptions={[5, 10]}
+          disableRowSelectionOnClick
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          style={{
+            backgroundClip: "content-box",
+            borderRadius: "20px",
+            textOverflow: "ellipsis",
+            background: "#3D3D3D",
+            border: "1px solid white",
+          }}
+          sx={[
+            {
               border: "none",
+              outline: "none",
             },
-          },
-          {
-            "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
-              outline: "none !important",
-              border: "none",
+            {
+              "& .MuiDataGrid-cell": {
+                border: "none",
+              },
             },
-          },
-          {
-            "& .MuiDataGrid-row": {
-              background: "#3D3D3D",
-              border: 0,
-              color: "white",
+            {
+              "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+                outline: "none !important",
+                border: "none",
+              },
             },
-          },
-          {
-            "& .MuiDataGrid-row:hover": {
-              bgcolor: "#1F1F1F",
+            {
+              "& .MuiDataGrid-row": {
+                background: "#3D3D3D",
+                border: 0,
+                color: "white",
+              },
             },
-          },
-          {
-            "& .MuiDataGrid-cell:hover": {
-              bgcolor: "#1F1F1F",
+            {
+              "& .MuiDataGrid-row:hover": {
+                bgcolor: "#1F1F1F",
+              },
             },
-          },
-          {
-            "& .inbound .Mui-selected": {
-              bgcolor: "rgb(230, 245, 230) !important",
+            {
+              "& .MuiDataGrid-cell:hover": {
+                bgcolor: "#1F1F1F",
+              },
             },
-            "& .inbound .Mui-selected:hover": {
-              bgcolor: "rgb(225, 245, 225) !important",
+            {
+              "& .inbound .Mui-selected": {
+                bgcolor: "rgb(230, 245, 230) !important",
+              },
+              "& .inbound .Mui-selected:hover": {
+                bgcolor: "rgb(225, 245, 225) !important",
+              },
             },
-          },
-          {
-            "& .outbound .Mui-selected": {
-              bgcolor: "rgb(245, 230, 230) !important",
+            {
+              "& .outbound .Mui-selected": {
+                bgcolor: "rgb(245, 230, 230) !important",
+              },
+              "& .outbound .Mui-selected:hover": {
+                bgcolor: "rgb(245, 225, 225) !important",
+              },
             },
-            "& .outbound .Mui-selected:hover": {
-              bgcolor: "rgb(245, 225, 225) !important",
+            {
+              "& .Mui-hovered": {
+                bgcolor: "rgb(232, 232, 232)",
+              },
             },
-          },
-          {
-            "& .Mui-hovered": {
-              bgcolor: "rgb(232, 232, 232)",
+            {
+              "& .MuiDataGrid-columnHeader": {
+                fontWeight: "bold !important",
+                bgcolor: "inherit",
+                border: "none",
+                color: "white",
+              },
             },
-          },
-          {
-            "& .MuiDataGrid-columnHeader": {
-              fontWeight: "bold !important",
-              bgcolor: "inherit",
-              border: "none",
-              color: "white",
+            {
+              "& .MuiDataGrid-footerContainer": {
+                border: "none",
+                background: "#1F1F1F",
+                borderBottomLeftRadius: "20px",
+                borderBottomRightRadius: "20px",
+              },
             },
-          },
-          {
-            "& .MuiDataGrid-footerContainer": {
-              border: "none",
-              background: "#1F1F1F",
-              borderBottomLeftRadius: "20px",
-              borderBottomRightRadius: "20px",
+            {
+              "& .MuiToolbar-root": {
+                color: "#9E9E9E",
+              },
             },
-          },
-          {
-            "& .MuiToolbar-root": {
-              color: "#9E9E9E",
-            },
-          },
-        ]}
-      />
+          ]}
+        />
+      </BoxWrapper>
     </Grid>
   );
 };

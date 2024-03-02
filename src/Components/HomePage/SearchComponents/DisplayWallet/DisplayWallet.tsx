@@ -1,11 +1,8 @@
 import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
 import DisplayNFTs from "./Components/DisplayNFTs";
-import TransactionDetailsTable from "./Components/TransactionDetailsTable";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
-import { Grid } from "@mui/material";
-import WidgetBox from "../../HomeComponents/WidgetBox/WidgetBox";
 import TokenBalance from "./Components/TokenBalance";
 
 interface WalletData {
@@ -31,44 +28,26 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
   console.log("Tokens are:", walletData.tokenBalance);
   const renderWalletData = () => {
     return (
-      <Grid container item spacing={3}>
-        <Grid item xs={12}>
-          <DisplayBalance walletData={walletData} />
-        </Grid>
+      <>
+        <DisplayBalance walletData={walletData} />
         {/* Left column */}
-        <Grid item xs={12}>
-          <WidgetBox
-            title="Transaction History"
-            titleSX={{ textAlign: "center", mb: 3 }}
-          >
-            <TransactionTable
-              walletData={walletData}
-              address={walletData.address}
-            />
-          </WidgetBox>
-        </Grid>
-        <Grid container item xs={12}>
-          <DisplayNFTs walletData={walletData} />
-        </Grid>
+        <TransactionTable
+          walletData={walletData}
+          address={walletData.address}
+        />
+        <DisplayNFTs walletData={walletData} />
         {walletData.tokenBalance && Array.isArray(walletData.tokenBalance) && (
-          <Grid item xs={12}>
-            <WidgetBox
-              title="Token Balance"
-              titleSX={{ textAlign: "center", mb: 3 }}
-            >
-              <TokenBalance
-                data={walletData.tokenBalance.filter(
-                  (x: any) => x.split(" ").length > 2 || x.includes("$")
-                )}
-              />
-            </WidgetBox>
-          </Grid>
+          <TokenBalance
+            data={walletData.tokenBalance.filter(
+              (x: any) => x.split(" ").length > 2 || x.includes("$")
+            )}
+          />
         )}
-      </Grid>
+      </>
     );
   };
 
-  return <div>{renderWalletData()}</div>;
+  return <>{renderWalletData()}</>;
 };
 
 export default DisplayWalletData;

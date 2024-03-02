@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, SxProps, Typography } from "@mui/material";
 
-interface WidgetBoxProps {
+interface BoxWrapperProps {
   children?: JSX.Element[] | JSX.Element;
   title: string;
   boxSX?: SxProps;
@@ -10,7 +10,7 @@ interface WidgetBoxProps {
   value?: React.ReactNode | string;
 }
 
-const WidgetBox: React.FC<WidgetBoxProps> = ({
+const BoxWrapper: React.FC<BoxWrapperProps> = ({
   children,
   title,
   value,
@@ -25,7 +25,6 @@ const WidgetBox: React.FC<WidgetBoxProps> = ({
         borderRadius: 8,
         padding: "26px 25px",
         background: "#28292A",
-        minHeight: 156,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -46,4 +45,4 @@ const WidgetBox: React.FC<WidgetBoxProps> = ({
   );
 };
 
-export default WidgetBox;
+export default BoxWrapper;
