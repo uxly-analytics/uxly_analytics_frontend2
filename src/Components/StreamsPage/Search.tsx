@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import "./home.css";
-import ChainSelect from "./ChainSelect";
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import './home.css';
+import ChainSelect from './ChainSelect';
 import {
   Box,
   FormControl,
@@ -8,8 +8,8 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 interface Chain {
   value: string;
@@ -22,16 +22,16 @@ interface SearchForm {
 
 function Search({ onSubmit }: SearchForm): JSX.Element {
   const [address, setAddress] = useState<string[]>([]);
-  const [chain, setChain] = useState<Chain>({ value: "", label: "" });
+  const [chain, setChain] = useState<Chain>({ value: '', label: '' });
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>("");
+  const [fileName, setFileName] = useState<string>('');
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
   function handleAddressChange(e: ChangeEvent<HTMLInputElement>): void {
     const addresses: string = e.target.value;
     const addressesArray: string[] = addresses
-      .split(",")
+      .split(',')
       .map((address) => address.trim());
     setAddress(addressesArray);
   }
@@ -47,11 +47,11 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
         if (event.target && event.target.result) {
           const csvData: string = event.target.result as string;
           // Split CSV data by newline
-          const lines: string[] = csvData.split("\n");
+          const lines: string[] = csvData.split('\n');
           // Process each line
           const addressesArray: string[] = lines
-            .flatMap((line) => line.split(",").map((item) => item.trim()))
-            .filter((item) => item !== "");
+            .flatMap((line) => line.split(',').map((item) => item.trim()))
+            .filter((item) => item !== '');
           setAddress(addressesArray);
         }
       };
@@ -62,16 +62,16 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    onSubmit(address, chain);
+    // onSubmit(address, chain);
   }
 
   function handleRetry(): void {
     setFileUploaded(false);
-    setFileName("");
+    setFileName('');
     setAddress([]); // Clear the address input
     // Clear the file input
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   }
 
@@ -96,7 +96,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
             type="file"
             onChange={handleFileChange}
             accept=".csv"
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             required={!address.length}
           />
         </>
@@ -106,7 +106,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
           <Stack>
             <Typography
               variant="body2"
-              color="black"
+              color="white"
               mb={0.5}
               textAlign="initial"
             >
@@ -119,23 +119,23 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
               onChange={handleAddressChange}
               required={!fileUploaded}
               sx={{
-                "&.Mui-focused": {
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    background: "none",
+                '&.Mui-focused': {
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    background: 'none',
                   },
                 },
-                "& fieldset": { border: "none" },
-                border: "1px solid #EB5763",
+                '& fieldset': { border: 'none' },
+                border: '1px solid #EB5763',
                 borderRadius: 100,
                 width: 625,
-                boxShadow: "none",
+                boxShadow: 'none',
               }}
               InputProps={{
                 endAdornment: <ChainSelect value={chain} onChange={setChain} />,
                 disableUnderline: true,
                 style: {
-                  color: "black",
-                  background: "inherit",
+                  color: 'white',
+                  background: 'inherit',
                 },
               }}
             />

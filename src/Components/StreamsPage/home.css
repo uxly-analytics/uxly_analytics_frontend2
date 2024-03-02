@@ -188,10 +188,10 @@
 
 /*These are for the loading screen*/
 .circle-loader-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* margin-top: 20px; */
 }
 
 .circle-loader {

@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
-import Header from "../HomePage/HomeComponents/HomeHeader";
-import StreamChart from "./StreamChart";
+import React, { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+import Header from '../HomePage/HomeComponents/HomeHeader';
+import StreamChart from './StreamChart';
 import {
   StreamChartRechartBar,
   StreamChartRechartLine,
-} from "./StreamChartRechart";
-import LoadScreen from "../HomePage/HomeComponents/LoadScreen";
-import GraphCarousel from "./GraphCarousel";
-import TransactionDrawer from "./TransactionDrawer";
-import Search from "./Search";
-import { Typography } from "@mui/material";
+} from './StreamChartRechart';
+import LoadScreen from '../HomePage/HomeComponents/LoadScreen';
+import GraphCarousel from './GraphCarousel';
+import TransactionDrawer from './TransactionDrawer';
+import Search from './Search';
+import { Typography } from '@mui/material';
 
 const consoleLog = async () => {
-  console.log("Searching!");
+  console.log('Searching!');
 };
 
 const Streams: React.FC = () => {
@@ -21,17 +21,17 @@ const Streams: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const socket = io("wss://uxly-analytics-717cfb342dbd.herokuapp.com", {
-      transports: ["websocket"],
+    const socket = io('wss://uxly-analytics-717cfb342dbd.herokuapp.com', {
+      transports: ['websocket'],
     });
 
-    socket.on("connect", () => {
+    socket.on('connect', () => {
       console.log(`Socket connected: ${socket.id}`);
     });
 
-    socket.on("USDT", (dataString) => {
+    socket.on('USDT', (dataString) => {
       try {
-        console.log("dataString", dataString);
+        console.log('dataString', dataString);
         setRawD(dataString);
         setLoading(false);
         // const data = JSON.parse(dataString);
@@ -61,14 +61,14 @@ const Streams: React.FC = () => {
         //   });
         // }
       } catch (error) {
-        console.error("Failed to parse data", error);
+        console.error('Failed to parse data', error);
       }
     });
 
     // Clean up the effect by disconnecting the socket when the component unmounts
     return () => {
       socket.disconnect();
-      console.log("Socket disconnected");
+      console.log('Socket disconnected');
     };
   }, []); // The empty dependency array ensures the effect runs only once on mount
 
@@ -80,12 +80,12 @@ const Streams: React.FC = () => {
         </section>
         <div className="center-content">
           <Search onSubmit={consoleLog} />
-          <Typography variant="subtitle1" color="black">
+          <Typography variant="subtitle1" color="white">
             Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
           </Typography>
         </div>
       </div>
-      <div className="relative mt-[-70px] h-screen w-screen">
+      <div className="relative mt-[-70px]">
         {loading ? (
           <LoadScreen />
         ) : (
