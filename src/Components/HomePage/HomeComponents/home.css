@@ -139,19 +139,12 @@
   box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.5);
 }
 /* styles for logo container */
-.logo-container {
-  position: absolute; /* stay in place on scroll */
-  margin-left: auto;
-  top: 6px; /* adjust buffer from the top */
-  left: 10px; /* adjust buffer from the left */
-  z-index: 1000; /* ensures logo stays above other content */
-}
+
 
 /* styles for logo itself */
 .logo {
   width: 142px; /* Adjust to make the logo smaller */
   height: auto; /* Maintain aspect ratio */
-  max-width: 75px; /* adjust to make the logo smaller */
 }
 
 /* user email styles */
