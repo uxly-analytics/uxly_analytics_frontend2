@@ -110,11 +110,11 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
               mb={0.5}
               textAlign="initial"
             >
-              Enter Chain Address
+              Enter Smart Contract Address
             </Typography>
             <TextField
               type="text"
-              placeholder="Wallet Address"
+              placeholder="Smart Contract Address"
               value={address}
               onChange={handleAddressChange}
               required={!fileUploaded}

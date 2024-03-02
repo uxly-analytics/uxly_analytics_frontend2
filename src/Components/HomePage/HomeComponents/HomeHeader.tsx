@@ -1,7 +1,7 @@
-import React from "react";
-import "./home.css";
-import Logo from "./images/Logo.png";
-import { Link } from "@mui/material";
+import React from 'react';
+import './home.css';
+import Logo from './images/Logo.png';
+import { Link } from '@mui/material';
 
 const Header: React.FC = () => {
   return (
@@ -10,6 +10,9 @@ const Header: React.FC = () => {
         <img src={Logo} alt="UXly Logo" className="logo" />
       </div>
       <div>
+        <Link href="/streams" className="about-us">
+          Streams
+        </Link>
         <Link
           target="_blank"
           href="https://uxly.software/"

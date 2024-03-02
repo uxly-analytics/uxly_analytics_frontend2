@@ -31,8 +31,18 @@ const Streams: React.FC = () => {
 
     socket.on('USDT', (dataString) => {
       try {
-        console.log('dataString', dataString);
-        setRawD(dataString);
+        let data = [...dataString];
+        data = data.map((item) => {
+          return {
+            ...item,
+            time: new Date(item.blockTimestamp),
+            hourAndMinute:
+              new Date(item.blockTimestamp).getHours() +
+              ':' +
+              new Date(item.blockTimestamp).getMinutes(),
+          };
+        });
+        setRawD(data);
         setLoading(false);
         // const data = JSON.parse(dataString);
         // console.log('USDT', data);
@@ -80,8 +90,8 @@ const Streams: React.FC = () => {
         </section>
         <div className="center-content">
           <Search onSubmit={consoleLog} />
-          <Typography variant="subtitle1" color="white">
-            Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
+          <Typography variant="h4" color="white">
+            Smart Contract Transactions
           </Typography>
         </div>
       </div>

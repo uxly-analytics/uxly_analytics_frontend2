@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BarChart,
   Bar,
@@ -11,7 +11,7 @@ import {
   AreaChart,
   Area,
   TooltipProps,
-} from "recharts";
+} from 'recharts';
 
 interface ChartComponentProps {
   data: {
@@ -40,22 +40,33 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const value =
-      typeof data.totalValue === "number" ? data.totalValue.toFixed(2) : "N/A";
-    const averageValue = payload[0].payload.averageValue?.toFixed(2) || "N/A";
+      typeof data.totalValue === 'number' ? data.totalValue.toFixed(2) : 'N/A';
+    const averageValue = payload[0].payload.averageValue?.toFixed(2) || 'N/A';
+    const blockNumber = payload[0].payload.blockNumber || 'N/A';
+    const time = payload[0].payload.time || 'N/A';
 
     return (
       <div
         className="custom-tooltip"
         style={{
-          backgroundColor: "#fff",
-          padding: "5px 10px", // Smaller top and bottom padding
-          border: "1px solid #ccc",
-          fontSize: "14px", // Smaller font size
+          backgroundColor: '#fff',
+          padding: '5px 10px', // Smaller top and bottom padding
+          border: '1px solid #ccc',
+          fontSize: '14px', // Smaller font size
         }}
       >
-        <p>{`Block Number: ${label}`}</p>
-        <p>{`Total Transfer: ${value}`}</p>
-        <p>{`Average Transfer: ${averageValue}`}</p>
+        <p>{`Block Number: ${blockNumber}`}</p>
+        <p>{`Time: ${time}`}</p>
+        <p
+          style={{
+            color: '#1890FF',
+          }}
+        >{`Total Transfer: ${value} USDT`}</p>
+        <p
+          style={{
+            color: '#82ca9d',
+          }}
+        >{`Average Transfer: ${averageValue} USDT`}</p>
       </div>
     );
   }
@@ -66,9 +77,9 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 const BarChartComponent = ({ data }: ChartComponentProps) => (
   <ResponsiveContainer width="95%" height="100%">
     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-      <CartesianGrid strokeDasharray="3 3" />
+      {/* <CartesianGrid strokeDasharray="1 1" /> */}
       <XAxis
-        dataKey="blockNumber"
+        dataKey="hourAndMinute"
         angle={-45}
         textAnchor="end"
         height={70}
@@ -77,14 +88,14 @@ const BarChartComponent = ({ data }: ChartComponentProps) => (
       <YAxis
         fontSize="14px"
         type="number"
-        domain={["auto", "auto"]}
+        domain={['auto', 'auto']}
         allowDataOverflow={true}
         tickCount={10}
         tickFormatter={(value) => `${value / 1e6}M`}
       />
       <Tooltip content={<CustomTooltip />} />
       <Legend />
-      <Bar dataKey="totalValue" fill="#8884d8" name="Total USDT Transfer" />
+      <Bar dataKey="totalValue" fill="#1890FF" name="Total USDT Transfer" />
       <Bar dataKey="averageValue" fill="#82ca9d" name="Average USDT Transfer" />
     </BarChart>
   </ResponsiveContainer>
@@ -93,9 +104,19 @@ const BarChartComponent = ({ data }: ChartComponentProps) => (
 const LineChartComponent = ({ data }: ChartComponentProps) => (
   <ResponsiveContainer width="95%" height="100%">
     <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-      <CartesianGrid strokeDasharray="3 3" />
+      {/* <CartesianGrid strokeDasharray="3 3" /> */}
+      <defs>
+        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#1890FF" stopOpacity={0.8} />
+          <stop offset="95%" stopColor="#1890FF" stopOpacity={0} />
+        </linearGradient>
+        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+          <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+        </linearGradient>
+      </defs>
       <XAxis
-        dataKey="blockNumber"
+        dataKey="hourAndMinute"
         angle={-45}
         textAnchor="end"
         height={70}
@@ -104,18 +125,19 @@ const LineChartComponent = ({ data }: ChartComponentProps) => (
       <YAxis
         fontSize="14px"
         type="number"
-        domain={["auto", "auto"]}
+        domain={['auto', 'auto']}
         allowDataOverflow={true}
         tickCount={10}
         tickFormatter={(value) => `${value / 1e6}M`}
       />
-      <Tooltip />
+      <Tooltip content={<CustomTooltip />} />
       <Legend />
       <Area
         type="monotone"
         dataKey="totalValue"
-        stroke="#8884d8"
-        fill="#8884d8"
+        stroke="#1890FF"
+        fillOpacity={1}
+        fill="url(#colorUv)"
         name="Total USDT Transfer"
       />
       <Area
@@ -133,7 +155,7 @@ export function StreamChartRechartBar({ data }: ChartComponentProps) {
   return (
     <div
       className="App"
-      style={{ width: "90%", height: "400px", margin: "auto" }}
+      style={{ width: '90%', height: '400px', margin: 'auto' }}
     >
       <BarChartComponent data={data} />
     </div>
@@ -144,7 +166,7 @@ export function StreamChartRechartLine({ data }: ChartComponentProps) {
   return (
     <div
       className="App"
-      style={{ width: "90%", height: "400px", margin: "auto" }}
+      style={{ width: '90%', height: '400px', margin: 'auto' }}
     >
       <LineChartComponent data={data} />
     </div>

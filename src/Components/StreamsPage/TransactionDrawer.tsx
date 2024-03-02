@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { Button } from "../ui/button";
+import { Button } from '../ui/button';
 import {
   Drawer,
   DrawerClose,
@@ -10,7 +10,8 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "../ui/drawer";
+} from '../ui/drawer';
+import './home.css';
 
 interface TransactionDataProps {
   data: {
@@ -28,24 +29,26 @@ const TransactionDrawer: React.FC<TransactionDataProps> = ({ data }) => {
     <div>
       <Drawer>
         <DrawerTrigger asChild>
-          <Button>Latest Transaction Block</Button>
+          <Button className="file-upload-button">
+            Latest Transaction Block
+          </Button>
         </DrawerTrigger>
         <DrawerContent>
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Latest Transaction Block</DrawerTitle>
               <DrawerDescription>
-                <p>Block Number: {(data && data[0]?.blockNumber) || "N/A"}</p>
-                <p>Token Name: {(data && data[0]?.tokenName) || "N/A"}</p>
-                <p>Token Symbol: {(data && data[0]?.tokenSymbol) || "N/A"}</p>
+                <p>Block Number: {(data && data[0]?.blockNumber) || 'N/A'}</p>
+                <p>Token Name: {(data && data[0]?.tokenName) || 'N/A'}</p>
+                <p>Token Symbol: {(data && data[0]?.tokenSymbol) || 'N/A'}</p>
                 <p>
-                  Total Value:{" "}
+                  Total Value:{' '}
                   {data && data[0]?.totalValue
                     ? `${data[0].totalValue}`
-                    : "N/A"}
+                    : 'N/A'}
                 </p>
                 <p>
-                  Block Timestamp: {(data && data[0]?.blockTimestamp) || "N/A"}
+                  Block Timestamp: {(data && data[0]?.blockTimestamp) || 'N/A'}
                 </p>
               </DrawerDescription>
             </DrawerHeader>
@@ -55,7 +58,7 @@ const TransactionDrawer: React.FC<TransactionDataProps> = ({ data }) => {
                   <div className="text-4xl font-bold tracking-tighter">
                     {data && data[0]?.averageValue
                       ? `${data[0].averageValue}`
-                      : "N/A"}{" "}
+                      : 'N/A'}{' '}
                   </div>
                   <div className="text-muted-foreground text-[0.70rem] uppercase">
                     average transaction value

@@ -80,6 +80,7 @@
 .about-us {
   font-size: 18px !important;
   color: white !important;
+  margin-right: 10px !important;
 }
 
 .about-us:hover {
