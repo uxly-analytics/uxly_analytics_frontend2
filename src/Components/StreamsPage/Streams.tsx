@@ -9,6 +9,12 @@ import {
 import LoadScreen from "../HomePage/HomeComponents/LoadScreen";
 import GraphCarousel from "./GraphCarousel";
 import TransactionDrawer from "./TransactionDrawer";
+import Search from "./Search";
+import { Typography } from "@mui/material";
+
+const consoleLog = async () => {
+  console.log("Searching!");
+};
 
 const Streams: React.FC = () => {
   const [rawD, setRawD] = useState<any>(null);
@@ -68,20 +74,32 @@ const Streams: React.FC = () => {
 
   return (
     <div>
-      <section className="mt-10">
-        <Header />
-      </section>
-      <div className="relative h-screen w-screen">
-        <h2>{loading && <LoadScreen />}</h2>
-        <GraphCarousel data={rawD} />
-        <div className="mt-5 flex justify-center">
-          <TransactionDrawer data={rawD} />
+      <div className="app-container">
+        <section className="header-section">
+          <Header />
+        </section>
+        <div className="center-content">
+          <Search onSubmit={consoleLog} />
+          <Typography variant="subtitle1" color="black">
+            Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
+          </Typography>
         </div>
+      </div>
+      <div className="relative mt-[-70px] h-screen w-screen">
+        {loading ? (
+          <LoadScreen />
+        ) : (
+          <>
+            <GraphCarousel data={rawD} />
+            <div className="mt-5 flex justify-center">
+              <TransactionDrawer data={rawD} />
+            </div>
+          </>
+        )}
       </div>
 
       <div>
         <h2>
-          {loading && <LoadScreen />}
           {/* <DisplayStreamsData rawData={rawData} /> */}
           {/* {rawD && <StreamChart data={rawD} />} */}
           {/*rawD && <StreamChartRechartBar data={rawD} />}
