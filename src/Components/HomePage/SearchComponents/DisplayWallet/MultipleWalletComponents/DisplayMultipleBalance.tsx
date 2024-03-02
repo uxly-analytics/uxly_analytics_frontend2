@@ -2,6 +2,7 @@ import React from "react";
 import MultipleBalanceGraph from "./MultipleBalanceGraph";
 import "./displaymultiplewallet.css";
 import { Grid } from "@mui/material";
+import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface WalletData {
   address: string;
@@ -57,7 +58,12 @@ const DisplayMultipleBalance: React.FC<{ wallets: WalletData[] }> = ({
   }
   return (
     <Grid item xs={12}>
-      <MultipleBalanceGraph balances={medianAndTotalBalances} />
+      <BoxWrapper
+        title="Aggregated Data"
+        titleSX={{ textAlign: "center", mb: 3 }}
+      >
+        <MultipleBalanceGraph balances={medianAndTotalBalances} />
+      </BoxWrapper>
     </Grid>
   );
 };

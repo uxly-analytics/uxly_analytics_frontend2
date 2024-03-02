@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import "./displaymultiplewallet.css";
 import { Grid } from "@mui/material";
+import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface WalletData {
   address: string;
@@ -128,24 +129,29 @@ const BalanceDistribution: React.FC<{ wallets: WalletData[] }> = ({
 
   return (
     <Grid item xs={12}>
-      <div className="chart-container">
-        <div className="row">
-          <div className="col">
-            <canvas ref={(el) => (chartRefs.current[0] = el)}></canvas>
+      <BoxWrapper
+        title="Native Balance Distribution"
+        titleSX={{ textAlign: "center", mb: 3 }}
+      >
+        <div className="chart-container">
+          <div className="row">
+            <div className="col">
+              <canvas ref={(el) => (chartRefs.current[0] = el)}></canvas>
+            </div>
+            <div className="col">
+              <canvas ref={(el) => (chartRefs.current[1] = el)}></canvas>
+            </div>
           </div>
-          <div className="col">
-            <canvas ref={(el) => (chartRefs.current[1] = el)}></canvas>
+          <div className="row">
+            <div className="col">
+              <canvas ref={(el) => (chartRefs.current[2] = el)}></canvas>
+            </div>
+            <div className="col">
+              <canvas ref={(el) => (chartRefs.current[3] = el)}></canvas>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col">
-            <canvas ref={(el) => (chartRefs.current[2] = el)}></canvas>
-          </div>
-          <div className="col">
-            <canvas ref={(el) => (chartRefs.current[3] = el)}></canvas>
-          </div>
-        </div>
-      </div>
+      </BoxWrapper>
     </Grid>
   );
 };

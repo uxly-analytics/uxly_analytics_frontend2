@@ -79,7 +79,9 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
     <form onSubmit={handleSubmit} className="search-form">
       {fileUploaded ? (
         <div>
-          <span>{fileName}</span>
+          <Typography variant="subtitle1" color="white">
+            {fileName}
+          </Typography>
           <button type="button" onClick={handleRetry}>
             Retry
           </button>
@@ -102,7 +104,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
         </>
       )}
       {!fileUploaded && (
-        <Box mb={3} width="100%" display="flex">
+        <Box width="100%" display="flex">
           <Stack>
             <Typography
               variant="body2"
