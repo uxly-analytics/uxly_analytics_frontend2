@@ -2,6 +2,7 @@ import React from "react";
 import "../displaywallet.css";
 import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
+import PlaceholderImage from "../../../HomeComponents/images/placeholder-img.png";
 
 interface WalletData {
   address: string;
@@ -21,7 +22,7 @@ const DisplayNFTs: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
           {walletData.nft.map((obj: any, index: string) => (
             <Grid item xs={3} key={index}>
               <Card sx={{ background: "#3D3D3D", height: "100%" }}>
-                {obj.image && (
+                {obj.image ? (
                   <CardMedia
                     sx={{ height: 265 }}
                     image={
@@ -30,6 +31,12 @@ const DisplayNFTs: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
                         : obj.image
                     }
                     title={obj.name}
+                  />
+                ) : (
+                  <CardMedia
+                    sx={{ height: 265 }}
+                    image={PlaceholderImage}
+                    title={"placeholder"}
                   />
                 )}
                 <CardContent>
