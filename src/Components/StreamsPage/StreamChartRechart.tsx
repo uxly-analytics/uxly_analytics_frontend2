@@ -129,18 +129,24 @@ const LineChartComponent = ({ data }: ChartComponentProps) => (
   </ResponsiveContainer>
 );
 
-function StreamChartRechart({ data }: ChartComponentProps) {
+export function StreamChartRechartBar({ data }: ChartComponentProps) {
   return (
     <div
       className="App"
-      style={{ width: "95%", height: "400px", margin: "auto" }}
+      style={{ width: "90%", height: "400px", margin: "auto" }}
     >
-      <h2>Bar Chart</h2>
       <BarChartComponent data={data} />
-      <h2>Line Chart</h2>
-      <LineChartComponent data={data} />
     </div>
   );
 }
 
-export default StreamChartRechart;
+export function StreamChartRechartLine({ data }: ChartComponentProps) {
+  return (
+    <div
+      className="App"
+      style={{ width: "90%", height: "400px", margin: "auto" }}
+    >
+      <LineChartComponent data={data} />
+    </div>
+  );
+}
