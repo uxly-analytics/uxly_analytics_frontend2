@@ -2,7 +2,6 @@ import React from "react";
 import DisplayMultipleBalance from "./MultipleWalletComponents/DisplayMultipleBalance";
 import MultipleTransactionDetailsTable from "./MultipleWalletComponents/MultipleTransactionDetailsTable";
 import BalanceDistribution from "./MultipleWalletComponents/BalanceDistribution";
-import { Grid } from "@mui/material";
 
 interface WalletData {
   address: string;

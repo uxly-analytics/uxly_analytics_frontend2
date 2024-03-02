@@ -1,14 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import "../HomeComponents/home.css";
 import ChainSelect from "./ChainSelect";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, TextField, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 interface Chain {
