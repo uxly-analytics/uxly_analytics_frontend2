@@ -11,6 +11,7 @@ import GraphCarousel from './GraphCarousel';
 import TransactionDrawer from './TransactionDrawer';
 import Search from './Search';
 import { Typography } from '@mui/material';
+import axios from 'axios';
 
 const consoleLog = async () => {
   console.log('Searching!');
@@ -24,6 +25,14 @@ const Streams: React.FC = () => {
     const socket = io('wss://uxly-analytics-717cfb342dbd.herokuapp.com', {
       transports: ['websocket'],
     });
+
+    // Make streams api active if it is not inactive
+    axios
+      .get('https://uxly-analytics-717cfb342dbd.herokuapp.com/restart-stream')
+      .then((res) => {
+        console.log('Streams API is active');
+        console.log(res.data);
+      });
 
     socket.on('connect', () => {
       console.log(`Socket connected: ${socket.id}`);
