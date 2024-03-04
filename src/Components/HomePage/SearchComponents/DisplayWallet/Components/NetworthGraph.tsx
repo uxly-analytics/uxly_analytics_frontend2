@@ -7,12 +7,14 @@ import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 interface NetworthProps {
   labels: string[];
   chainNetWorth: number[];
+  total: string;
 }
 
-const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth }) => {
+const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart>();
-
+  const totalNetWorth = `Total Wallet Networth: $${total}`;
+  
   const chartConfig = useMemo<ChartConfiguration>(
     () => ({
       type: "bar",
@@ -95,7 +97,12 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth }) => {
   return (
     <Grid item xs={12}>
       <BoxWrapper
-        title="Wallet Networth by Chain (USD)"
+        title = {totalNetWorth}
+        titleSX={{ textAlign: "center" }} 
+      />
+      <br/>
+      <BoxWrapper
+        title="Networth by Chain (USD)"
         titleSX={{ textAlign: "center" }}
       >
         <Box maxHeight={400} mt={3}>

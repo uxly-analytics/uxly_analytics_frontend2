@@ -1,11 +1,12 @@
 import React from "react";
 import NetworthGraph from "./NetworthGraph";
+import NativeBalanceGraph from "./NativeBalanceGraph";
 import "../displaywallet.css";
 import { Grid } from "@mui/material";
 
 interface WalletData {
   networth: {
-      total_networth:string;
+      total_networth_usd: string;
       chains: ChainNetWorth[];
   };
 }
@@ -29,7 +30,14 @@ const DisplayBalance: React.FC<{ walletData: WalletData }> = ({
     const tokenBalance: number [] = chains.map(chain => parseFloat(chain.token_balance_usd));
   return (
     <Grid item xs={12}>
-      <NetworthGraph labels = {labels} chainNetWorth = {chainNetWorth}/>
+      <NetworthGraph labels = {labels} chainNetWorth = {chainNetWorth} total={walletData.networth.total_networth_usd}/>
+      <br/>
+      <NativeBalanceGraph
+          labels={labels}
+          nativeBalance={nativeBalance}
+          nativeBalanceUSD={nativeBalanceUSD}
+          tokenBalanceUSD={tokenBalance}
+      />
     </Grid>
   );
 };

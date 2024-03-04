@@ -29,10 +29,6 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
   const renderWalletData = () => {
     return (
       <>
-        <Typography variant="subtitle1" color="white">
-            {walletData.address}'s Data
-            Total Wallet NetWorth: ${walletData.networth.total_networth_usd}
-        </Typography>
         <DisplayBalance walletData={walletData} />
         {/* Left column */}
         <TransactionTable
