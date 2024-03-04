@@ -105,7 +105,7 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
         title="Networth by Chain (USD)"
         titleSX={{ textAlign: "center" }}
       >
-        <Box maxHeight={400} mt={3}>
+        <Box  minHeight={400} maxHeight={800} mt={3}>
           <canvas
             ref={chartRef}
             style={{ maxWidth: "100%", maxHeight: "100%" }}

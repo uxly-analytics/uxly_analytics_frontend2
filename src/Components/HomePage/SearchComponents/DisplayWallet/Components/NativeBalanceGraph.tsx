@@ -107,7 +107,7 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
                 title="Chain Networth Details"
                 titleSX={{ textAlign: "center" }}
             >
-                <Box maxHeight={400} mt={3}>
+                <Box minHeight={400} maxHeight={800} mt={3}>
                 <canvas
                     ref={chartRef}
                     style={{ maxWidth: "100%", maxHeight: "100%" }}

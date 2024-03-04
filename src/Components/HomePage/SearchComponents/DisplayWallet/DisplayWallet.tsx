@@ -1,6 +1,5 @@
 import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
-import { Typography } from "@mui/material";
 import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
