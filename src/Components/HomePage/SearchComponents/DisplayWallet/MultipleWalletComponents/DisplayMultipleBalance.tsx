@@ -1,8 +1,6 @@
 import React from "react";
 import MultipleBalanceGraph from "./MultipleBalanceGraph";
 import "./displaymultiplewallet.css";
-import { Grid } from "@mui/material";
-import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface WalletData {
   networth: {

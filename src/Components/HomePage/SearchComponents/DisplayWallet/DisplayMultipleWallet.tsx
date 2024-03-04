@@ -26,7 +26,7 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
     return (
       <>
         <DisplayMultipleBalance wallets={wallets} />
-        
+        <BalanceDistribution wallets={wallets}/>
         <MultipleTransactionDetailsTable wallets={wallets} />
       </>
     );
