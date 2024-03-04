@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // const HOST = "http://18.223.123.138:5000/";
-//const HOST = 'https://uxly-analytics-717cfb342dbd.herokuapp.com/';
-const HOST = "http://localhost:8888";
+const HOST = 'https://uxly-analytics-717cfb342dbd.herokuapp.com/';
+//const HOST = "http://localhost:8888";
 
 interface WalletData {
   address: string;
