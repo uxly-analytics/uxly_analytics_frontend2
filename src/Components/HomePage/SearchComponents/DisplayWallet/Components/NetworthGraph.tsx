@@ -45,7 +45,7 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
           y: {
             type: 'logarithmic',
             ticks: {
-              color: "#8C8C8C", // Set y-axis text color to black
+              color: "white", // Set y-axis text color to black
               callback: (value: string | number) => {
                 return '$' + value.toLocaleString(); // Format ticks as currency
               },
