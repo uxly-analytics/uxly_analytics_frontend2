@@ -147,7 +147,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
                             intersect: false,
                           },
                           legend: {
-                            display: false,
+                            display: true,
                           },
                         },
                     },
@@ -165,7 +165,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
             {Array.from({ length: 4 }, (_, index) => (
               <Grid item xs={6} key={index}>
                 <BoxWrapper
-                title="Balance Distribution Between Popular Chains"
+                title="Balance Distribution Stats"
                 titleSX={{ textAlign: "center" }}
                 >
                   <Box minHeight={300} maxHeight={800} mt={3}>
