@@ -1,14 +1,15 @@
 import React from "react";
 import DisplayBalance from "./Components/DisplayBalance";
+import { Typography } from "@mui/material";
 import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 import TokenBalance from "./Components/TokenBalance";
 
+
 interface WalletData {
   address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
+  networth: any;
   nft: any;
   tokenBalance: any;
   transactions: any;
@@ -25,10 +26,13 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
   chain,
 }) => {
   console.log("Wallet data is:", walletData);
-  console.log("Tokens are:", walletData.tokenBalance);
   const renderWalletData = () => {
     return (
       <>
+        <Typography variant="subtitle1" color="white">
+            {walletData.address}'s Data
+            Total Wallet NetWorth: ${walletData.networth.total_networth_usd}
+        </Typography>
         <DisplayBalance walletData={walletData} />
         {/* Left column */}
         <TransactionTable
