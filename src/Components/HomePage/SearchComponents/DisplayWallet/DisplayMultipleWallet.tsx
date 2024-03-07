@@ -2,11 +2,11 @@ import React from "react";
 import DisplayMultipleBalance from "./MultipleWalletComponents/DisplayMultipleBalance";
 import MultipleTransactionDetailsTable from "./MultipleWalletComponents/MultipleTransactionDetailsTable";
 import BalanceDistribution from "./MultipleWalletComponents/BalanceDistribution";
+import BoxWrapper from "../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface WalletData {
   address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
+  networth: any;
   nft: any;
   tokenBalance: any;
   transactions: any;
@@ -26,7 +26,7 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
     return (
       <>
         <DisplayMultipleBalance wallets={wallets} />
-        <BalanceDistribution wallets={wallets} />
+        <BalanceDistribution wallets={wallets}/>
         <MultipleTransactionDetailsTable wallets={wallets} />
       </>
     );

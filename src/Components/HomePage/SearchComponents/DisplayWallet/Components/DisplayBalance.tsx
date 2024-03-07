@@ -1,35 +1,43 @@
 import React from "react";
-import BalanceGraph from "./BalanceGraph";
+import NetworthGraph from "./NetworthGraph";
+import NativeBalanceGraph from "./NativeBalanceGraph";
 import "../displaywallet.css";
 import { Grid } from "@mui/material";
 
 interface WalletData {
-  address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
-  nft: any;
-  tokenBalance: any;
-  transactions: any;
-  transactionsData: any;
+  networth: {
+      total_networth_usd: string;
+      chains: ChainNetWorth[];
+  };
 }
 
-interface ChainBalance {
+interface ChainNetWorth{
   chain: string;
-  balance: string;
+  native_balance_formatted: string;
+  native_balance_usd: string;
+  networth_usd: string;
+  token_balance_usd: string;
 }
 
 const DisplayBalance: React.FC<{ walletData: WalletData }> = ({
   walletData,
 }) => {
-  const labels: string[] = walletData.nativeBalance.map(
-    (obj: ChainBalance) => obj.chain
-  );
-  const balances: number[] = walletData.nativeBalance.map((obj: ChainBalance) =>
-    parseFloat(obj.balance)
-  );
+    const chains : ChainNetWorth[] = walletData.networth.chains;
+    const labels: string[] = chains.map(chain => chain.chain);
+    const chainNetWorth: number[] = chains.map(chain => parseFloat(chain.networth_usd));
+    const nativeBalance: number[] = chains.map(chain => parseFloat(chain.native_balance_formatted));
+    const nativeBalanceUSD: number[] = chains.map(chain => parseFloat(chain.native_balance_usd));
+    const tokenBalance: number [] = chains.map(chain => parseFloat(chain.token_balance_usd));
   return (
     <Grid item xs={12}>
-      <BalanceGraph data={balances} labels={labels} />
+      <NetworthGraph labels = {labels} chainNetWorth = {chainNetWorth} total={walletData.networth.total_networth_usd}/>
+      <br/>
+      <NativeBalanceGraph
+          labels={labels}
+          nativeBalance={nativeBalance}
+          nativeBalanceUSD={nativeBalanceUSD}
+          tokenBalanceUSD={tokenBalance}
+      />
     </Grid>
   );
 };

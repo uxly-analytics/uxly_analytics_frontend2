@@ -6,8 +6,7 @@ const HOST = 'https://uxly-analytics-717cfb342dbd.herokuapp.com/';
 
 interface WalletData {
   address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
+  networth: any;
   nft: any;
   tokenBalance: any;
   transactions: any;
@@ -25,9 +24,7 @@ export async function getWalletData(
     console.log(response);
     return {
       address: response.data.walletStats.address,
-      activeChainsSimplified:
-        response.data.walletStats.activeChainsSimplified.chains,
-      nativeBalance: response.data.walletStats.nativeBalance,
+      networth: response.data.walletStats.networth,
       nft: response.data.walletStats.nft.nfts,
       tokenBalance: response.data.walletStats.tokenBalance.tokens,
       transactions: response.data.walletStats.transactions,
@@ -37,8 +34,7 @@ export async function getWalletData(
     console.log('Error: ', error);
     return {
       address: 'null',
-      activeChainsSimplified: {},
-      nativeBalance: {},
+      networth: {},
       nft: {},
       tokenBalance: { tokens: [] },
       transactions: {},
@@ -60,9 +56,7 @@ export async function getMultipleWalletData(
       console.log(response);
       walletDataArray.push({
         address: response.data.walletStats.address,
-        activeChainsSimplified:
-          response.data.walletStats.activeChainsSimplified.chains,
-        nativeBalance: response.data.walletStats.nativeBalance,
+        networth: response.data.walletStats.networth,
         nft: response.data.walletStats.nft.nfts,
         tokenBalance: response.data.walletStats.tokenBalance.tokens,
         transactions: response.data.walletStats.transactions,

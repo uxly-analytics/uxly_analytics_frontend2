@@ -6,8 +6,7 @@ import PlaceholderImage from "../../../HomeComponents/images/placeholder-img.png
 
 interface WalletData {
   address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
+  networth: any;
   nft: any;
   tokenBalance: any;
   transactions: any;

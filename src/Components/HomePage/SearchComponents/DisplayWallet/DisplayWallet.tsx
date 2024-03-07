@@ -5,10 +5,10 @@ import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 import TokenBalance from "./Components/TokenBalance";
 
+
 interface WalletData {
   address: string;
-  activeChainsSimplified: any;
-  nativeBalance: any;
+  networth: any;
   nft: any;
   tokenBalance: any;
   transactions: any;
@@ -25,7 +25,6 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
   chain,
 }) => {
   console.log("Wallet data is:", walletData);
-  console.log("Tokens are:", walletData.tokenBalance);
   const renderWalletData = () => {
     return (
       <>

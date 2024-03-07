@@ -69,7 +69,7 @@ function Home() {
             {Array.isArray(data) ? (
               data.length !== 0 ? (
                 <>
-                  <WalletInfo />
+                  <WalletInfo wallets={data}/>
                   <WalletAge />
                   <AudienceGrowth />
                   <DisplayMultipleWallet
