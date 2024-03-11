@@ -18,6 +18,8 @@ export async function getWalletData(
   chain: string,
 ): Promise<WalletData> {
   try {
+    const startTime = Date.now();
+
     const urls = [
       `${HOST}/wallet-networth?address=${address}`,
       `${HOST}/token-balance?address=${address}&chain=${chain}`,
@@ -27,6 +29,10 @@ export async function getWalletData(
     ];
 
     const responses = await Promise.all(urls.map((url) => axios.get(url)));
+
+    const endTime = Date.now();
+
+    console.log(`Requests took ${endTime - startTime}ms`);
 
     console.log(responses);
     return {
