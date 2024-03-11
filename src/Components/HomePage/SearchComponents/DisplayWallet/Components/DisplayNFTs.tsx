@@ -7,7 +7,7 @@ import PlaceholderImage from "../../../HomeComponents/images/placeholder-img.png
 interface WalletData {
   address: string;
   networth: any;
-  nft: any;
+  nfts: any;
   tokenBalance: any;
   transactions: any;
   transactionsData: any;
@@ -18,7 +18,7 @@ const DisplayNFTs: React.FC<{ walletData: WalletData }> = ({ walletData }) => {
     <Grid item xs={12}>
       <BoxWrapper title="NFT'S" titleSX={{ textAlign: "center", mb: 3 }}>
         <Grid container item spacing={3}>
-          {walletData.nft.map((obj: any, index: string) => (
+          {walletData.nfts.nfts.map((obj: any, index: string) => (
             <Grid item xs={3} key={index}>
               <Card sx={{ background: "#3D3D3D", height: "100%" }}>
                 {obj.image ? (
