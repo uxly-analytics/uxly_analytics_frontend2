@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import Header from '../HomePage/HomeComponents/HomeHeader';
-import StreamChart from './StreamChart';
-import {
-  StreamChartRechartBar,
-  StreamChartRechartLine,
-} from './StreamChartRechart';
+import StreamsHeader from './StreamsHeader';
 import LoadScreen from '../HomePage/HomeComponents/LoadScreen';
 import GraphCarousel from './GraphCarousel';
 import TransactionDrawer from './TransactionDrawer';
@@ -51,6 +46,8 @@ const Streams: React.FC = () => {
               new Date(item.blockTimestamp).getMinutes(),
           };
         });
+        // Reversethe data array by time in descending order (most recent first)
+        data.reverse();
         setRawD(data);
         setLoading(false);
         // const data = JSON.parse(dataString);
@@ -95,7 +92,7 @@ const Streams: React.FC = () => {
     <div>
       <div className="app-container">
         <section className="header-section">
-          <Header />
+          <StreamsHeader />
         </section>
         <div className="center-content">
           <Search onSubmit={consoleLog} />
