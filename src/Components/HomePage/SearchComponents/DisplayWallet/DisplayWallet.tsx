@@ -5,11 +5,10 @@ import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 import TokenBalance from "./Components/TokenBalance";
 
-
 interface WalletData {
   address: string;
   networth: any;
-  nft: any;
+  nfts: any;
   tokenBalance: any;
   transactions: any;
   transactionsData: any;
@@ -38,7 +37,7 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         {walletData.tokenBalance && Array.isArray(walletData.tokenBalance) && (
           <TokenBalance
             data={walletData.tokenBalance.filter(
-              (x: any) => x.split(" ").length > 2 || x.includes("$")
+              (x: any) => x.split(" ").length > 2 || x.includes("$"),
             )}
           />
         )}
