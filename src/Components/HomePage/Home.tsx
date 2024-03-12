@@ -57,6 +57,15 @@ function Home() {
         <Header />
       </section>
       <div className="center-content">
+        {/* Main title added here */}
+        <Typography variant="h2" gutterBottom className="main-title">
+          Discover In-Depth Insights
+        </Typography>
+        <Typography variant="body1" className="subtext"mb={6}>
+          Gain valuable insights into how your users interact with your applications and compare their behavior acros: competitor platforms. With UXly's intuitive and visual analytics, you can discover, consolidate, and communicate user needs effortlessly.
+        </Typography>
+        <div>
+        </div>
         <Search onSubmit={handleSearchSubmit} />
         <Typography variant="subtitle1" color="white" mt={3}>
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
