@@ -1,0 +1,75 @@
+body {
+  background-color: #1F1F1F;
+}
+
+/* Update header styles */
+.header {
+  /* display: flex;
+  align-items: center;
+  padding: 0 100px; */
+  width: 100%; /* Full width */
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically if needed */
+  margin-top: 20px; /* Space between header and login, adjust as needed */
+}
+
+/* New class for the container of both links */
+.links-container {
+  display: flex;
+  align-items: center; /* aligns items vertically */
+  gap: 10px; /* adjust as needed for spacing between Log-in and About Us */
+}
+
+.log-in-button,
+.sign-up-button {
+  /* cursor: pointer;
+  font-size: 18px;
+  color: white;
+  padding: 10px 20px;
+  background-color: #eb5763;
+  border-radius: 15px; */  
+
+  background-color: #eb5763;
+  color: white;
+  border: 1px solid #EB5763;
+  border: 1px solid #eb5763;
+  padding: 10px 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 10px;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  white-space: nowrap;
+  padding: 10px 24px 10px 16px;
+
+  /* Clarissa's CSS */
+  /* background-color: #EB5763;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 20px 40px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease; */
+}
+/*  */
+.log-in-button:hover,
+.sign-up-button:hover {
+  background-color: #e76772;
+}
+
+.about-us {
+  font-size: 18px;
+  color: white;
+  text-decoration: none;
+}
