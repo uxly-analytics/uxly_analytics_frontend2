@@ -10,7 +10,7 @@ interface WalletData {
   nfts: any;
   tokenBalance: any;
   transactions: any;
-  //transactionsData: any;
+  transactionsData: any;
 }
 
 export async function getWalletData(
@@ -25,7 +25,7 @@ export async function getWalletData(
       `${HOST}/token-balance?address=${address}&chain=${chain}`,
       `${HOST}/nft?address=${address}&chain=${chain}`,
       `${HOST}/20transactions?address=${address}&chain=${chain}`,
-      //`${HOST}/aggregate-transactions?address=${address}&chain=${chain}`,
+      `${HOST}/aggregate-transactions?address=${address}&chain=${chain}`,
     ];
 
     const responses = await Promise.all(urls.map((url) => axios.get(url)));
@@ -41,7 +41,7 @@ export async function getWalletData(
       tokenBalance: responses[1].data,
       nfts: responses[2].data,
       transactions: responses[3].data,
-      //   transactionsData: responses[4].data,
+      transactionsData: responses[4].data,
     };
   } catch (error) {
     console.log("Error: ", error);
@@ -51,7 +51,7 @@ export async function getWalletData(
       nfts: {},
       tokenBalance: { tokens: [] },
       transactions: {},
-      //  transactionsData: {},
+      transactionsData: {},
     };
   }
 }
@@ -73,7 +73,7 @@ export async function getMultipleWalletData(
         nfts: response.data.walletStats.nft.nfts,
         tokenBalance: response.data.walletStats.tokenBalance.tokens,
         transactions: response.data.walletStats.transactions,
-        //transactionsData: response.data.walletStats.transactionsData,
+        transactionsData: response.data.walletStats.transactionsData,
       });
     } catch (error) {
       console.log(`Error fetching wallet data for address ${address}:`, error);

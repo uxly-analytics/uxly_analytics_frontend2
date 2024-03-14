@@ -1,0 +1,56 @@
+body {
+  background-color: #1F1F1F;
+}
+
+/* Update header styles */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 100px;
+}
+
+/* New class for the container of both links */
+.links-container {
+  display: flex;
+  align-items: center; /* aligns items vertically */
+  gap: 10px; /* adjust as needed for spacing between Log-in and About Us */
+}
+
+.log-in-button,
+.sign-up-button {
+  /* cursor: pointer;
+  font-size: 18px;
+  color: white;
+  padding: 10px 20px;
+  background-color: #eb5763;
+  border-radius: 15px; */
+  background-color: #eb5763;
+  color: white;
+  border: 1px solid #EB5763;
+  border: 1px solid #eb5763;
+  padding: 10px 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 10px;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  white-space: nowrap;
+  padding: 10px 24px 10px 16px;
+}
+
+.log-in-button:hover,
+.sign-up-button:hover {
+  background-color: #e76772;
+}
+
+.about-us {
+  font-size: 18px;
+  color: white;
+  text-decoration: none;
+}

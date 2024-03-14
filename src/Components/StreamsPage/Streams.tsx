@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import Header from '../HomePage/HomeComponents/HomeHeader';
+import StreamsHeader from './StreamsHeader';
 import StreamChart from './StreamChart';
 import {
   StreamChartRechartBar,
@@ -95,7 +95,7 @@ const Streams: React.FC = () => {
     <div>
       <div className="app-container">
         <section className="header-section">
-          <Header />
+          <StreamsHeader />
         </section>
         <div className="center-content">
           <Search onSubmit={consoleLog} />
