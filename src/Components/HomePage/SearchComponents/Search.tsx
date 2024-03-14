@@ -105,7 +105,7 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
               mb={0.5}
               textAlign="initial"
             >
-              Enter Chain Address
+              Enter Wallet Address
             </Typography>
             <TextField
               type="text"
