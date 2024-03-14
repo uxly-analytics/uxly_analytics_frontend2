@@ -80,7 +80,8 @@
 .about-us {
   font-size: 18px !important;
   color: white !important;
-  margin-right: 10px !important;
+  margin-right: 20px !important;
+  
 }
 
 .about-us:hover {
@@ -153,7 +154,7 @@
   color: white; /* adjust as needed */
   font-size: 16px; /* adjust to match the website's font size */
   margin-right: auto; /* pushes everything else to the right */
-  padding-left: 20px; /* space from logo or the left side of the header */
+  /* space from logo or the left side of the header */
 }
 
 /* style adjustments for profile component */
@@ -169,7 +170,7 @@
   justify-content: flex-end;
   flex-grow: 1;
   margin: 0 auto; /* centers the button and ensures no direct overflow */
-  padding: 10px; /* ensure it doesn't cause overflow */
+ 
 }
 
 .profile {
@@ -178,26 +179,27 @@
   margin-right: auto;
   margin-left: auto;
   position: absolute;
-  right: 130px; /* adjust buffer from the right */
+  right: 89px !important; /* adjust buffer from the right */
   top: 3px;
-  z-index: 1000;
+  z-index: 300 !important;
   color: #000000;
   display: flex; /* aligns text with the image */
   font-family: "noto sans", sans-serif;
 }
 
 .profile-info {
+  color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 10px;
+  margin-top: 40px;
 }
 
 /* adjusts the profile email styling */
 .profile-email {
   margin: 0; /* reduces default paragraph margin */
   font-size: 14px;
-  color: #605e5e;
+  color: #ffffff !important;
   font-weight: bold;
 }
 
@@ -239,3 +241,33 @@
   margin-top: -5px;
   font-size: 25px;
 }
+
+/* MENU */
+/* Add styles for the hamburger menu */
+.menu-button {
+  color: white;
+}
+
+/* ... other styles ... */
+.routes-container{
+  margin-left: 800px;
+padding-right: 0px !important; 
+display: flex;
+
+}
+
+/* Update the .header to adjust for the new menu */
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 5px !important;
+  margin-top: -15px;
+  padding: 0px; /* Adjusted padding */
+}
+
+.routes-section {
+  display: flex;
+
+}
+

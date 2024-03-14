@@ -10,12 +10,12 @@ const Profile = () => {
 
   return (
     isAuthenticated && user ? (
-      <div className="profile">
-      <div> 
+      <div className="profile-container">
+      <div className="profile"> 
         <img src={user.picture} alt={user.name} />
-        <div className="profile-info">
-          <p className="profile-email">{user.email}</p>
-        </div>
+        <section className="profile-info">
+         {/*<p className="profile-email">{user.email}</p>*/}
+        </section>
       </div>
       </div>
     ) : null

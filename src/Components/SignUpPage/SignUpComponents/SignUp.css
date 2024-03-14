@@ -18,30 +18,19 @@ body {
 
 .log-in-button,
 .sign-up-button {
-  /* cursor: pointer;
-  font-size: 18px;
-  color: white;
-  padding: 10px 20px;
   background-color: #eb5763;
-  border-radius: 15px; */
-  background-color: #eb5763;
-  color: white;
+  color: white !important;
   border: 1px solid #EB5763;
-  border: 1px solid #eb5763;
-  padding: 10px 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border-radius: 15px;
   cursor: pointer;
-  font-size: 14px;
-  gap: 10px;
+  font-size: 18px !important;
   border-radius: 32px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  justify-content: center !important;
   width: fit-content;
   white-space: nowrap;
-  padding: 10px 24px 10px 16px;
+  padding: 10px 24px;
+  
 }
 
 .log-in-button:hover,

@@ -39,7 +39,7 @@ body {
   margin-right: 10px;
   border-radius: 15px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px !important;
   gap: 10px;
   border-radius: 32px;
   display: flex;
