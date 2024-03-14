@@ -3,19 +3,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
+  justify-content: flex-start; /* Align to the top */
+  height: 100vh; /* Full viewport height */
   text-align: center;
-  padding-top: 20px;
+  margin: 0; /* Reset default margin */
+  padding: 0; /* Reset default padding */
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Include padding and borders in the element's total width and height */
 }
 
 /* Header Section */
 .header-section {
-  width: 100%; /* Full width */
   display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically if needed */
-  margin-top: 20px; /* Space between header and login, adjust as needed */
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 15%; /* Adjust the padding-top to move your h1 down */
 }
 
 /* Login Section */
@@ -68,4 +71,34 @@
 }
 
 
+/* h1 Styling for large header text */
+h1 {
+  font-size: 4rem; /* Large, eye-catching size */
+  color: #ffffff; /* White color for high contrast */
+  font-weight: bold; /* Bold weight for header */
+  letter-spacing: -2px; /* Negative letter-spacing for a tighter look */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
+}
 
+/* Subtext Styling for paragraph text */
+p {
+  font-size: 1.25rem; /* Smaller than h1, but still legible */
+  color: #ffffff; /* Same color for consistency */
+  font-weight: normal; /* Normal weight for paragraph */
+  letter-spacing: normal; /* Standard letter-spacing */
+  line-height: 1.5; /* Space between lines for readability */
+  margin: 0px 0; /* Space above and below the paragraph */
+  max-width: 1000px; /* Max width for optimal reading */
+  text-align: center; /* Center-align text */
+  margin-left: auto; /* Align the paragraph block horizontally center */
+  margin-right: auto; /* Align the paragraph block horizontally center */
+}
+/* Ensuring responsiveness */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem; /* Smaller font size for mobile devices */
+  }
+  p {
+    font-size: 1rem; /* Adjust paragraph font size for mobile devices */
+  }
+}
