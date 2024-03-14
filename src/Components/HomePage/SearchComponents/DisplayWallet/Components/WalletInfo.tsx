@@ -26,7 +26,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({wallets}) => {
   return (
     <>
       <Grid item xs={6}>
-        <BoxWrapper title="Wallet Value" value={total} />
+        <BoxWrapper title="Total Networth Across Wallets" value={total} />
       </Grid>
       <Grid item xs={3}>
         <BoxWrapper title="Number of Wallets" value={numWallets} />
