@@ -9,7 +9,11 @@ const LoginButton: React.FC = () => {
     loginWithRedirect();
   };
 
-  return <button className="login-btn" onClick={handleLogin}>Sign Up / Login</button>;
+  return (
+    <button className="login-btn" onClick={handleLogin}>
+      Sign Up / Login
+    </button>
+  );
 };
 
 export default LoginButton;
