@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Header from "./SignUpComponents/SignUpHeader";
+import { useAuth0 } from "@auth0/auth0-react";
+import '../HomePage/HomeComponents/home.css';
 
 import "./SignUpComponents/SignUp.css";
 
@@ -46,6 +48,12 @@ export default function SignUp() {
       confirmPassword: data.get('confirmPassword'), // Capture the confirm password value
     });
   };
+
+  const { loginWithRedirect } = useAuth0();
+
+  function handleLogIn() {
+    loginWithRedirect(); // navigate('/login');
+  }
 
   return (
     <div className="app-container">
@@ -110,7 +118,7 @@ export default function SignUp() {
                   />
                 </Grid>
               </Grid>
-              <Button
+              <Button onClick={handleLogIn}
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -121,7 +129,7 @@ export default function SignUp() {
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
-                  <Link href="/Login" variant="body2">
+                  <Link onClick={handleLogIn} variant="body2">
                     Already have an account? Sign in
                   </Link>
                 </Grid>

@@ -51,6 +51,8 @@ const Streams: React.FC = () => {
               new Date(item.blockTimestamp).getMinutes(),
           };
         });
+        // Reversethe data array by time in descending order (most recent first)
+        data.reverse();
         setRawD(data);
         setLoading(false);
         // const data = JSON.parse(dataString);
