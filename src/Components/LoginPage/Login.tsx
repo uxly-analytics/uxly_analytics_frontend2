@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useAuth0 } from '@auth0/auth0-react';
 import Header from "./LoginComponents/LoginHeader";
+import { RedirectLoginOptions } from '@auth0/auth0-react';
 
 import "./LoginComponents/Login.css";
 
@@ -33,6 +34,13 @@ const defaultTheme = createTheme({
 
 export default function SignIn() {
   const { loginWithRedirect } = useAuth0();
+
+  const handleSignIn = () => {
+    loginWithRedirect({
+      // Specify the redirect URI
+      redirectUri: window.location.origin + '/', // This will redirect to the root of your app
+    } as RedirectLoginOptions);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -133,7 +141,7 @@ export default function SignIn() {
                     backgroundColor: '#A43C45', // Change to red on hover
                   },
                 }}
-                onClick={() => loginWithRedirect()}
+                onClick={handleSignIn}
               >
                 Sign In
               </Button>
