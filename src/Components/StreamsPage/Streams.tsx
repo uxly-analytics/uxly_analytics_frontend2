@@ -59,7 +59,6 @@ const Streams: React.FC = () => {
       console.log(`Socket connected: ${socket.id}`);
     });
 
-    
     socket.on('USDT', (dataString) => {
       try {
         let data = [...dataString];
@@ -114,7 +113,6 @@ const Streams: React.FC = () => {
       console.log('Socket disconnected');
     };
   }, []); // The empty dependency array ensures the effect runs only once on mount
-  console.log('this is rawD', rawD);
   return (
     <div>
       <div className="app-container">
