@@ -76,6 +76,10 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
               },
               legend: {
                 display: true,
+                labels: {
+                  color: 'white',
+                  fontSize: 20,
+                }
               },
             },
           },

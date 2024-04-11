@@ -105,11 +105,10 @@ function Search({ onSubmit }: SearchForm): JSX.Element {
               mb={0.5}
               textAlign="initial"
             >
-              Enter Wallet Address
             </Typography>
             <TextField
               type="text"
-              placeholder="Wallet Address"
+              placeholder="Enter Wallet Address"
               value={address}
               onChange={handleAddressChange}
               required={!fileUploaded}

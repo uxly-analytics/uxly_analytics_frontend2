@@ -22,7 +22,7 @@ const BoxWrapper: React.FC<BoxWrapperProps> = ({
     <Box
       sx={{
         border: "1px solid #FA939B",
-        borderRadius: 8,
+        borderRadius: 4,
         padding: "26px 25px",
         background: "#28292A",
         display: "flex",

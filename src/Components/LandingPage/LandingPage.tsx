@@ -24,7 +24,7 @@ function LandingPage(){
             <Typography className="main-title"
                         variant="h2" 
                         color="white" 
-                        marginTop={20}
+                        marginTop={10}
                         gutterBottom >
            Discover In-Depth Insights
          </Typography>
@@ -32,7 +32,7 @@ function LandingPage(){
                      variant="body1" 
                      color="white" 
                      mb={6}
-                     width={850}>
+                     width={1000}>
            Gain valuable insights into how your users interact with your applications and compare their behavior acros: competitor platforms. With UXly's intuitive and visual analytics, you can discover, consolidate, and communicate user needs effortlessly.
          </Typography>
          <section className="login-section" > 

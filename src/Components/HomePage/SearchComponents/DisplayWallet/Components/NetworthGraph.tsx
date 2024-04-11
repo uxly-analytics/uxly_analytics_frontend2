@@ -10,11 +10,24 @@ interface NetworthProps {
   total: string;
 }
 
+const NumberComponent = ({ numberString }: { numberString: string }): string => {
+  const addCommasToNumberString = (numberString: string): string => {
+    const number = parseFloat(numberString);
+    if (!isNaN(number)) {
+      return number.toLocaleString();
+    } else {
+      return numberString;
+    }
+  };
+
+  return addCommasToNumberString(numberString);
+};
+
 const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart>();
-  const totalNetWorth = `Total Wallet Networth: $${total}`;
-  
+  const totalNetworth = NumberComponent({numberString: total});
+
   const chartConfig = useMemo<ChartConfiguration>(
     () => ({
       type: "bar",
@@ -57,6 +70,7 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
             title: {
               display: true,
               text: "USD",
+              color: "white",
             },
           },
         },
@@ -96,16 +110,19 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
 
   return (
     <Grid item xs={12}>
-      <BoxWrapper
-        title = {totalNetWorth}
-        titleSX={{ textAlign: "center" }} 
-      />
+      <Grid item xs={6}>
+        <BoxWrapper
+          title = {"Wallet Value:"}
+          titleSX={{ textAlign: "center" }} 
+          value = {`$${totalNetworth}`}
+        />
+      </Grid>
       <br/>
       <BoxWrapper
         title="Networth by Chain (USD)"
         titleSX={{ textAlign: "center" }}
       >
-        <Box  minHeight={400} maxHeight={800} mt={3}>
+        <Box  minHeight={400} maxHeight={500} mt={3}>
           <canvas
             ref={chartRef}
             style={{ maxWidth: "100%", maxHeight: "100%" }}
