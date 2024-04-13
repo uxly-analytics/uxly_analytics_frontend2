@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import Chart, { ChartConfiguration } from "chart.js/auto";
 import "../displaywallet.css";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
 import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
 
 interface NetworthProps {
@@ -26,7 +26,9 @@ const NumberComponent = ({ numberString }: { numberString: string }): string => 
 const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart>();
+  const [isListView, setIsListView] = useState(false);
   const totalNetworth = NumberComponent({numberString: total});
+  const [key, setKey] = useState(0); // Add key state
 
   const chartConfig = useMemo<ChartConfiguration>(
     () => ({
@@ -38,8 +40,8 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
             label: "",
             data: chainNetWorth,
             backgroundColor: "#74B9B1",
-            borderColor: "#74B9B1",
-            borderWidth: 2,
+            borderColor: "white",
+            borderWidth: 1,
             maxBarThickness: 55,
           },
         ],
@@ -106,28 +108,57 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
         chartInstance.current.destroy(); // Clean up on unmount
       }
     };
-  }, [chainNetWorth, labels, chartConfig]);
+  }, [chainNetWorth, labels, chartConfig, key]);
+
+  const toggleView = () => {
+    setIsListView((prev) => !prev);
+    setKey((prevKey) => prevKey + 1); // Update key to force re-render
+  };
 
   return (
     <Grid item xs={12}>
-      <Grid item xs={6}>
-        <BoxWrapper
-          title = {"Wallet Value:"}
-          titleSX={{ textAlign: "center" }} 
-          value = {`$${totalNetworth}`}
-        />
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <BoxWrapper
+            title={"Wallet Value:"}
+            titleSX={{ textAlign: "center" }}
+            value={`$${totalNetworth}`}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <BoxWrapper
+            title={"Wallet Age"}
+            titleSX={{ textAlign: "center" }}
+            value={`Mature`}
+          />
+        </Grid>
       </Grid>
       <br/>
       <BoxWrapper
         title="Networth by Chain (USD)"
         titleSX={{ textAlign: "center" }}
       >
-        <Box  minHeight={400} maxHeight={500} mt={3}>
-          <canvas
-            ref={chartRef}
-            style={{ maxWidth: "100%", maxHeight: "100%" }}
-          />
-        </Box>
+        <Button onClick={toggleView} style={{ position: "relative", width: "150px", color: "#da6167"}}>
+          {isListView ? "Graph View" : "List View"} {/* Toggle button text based on view */}
+        </Button>
+        {isListView ? (
+          <Box minHeight={400} maxHeight={600} mt={3}>
+            <Grid container spacing={3}>
+              {labels.map((label, index) => (
+                <Grid item xs={6} key={index} style={{ color: 'white', fontSize: '2rem' }}>
+                  {label} : {`$${NumberComponent({ numberString: `${chainNetWorth[index]}` })}`}
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        ) : (
+          <Box minHeight={400} maxHeight={400} mt={3}>
+            <canvas
+              ref={chartRef}
+              style={{ maxWidth: "100%", maxHeight: "100%" }}
+            />
+          </Box>
+        )}
       </BoxWrapper>
     </Grid>
   );

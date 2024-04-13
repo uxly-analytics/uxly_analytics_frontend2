@@ -29,11 +29,11 @@ function LandingPage(){
            Discover In-Depth Insights
          </Typography>
          <Typography className="subtext"
-                     variant="body1" 
+                     variant="h6" 
                      color="white" 
                      mb={6}
                      width={1000}>
-           Gain valuable insights into how your users interact with your applications and compare their behavior acros: competitor platforms. With UXly's intuitive and visual analytics, you can discover, consolidate, and communicate user needs effortlessly.
+           Gain valuable insights into how your users interact with your applications and compare their behavior across competitor platforms. With UXly's intuitive and visual analytics, you can discover, consolidate, and communicate user needs effortlessly.
          </Typography>
          <section className="login-section" > 
          <div className="login-btn">
