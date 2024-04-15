@@ -39,21 +39,21 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
                 label: 'Native Balance',
                 data: nativeBalance,
                 backgroundColor: 'rgba(255, 99, 132, 1)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                borderColor: "white",
                 borderWidth: 1
             },
             {
                 label: 'Native Balance (USD)',
                 data: nativeBalanceUSD,
                 backgroundColor: 'rgba(255, 159, 64, 1)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                borderColor: "white",
                 borderWidth: 1
             },
             {
                 label: 'Token Balance (USD)',
                 data: tokenBalanceUSD,
                 backgroundColor: 'rgba(54, 162, 235, 1)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                borderColor: "white",
                 borderWidth: 1
             }]
         },
