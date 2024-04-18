@@ -24,6 +24,9 @@ function Home() {
   } | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [isSearchInHeader, setIsSearchInHeader] = useState(false);
+  const [selectedChain, setSelectedChain] = useState<Chain>({ value: '', label: '' });
 
   useEffect(() => {
     if (data !== null) {
@@ -31,11 +34,19 @@ function Home() {
     }
   }, [data]);
 
-  const handleSearchSubmit = async (address: string[], chain: Chain) => {
+  const onChainSelected = (newChain: Chain) => {
+    setSelectedChain(newChain);
+  };
+
+  const handleSearchSubmit = async (searchValue: string, chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
-    console.log("Address ", address);
+    setSearchSubmitted(true); // Set the search as submitted\
+    setIsSearchInHeader(true);
+    console.log("Address ", searchValue);
     console.log("Chain: ", chain.label, chain.value);
-    const uniqueAddresses = Array.from(new Set(address));
+
+    // Split the searchValue by commas and trim whitespace from each address
+  const uniqueAddresses = searchValue.split(',').map(addr => addr.trim());
     setSearchInput({ address: uniqueAddresses, chain });
     try {
       if (uniqueAddresses.length === 1) {
@@ -53,14 +64,26 @@ function Home() {
 
   return (
     <div className="app-container">
-      <section className="header-section">
-        <Header />
-      </section>
-      <div className="center-content">
-        <Search onSubmit={handleSearchSubmit} />
-        <Typography variant="subtitle1" color="white" mt={3}>
+      <div className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}>
+    <section className="header-section">
+      <Header />
+    </section>
+    
+    <div className="center-content" >
+      <div className={`search-area ${isSearchInHeader ? 'move-up' : ''}`}>
+        <Typography variant="subtitle1" color="white" mb={-10}>
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
         </Typography>
+
+        <Search 
+          className={isSearchInHeader ? "search-in-header" : "search-default"}
+          onSearchSubmit={(searchValue) => handleSearchSubmit(searchValue, selectedChain)}
+          onChainSelected={setSelectedChain}        
+        />
+        <Typography variant="h4" color="white" paddingTop={2} mb={-20}>Get Web3 Wallet Data
+        </Typography>
+        </div>
+      </div>
       </div>
       <Grid container maxWidth="1198px" mt={4} columnSpacing={3} rowSpacing={4}>
         {loading && <LoadScreen />}

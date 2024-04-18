@@ -20,11 +20,22 @@ const consoleLog = async () => {
 const Streams: React.FC = () => {
   const [rawD, setRawD] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [isSearchInHeader, setIsSearchInHeader] = useState(false);
+
+// Call this function when the search is submitted
+const handleSearchSubmit = (searchValue: string) => {
+  setSearchSubmitted(true); // Set the search as submitted\
+  setIsSearchInHeader(true); 
+  console.log('Search submitted with value:', searchValue);
+  // ... perform search or other actions ...
+};
 
   useEffect(() => {
     const socket = io('wss://uxly-analytics-717cfb342dbd.herokuapp.com', {
       transports: ['websocket'],
     });
+    console.log(isSearchInHeader);
 
     // Make streams api active if it is not inactive
     axios
@@ -91,20 +102,26 @@ const Streams: React.FC = () => {
       socket.disconnect();
       console.log('Socket disconnected');
     };
-  }, []); // The empty dependency array ensures the effect runs only once on mount
+  }, [isSearchInHeader]); // The empty dependency array ensures the effect runs only once on mount
 
   return (
-    <div>
       <div className="app-container">
-        <section className="header-section">
-          <StreamsHeader />
-        </section>
-        <div className="center-content">
-          <Search onSubmit={consoleLog} />
-          <Typography variant="h4" color="white">
-            Smart Contract Transactions
+      <div className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}>
+    <section className="header-section">
+      <StreamsHeader />
+    </section>
+
+        <div className={`search-area ${isSearchInHeader ? 'move-up' : ''}`}>
+      <Search
+        className={isSearchInHeader ? "search-in-header" : "search-default"}
+        onSearchSubmit={handleSearchSubmit}
+      />
+  
+          <Typography variant="h4" color="white" paddingTop={2}>
+          Stream Web3 Smart Contracts
           </Typography>
-        </div>
+      
+      </div>
       </div>
       <div className="relative mt-[-70px]">
         {loading ? (
