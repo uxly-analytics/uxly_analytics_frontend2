@@ -3,6 +3,16 @@ import Chart, { ChartConfiguration } from "chart.js/auto";
 import "../displaywallet.css";
 import { Box, Grid, Button } from "@mui/material";
 import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
+import EthLogo from "../../Icons/eth-logo.png";
+import PolygonLogo from "../../Icons/polygon-logo.png";
+import BscLogo from "../../Icons/bsc-logo.png";
+import AvalancheLogo from "../../Icons/avalanche-logo.png";
+import FantomLogo from "../../Icons/fantom-logo.png";
+import CronosLogo from "../../Icons/cronos-logo.png";
+import ArbitrumLogo from "../../Icons/arbitrum-logo.png";
+import GnosisLogo from "../../Icons/gnosis-logo.png";
+import BaseLogo from "../../Icons/base-logo.png";
+import OptimismLogo from "../../Icons/optimism-logo.png";
 
 interface NetworthProps {
   labels: string[];
@@ -29,6 +39,19 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
   const [isListView, setIsListView] = useState(false);
   const totalNetworth = NumberComponent({numberString: total});
   const [key, setKey] = useState(0); // Add key state
+
+  const logos = [
+    EthLogo,
+    PolygonLogo,
+    BscLogo,
+    AvalancheLogo,
+    FantomLogo,
+    CronosLogo,
+    ArbitrumLogo,
+    GnosisLogo,
+    BaseLogo,
+    OptimismLogo,
+  ];
 
   const chartConfig = useMemo<ChartConfiguration>(
     () => ({
@@ -152,11 +175,18 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
             </Grid>
           </Box>
         ) : (
-          <Box minHeight={400} maxHeight={400} mt={3}>
+          <Box minHeight={400} maxHeight={500} mt={3}>
             <canvas
               ref={chartRef}
               style={{ maxWidth: "100%", maxHeight: "100%" }}
             />
+            <Grid container spacing={4} justifyContent={"right"}>
+              {logos.map((logo, index) => (
+                <Grid item key={index}>
+                  <img src={logo} alt={`Logo ${index}`} style={{ maxWidth: "20px", maxHeight: "20px", marginRight: "50px" }} />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         )}
       </BoxWrapper>
