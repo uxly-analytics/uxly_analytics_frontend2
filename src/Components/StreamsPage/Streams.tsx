@@ -12,6 +12,7 @@ import TransactionDrawer from './TransactionDrawer';
 import Search from './Search';
 import { Typography } from '@mui/material';
 import axios from 'axios';
+import defaultdata from './defaultdata.json';
 
 const consoleLog = async () => {
   console.log('Searching!');
@@ -22,6 +23,26 @@ const Streams: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch last 25 transactions
+        const response = await axios.get('https://uxly-analytics-717cfb342dbd.herokuapp.com/previous-stream-transactions');
+        const last25Transactions = response.data;
+        // Set the last 25 transactions as initial data
+        setRawD(last25Transactions);
+        setLoading(false);
+      } catch (error) {
+        // use default data if backend didn't fetch 25 transactions
+        console.error('Failed to fetch data:', error);
+        const defaultData = defaultdata;
+        console.log(defaultData);
+        setRawD(defaultData);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
     const socket = io('wss://uxly-analytics-717cfb342dbd.herokuapp.com', {
       transports: ['websocket'],
     });
@@ -92,7 +113,6 @@ const Streams: React.FC = () => {
       console.log('Socket disconnected');
     };
   }, []); // The empty dependency array ensures the effect runs only once on mount
-
   return (
     <div>
       <div className="app-container">
