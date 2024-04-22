@@ -1,8 +1,18 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import { Box, Grid } from "@mui/material";
 import BoxWrapper from '../../../../HomePage/HomeComponents/BoxWrapper/BoxWrapper';
 import "./displaymultiplewallet.css";
+import EthLogo from "../../Icons/eth-logo.png";
+import PolygonLogo from "../../Icons/polygon-logo.png";
+import BscLogo from "../../Icons/bsc-logo.png";
+import AvalancheLogo from "../../Icons/avalanche-logo.png";
+import FantomLogo from "../../Icons/fantom-logo.png";
+import CronosLogo from "../../Icons/cronos-logo.png";
+import ArbitrumLogo from "../../Icons/arbitrum-logo.png";
+import GnosisLogo from "../../Icons/gnosis-logo.png";
+import BaseLogo from "../../Icons/base-logo.png";
+import OptimismLogo from "../../Icons/optimism-logo.png";
 
 interface WalletData {
     networth: {
@@ -25,6 +35,20 @@ const MultipleBalanceGraph: React.FC<DisplayMultipleNetworthProps> = ({ wallets 
 
     const chainsNetworth: Record<string, number> = {};
     const chainsCounts: Record<string, number> = {};
+
+    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1200);
+    const logos = [
+        EthLogo,
+        PolygonLogo,
+        BscLogo,
+        AvalancheLogo,
+        FantomLogo,
+        CronosLogo,
+        ArbitrumLogo,
+        GnosisLogo,
+        BaseLogo,
+        OptimismLogo,
+      ];
 
     // Calculate total networth_usd per chain
     wallets.forEach(wallet => {
@@ -64,13 +88,13 @@ const MultipleBalanceGraph: React.FC<DisplayMultipleNetworthProps> = ({ wallets 
                 label: 'Networth (USD)',
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 1)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                borderColor: 'white',
                 borderWidth: 1
             }, {
                 label: 'Median (USD)',
                 data: medianData,
                 backgroundColor: 'rgba(153, 102, 255, 1)',
-                borderColor: 'rgba(153, 102, 255, 1)',
+                borderColor: 'white',
                 borderWidth: 1
             }]
         },
@@ -108,10 +132,26 @@ const MultipleBalanceGraph: React.FC<DisplayMultipleNetworthProps> = ({ wallets 
                 },
                 legend: {
                   display: true,
+                  labels: {
+                    color: 'white',
+                    fontSize: 20,
+                  }
                 },
               },
         }
     }), [labels, data, medianData]);
+
+    useEffect(() => {
+        const handleResize = () => {
+          setIsSmallScreen(window.innerWidth < 1200);
+        };
+    
+        window.addEventListener("resize", handleResize);
+    
+        return () => {
+          window.removeEventListener("resize", handleResize);
+        };
+      }, []);
 
     useEffect(() => {
         if (chartRef.current) {
@@ -142,6 +182,15 @@ const MultipleBalanceGraph: React.FC<DisplayMultipleNetworthProps> = ({ wallets 
                     ref={chartRef}
                     style={{ maxWidth: "100%", maxHeight: "100%" }}
                 />
+                {!isSmallScreen && (
+                    <Grid container spacing={3} className="balance-graph-icons">
+                    {logos.map((logo, index) => (
+                        <Grid item key={index}>
+                        <img src={logo} alt={`Logo ${index}`} style={{ maxWidth: "20px", maxHeight: "20px", marginRight: "60px" }} />
+                        </Grid>
+                    ))}
+                    </Grid>
+                    )}
                 </Box>
             </BoxWrapper>
         </Grid>

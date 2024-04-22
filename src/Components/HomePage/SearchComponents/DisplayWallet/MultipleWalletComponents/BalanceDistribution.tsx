@@ -148,6 +148,9 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
                           },
                           legend: {
                             display: true,
+                            labels: {
+                                color: 'white',
+                              }
                           },
                         },
                     },
