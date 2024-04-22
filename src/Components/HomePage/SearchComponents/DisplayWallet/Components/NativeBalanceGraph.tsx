@@ -3,6 +3,16 @@ import Chart, { ChartConfiguration } from "chart.js/auto";
 import "../displaywallet.css";
 import { Box, Grid, Button } from "@mui/material";
 import BoxWrapper from "../../../HomeComponents/BoxWrapper/BoxWrapper";
+import EthLogo from "../../Icons/eth-logo.png";
+import PolygonLogo from "../../Icons/polygon-logo.png";
+import BscLogo from "../../Icons/bsc-logo.png";
+import AvalancheLogo from "../../Icons/avalanche-logo.png";
+import FantomLogo from "../../Icons/fantom-logo.png";
+import CronosLogo from "../../Icons/cronos-logo.png";
+import ArbitrumLogo from "../../Icons/arbitrum-logo.png";
+import GnosisLogo from "../../Icons/gnosis-logo.png";
+import BaseLogo from "../../Icons/base-logo.png";
+import OptimismLogo from "../../Icons/optimism-logo.png";
 
 interface NativeBalanceGraphProps {
     labels: string[];
@@ -28,7 +38,21 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart>();
     const [isListView, setIsListView] = useState(false);
+    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1200);
     const [key, setKey] = useState(0); // Add key state
+
+    const logos = [
+      EthLogo,
+      PolygonLogo,
+      BscLogo,
+      AvalancheLogo,
+      FantomLogo,
+      CronosLogo,
+      ArbitrumLogo,
+      GnosisLogo,
+      BaseLogo,
+      OptimismLogo,
+    ];
 
     const chartConfig = useMemo<ChartConfiguration>(
         () => ({
@@ -103,6 +127,18 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
       );
 
     useEffect(() => {
+      const handleResize = () => {
+        setIsSmallScreen(window.innerWidth < 1200);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }, []);
+
+    useEffect(() => {
       if (chartRef.current) {
         const ctx = chartRef.current.getContext("2d");
         if (ctx) {
@@ -138,7 +174,8 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
               <Box minHeight={400} maxHeight={1000} mt={3}>
                 <Grid container spacing={3}>
                   {labels.map((chain, index) => (
-                    <Grid item xs={6} key={index} style={{ color: 'white', fontSize: '1.2rem' }}>
+                    <Grid item xs={6} key={index} style={{ color: 'white', fontSize: '1.2rem', }}>
+                      <img src={logos[index]} alt={`Logo ${index}`} style={{ maxWidth: "30px", maxHeight: "30px", marginRight: "10px" }} />
                       {chain}: <br />
                       Native Balance: {nativeBalance[index]}<br />
                       Native Balance (USD): {`$${NumberComponent({ numberString: `${nativeBalanceUSD[index]}` })}`}<br />
@@ -153,7 +190,16 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
                     ref={chartRef}
                     style={{ maxWidth: "100%", maxHeight: "100%" }}
                 />
-                </Box>
+                {!isSmallScreen && (
+                  <Grid container spacing={3} className="balance-graph-icons">
+                  {logos.map((logo, index) => (
+                    <Grid item key={index}>
+                      <img src={logo} alt={`Logo ${index}`} style={{ maxWidth: "20px", maxHeight: "20px", marginRight: "60px" }} />
+                    </Grid>
+                  ))}
+                </Grid>
+                )}
+              </Box>
             )}
             </BoxWrapper>
         </Grid>
