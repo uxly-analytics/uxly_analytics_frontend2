@@ -38,6 +38,7 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
   const chartInstance = useRef<Chart>();
   const [isListView, setIsListView] = useState(false);
   const totalNetworth = NumberComponent({numberString: total});
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1200);
   const [key, setKey] = useState(0); // Add key state
 
   const logos = [
@@ -116,6 +117,18 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
   );
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 1200);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext("2d");
       if (ctx) {
@@ -168,8 +181,11 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
           <Box minHeight={400} maxHeight={600} mt={3}>
             <Grid container spacing={3}>
               {labels.map((label, index) => (
-                <Grid item xs={6} key={index} style={{ color: 'white', fontSize: '2rem' }}>
-                  {label} : {`$${NumberComponent({ numberString: `${chainNetWorth[index]}` })}`}
+                <Grid item xs={6} key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                  <img src={logos[index]} alt={`Logo ${index}`} style={{ maxWidth: "20px", maxHeight: "20px", marginRight: "10px" }} />
+                  <div style={{ color: 'white', fontSize: '2rem' }}>
+                    {label} : {`$${NumberComponent({ numberString: `${chainNetWorth[index]}` })}`}
+                  </div>
                 </Grid>
               ))}
             </Grid>
@@ -180,13 +196,15 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
               ref={chartRef}
               style={{ maxWidth: "100%", maxHeight: "100%" }}
             />
-            <Grid container spacing={4} justifyContent={"right"}>
+            {!isSmallScreen && (
+              <Grid container spacing={4} className="balance-graph-icons">
               {logos.map((logo, index) => (
                 <Grid item key={index}>
                   <img src={logo} alt={`Logo ${index}`} style={{ maxWidth: "20px", maxHeight: "20px", marginRight: "50px" }} />
                 </Grid>
               ))}
             </Grid>
+            )}
           </Box>
         )}
       </BoxWrapper>
