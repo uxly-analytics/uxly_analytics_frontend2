@@ -115,7 +115,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
                                 label: `${chain.chain} Balance Distribution`,
                                 data: Object.values(chain.balanceRanges),
                                 backgroundColor: 'rgba(75, 192, 192, 1)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderColor: 'white',
                                 borderWidth: 1,
                             },
                         ],
@@ -164,7 +164,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
     }, [wallets]);
 
     return (
-      <Grid container spacing={2}>
+      <Grid container spacing={2} style={{marginLeft: "0px", marginTop: "10px"}}>
             {Array.from({ length: 4 }, (_, index) => (
               <Grid item xs={6} key={index}>
                 <BoxWrapper
