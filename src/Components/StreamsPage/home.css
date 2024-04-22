@@ -4,22 +4,86 @@
   align-items: center;
   justify-content: flex-start;
   padding: 32px 0px;
+  transition: padding-top 0.3s ease-in-out; /* Smooth transition for padding */
+}
+
+/* When search is active, increase the padding-top to push content down */
+.app-container.search-active {
+  padding-top: 0px; /* Adjust based on the size of your search component */
+  z-index: 1001;
+}
+
+.app-container, .header-section {
+  position: relative; /* This creates a new stacking context for child elements */
+}
+
+/* Initial position of the search area */
+.search-area {
+  transition: transform 0.5s ease-in-out; /* Smooth transition for moving up */
+}
+
+/* Position of the search area when search is active */
+.search-area.move-up {
+  transform: translateY(-115px); /* Moves the search area up by its own height */
+  position: relative; /* Or absolute if you need it to be positioned out of the normal flow */
+  z-index: 1002;
+}
+.search-area.move-up .search-component {
+  transform: translateY(-115px); /* Adjust the movement as necessary */
+  z-index: 2000; /* Increase this to be above the header */
+  position: relative; /* Adjust if necessary */
+}
+
+.transaction-title {
+  transition: opacity 0.3s ease-in-out; /* Smooth transition for text appearance */
+  opacity: 1; /* Fully visible by default */
 }
 
 .center-content {
   text-align: center;
-  margin-top: 100px;
+  margin-top: 50px; /* Adjust value as needed */
+  transition: margin-top 0.3s ease; 
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .search-form {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   width: 100%;
-  gap: 25px;
+  gap: 75px;
+  top: 0px;
+}
+
+.center-content .search-component {
+  transition: transform 0.3s ease-in-out;
+  /* Additional styling for the search bar */
+}
+
+/* When search is in the header, we translate it upwards */
+.header-section.search-in-header {
+  padding-top: 50px; /* For example purposes */
+}
+.search-in-header {
+  margin-top: 0; /* Reset margin to move it to the top */
+  z-index: 1001; /* Ensure a high z-index so it's clickable */
+  position: relative; /* Ensure it's positioned correctly */
+}
+
+/* Ensure .search-component has the initial style */
+.search-component {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Centers the element */
+  transition: top 0.3s ease; /* Smooth transition for the top property */
+  width: 100%; /* Set a specific width if needed */
+  max-width: 600px;
+  z-index: 2001; 
+}
+
+.header-section.search-in-header .search-component {
+  top: -100px !important;  /* This will move the search bar up */
 }
 
 .wallet-input {
@@ -58,6 +122,21 @@
   background-color: #e76772;
 }
 
+.search-default {
+  /* Default search bar styling */
+  margin-top: 100px; /* Or your desired spacing */
+  transition: margin-top 0.3s ease;
+}
+
+.search-header {
+  /* Styling to position the search bar in the header */
+  
+  top: 0px;
+  /* Other styling as necessary */
+  margin-right: auto;
+  margin-left: auto;
+} 
+
 .loaded-data {
   margin-left: 50px;
   width: 100%;
@@ -69,7 +148,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 50px;
+  padding: 0 100px;
+  z-index: 10;
 }
 
 .about-us {
@@ -82,11 +162,13 @@
 }
 
 .header-section {
+  position: relative; /* This is crucial */
+  transition: padding 0.3s; 
   width: 100%; /* Full width */
   display: flex;
   justify-content: space-between; /* Center content horizontally */
-  z-index: 1000; /* Ensures the header stays above other content */
-  height: 75px;
+  z-index: 5; /* Ensures the header stays above other content */
+  height: 75px; 
 }
 
 /* Login Button */
@@ -129,6 +211,7 @@
 
 /* Styles for logo itself */
 .logo {
+  transition: all 0.3s ease-in-out; /* Smooth transition for size change */
   width: 142px; /* Adjust to make the logo smaller */
   height: auto; /* Maintain aspect ratio */
 }
@@ -222,4 +305,5 @@
   margin-left: 130px;
   margin-top: -5px;
   font-size: 25px;
+  z-index: 10;
 }
