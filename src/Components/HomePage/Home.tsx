@@ -65,16 +65,16 @@ function Home() {
   return (
     <div className="app-container">
       <div className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}>
+
     <section className="header-section">
       <Header />
     </section>
     
     <div className="center-content" >
       <div className={`search-area ${isSearchInHeader ? 'move-up' : ''}`}>
-        <Typography variant="subtitle1" color="white" mb={-10}>
+      <Typography variant="subtitle1" color="white" mt={-5} mb={-5}>
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
         </Typography>
-
         <Search 
           className={isSearchInHeader ? "search-in-header" : "search-default"}
           onSearchSubmit={(searchValue) => handleSearchSubmit(searchValue, selectedChain)}
