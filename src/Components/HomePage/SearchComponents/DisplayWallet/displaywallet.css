@@ -52,6 +52,10 @@
   width: 80%;
 }
 
+.balance-graph-icons{
+  justify-content: right;
+}
+
 @media (max-width: 800px) {
   .text-container {
     display: flex;
@@ -72,6 +76,10 @@
     display: flex;
     align-items: center;
     font-size: x-small;
+  }
+
+  .balance-graph-icons{
+    display: none;
   }
 }
 

@@ -67,6 +67,13 @@ function ChainSelect({ value, onChange }: ChainSelectProps): JSX.Element {
       ...provided,
       background: "#28292A",
     }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      background: state.isSelected ? "#EB5763" : "none",
+      "&:hover": {
+        background: "#f57882",
+      },
+    }),
   };
 
   const selectedOption =
