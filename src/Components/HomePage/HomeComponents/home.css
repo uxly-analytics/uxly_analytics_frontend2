@@ -285,4 +285,11 @@ display: flex;
 
 }
 
+/* Wallet Address Selector */
+.wallet-label {
+  color: white;
+}
 
+.checkbox-root {
+  color: blue;
+}
