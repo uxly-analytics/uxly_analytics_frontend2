@@ -152,7 +152,7 @@
 
 .logout-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.5);
+  box-shadow: 0 0 0 2px #ff69b480;
 }
 /* styles for logo container */
 
@@ -285,4 +285,269 @@ display: flex;
 
 }
 
+/* Filtered Graph */
+.graph-container {
+   /* Match with the transaction table styles */
+   padding: 20px;
+   margin-top: 20px; /* Or as needed to match the table */
+   margin-left: 23px;
+   margin-right: 0px;
+   margin-bottom: 20px;
+   background-color: #2c2c2c;
+   border: 2px solid #f78a93b0; 
+   border-radius: 15px;
+   /* Make sure the container takes full width */
+   width: 98%;  /*1175px; */
+   display: flex;
+   justify-content: center;
+   flex-direction: column; /* Ensure stacking of children */
+   align-items: flex-start;
+   box-sizing: border-box;
+   min-height: 700px;
+   /* overflow: hidden; */
+}
 
+/* For dynamically increasing height */
+.graph-container > * {
+  margin-bottom: 10px; /* Adjust space between children */
+}
+
+.filters-container {
+  margin-bottom: 20px;
+  margin-right: 20px;
+  padding: 20px; /* Padding around filters */
+  background-color: #333; /* Dark background for the filter area */
+  display: flex; /* To lay out children in a row */
+  justify-content: flex-start; /* Space out children */
+  align-items: center; /* Align children vertically */
+  gap: 10px; /* Space between filter elements */
+  width: 100% !important; 
+  height: calc(100% - 100px);
+  border-radius: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-row {
+  width: 100%; /* Take up full width to avoid unnecessary wrapping */
+  margin-bottom: -10px; 
+}
+ 
+
+.filter-block {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* Align items in a row for each filter block */
+  gap: 10px; /* Space between filter dropdowns and delete icon */
+  width: 100%; /* Take the full width of the container */
+  margin-bottom: 0px; /* Space between each filter-block */
+}
+
+/* For the text input inside filters */
+.filter-block .MuiInputBase-input {
+  color: #EEEEEE; /* Off-white text */
+}
+
+/* For the label inside filters */
+.filter-block .MuiInputLabel-root {
+  color: #EEEEEE; /* Off-white text */
+  flex: 1;
+}
+
+.filters-container .MuiInputLabel-root {
+  color: white; /* Or any color you prefer */
+  
+}
+
+.filters-container .MuiOutlinedInput-notchedOutline {
+  border-color: white;
+}
+
+.filters-container .MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
+}
+
+.filters-container .MuiSelect-select {
+  padding-left: 8px; /* Adjust to your liking */
+  padding-right: 8px; /* Adjust to your liking */
+}
+
+.filter-set {
+  display: flex; /* Aligns children (filters) in a row */
+  justify-content: space-between; /* Puts equal space between children */
+  align-items: center; /* Vertically centers children */
+  padding: -10px; /* Add padding inside each filter set */
+  margin-bottom: -5px;
+  flex-direction: column; 
+}
+
+.filter-set .MuiFormControl-root {
+  flex: 1; /* Each filter dropdown will take equal space */
+  min-width: 120px; /* Or any minimum width that looks good */
+}
+
+/* Fix the width of selects if needed */
+.select-filter {
+  width: 100px; /* or whatever width is required */
+}
+
+.filter-input {
+  width: 150px;
+}
+
+.filter-input, .time-range-select {
+  flex-grow: 1; /* Allows input to grow */
+}
+
+.filter-button-container {
+  align-self: flex-end; /* Align the 'Add Filter' button to the end of the flex container */
+}
+
+.add-filter-btn {
+  margin-left: auto; /* Push the button towards the end of the filters-container */
+  padding: 8px 16px; /* Adjust padding to control the size of the button */
+}
+
+.time-range-select {
+  width: 20px;
+}
+
+.time-range-buttons {
+  display: 'flex';
+  justify-content: 'flex-end';
+}
+
+.graph-border {
+  border: 3px solid white;
+  border-radius: 15px;
+  /* Other styles for the border like padding or margins if necessary */
+}
+
+.custom-tooltip {
+  background: grey;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  margin-right: 20px; 
+  max-width: calc(100% - 40px); 
+}
+
+/* Styling for the chart element itself */
+.transactions-chart {
+  /* width: 100%;  You can set a max-width if necessary */
+  padding: 15px; /* For some spacing */
+  box-sizing: border-box; /* To include padding in width */
+  border: 2px solid rgba(245, 245, 245, 0.538); /* Your custom border color */
+  background-color: transparent; /* #333; transparent; For the background */
+  border-radius: 15px;
+  overflow: hidden; /* Ensures child elements don't overflow rounded corners */
+  margin-bottom: 0px;
+  margin-top: 10px;
+  width: 1175px; /* Example fixed width */
+  height: 400px;
+  flex: 1;
+}
+
+/* No Data Message Styles */
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Full height of the container */
+  color: white;
+  font-size: 1.2rem; /* Adjust as needed */
+}
+
+.MuiButton-contained {
+  background-color: #38181c !important;
+  color: #e76772 !important;
+}
+
+.MuiButton-outlined {
+  border-color: grey !important;
+  color: whitesmoke !important;
+}
+
+.timeselection-container {
+  width: 100% !important;
+  height: 80px!important;
+  margin-bottom: -5px;
+  padding: 0px;
+  align-items: right;
+}
+
+.chart-container {
+  height: auto; 
+}
+
+.canvas-class {
+  height: 100% !important; /* Ensuring it fills the parent height */
+  width: 100% !important;  /*Ensuring it fills the parent width */
+}
+
+/* Override MUI input text color */
+.MuiInputBase-input {
+  color: white; /* Set the color of input text */
+}
+
+/* Override MUI select component styles */
+.MuiOutlinedInput-notchedOutline {
+  border-color: pink; /* Set the border color for the non-focused state */
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: pink; /* Set the border color for the focused state */
+}
+
+.MuiSelect-select {
+  color: white; /* Set the color of select text */
+  padding: 0 10px; 
+}
+
+/* Styles for the text fields */
+.filter-input .MuiInputBase-input,
+.time-range-select .MuiSelect-select {
+  color: white !important; /* White text for inputs and selects */
+  font-size: 1rem; /* Larger text for visibility */
+  height: 12px;
+}
+
+/* Specific styles for the dropdown menu */
+.MuiPaper-root .MuiMenu-paper .MuiMenu-list {
+  background-color: #555 !important; /* Darker background for dropdown */
+}
+
+/* Styles for dropdown items */
+.MuiMenuItem-root {
+  font-size: 1rem; /* Larger text for dropdown items */
+}
+
+/* Override MUI Select focus color */
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #e76772 !important; /* Pink border for focus */
+}
+
+/* Override MUI Select hover styles */
+.MuiSelect-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #e76772 !important; /* Pink border on hover */
+}
+
+/* Style the dropdown filters */
+.filter-set .MuiFormControl-root {
+  background-color: transparent; /* Off-white background */
+  color: #eee; /* Off-white text */
+}
+
+/* Style the text inside the dropdown */
+.filter-set .MuiInputBase-input {
+  color: #eee; /* Off-white text */
+}
+
+/* Style the labels */
+.filter-set .MuiInputLabel-root {
+  color: #eee; /* Off-white text */
+}
+
+/* Apply off-white border to notched outline */
+.filter-set .MuiOutlinedInput-notchedOutline {
+  border-color: grey; /* Off-white border */
+}

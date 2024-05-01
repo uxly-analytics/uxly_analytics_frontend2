@@ -16,8 +16,6 @@ function getChainOptions(): Chain[] {
   return [
     { value: "0x1", label: "ETH" },
     { value: "0x5", label: "Goerli" },
-    { value: "0xaa36a7", label: "Sepolia" },
-    { value: "0x89", label: "Polygon" },
     { value: "0x13881", label: "Mumbai" },
     { value: "0x38", label: "BSC" },
     { value: "0x61", label: "BSC testnet" },
