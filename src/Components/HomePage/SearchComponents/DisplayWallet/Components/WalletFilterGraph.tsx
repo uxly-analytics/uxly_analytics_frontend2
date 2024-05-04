@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent , useEffect} from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 
 import { TextField, FormControl, InputLabel, Select, MenuItem, Stack , Button, IconButton, colors} from '@mui/material';
@@ -12,6 +12,7 @@ import { DatePicker } from '@mui/lab';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TextFieldProps } from '@mui/material/TextField';
+import { VerticalAlignCenter } from '@mui/icons-material';
 
 
 
@@ -39,8 +40,8 @@ type Transaction = {
     block_timestamp: number;
     date: string; 
     value: number;
-    from_address?: string;
-    to_address?: string;
+    from_address?: string | null;
+    to_address?: string | null;
   };
 
 const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
@@ -48,19 +49,55 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const [timeRange, setTimeRange] = useState<string>('1Y');
   const [chartType, setChartType] = useState<string>('Transactions');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilters, setActiveFilters] = useState<FilterType[]>([]);
-  const timeRanges = ['1Y', '6M', '90D', '30D', 'Select Date'];
+  const timeRanges = ['1Y', '6M', '90D', '30D', '1D', 'Select Date'];
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
+  const [processedData, setProcessedData] = useState<Transaction[]>([]);
+
+
   const chartTypes = ['Transactions', 'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
   const [containerHeight, setContainerHeight] = useState(600); // Initial height  
   const minHeight = 600; // Base height for no filters
   const heightPerFilter = 50; // Height added per filter
   const dynamicHeight = minHeight + (filters.length * heightPerFilter);
   const [timeScale, setTimeScale] = useState('daily');
+
+  // ****************************************************************************************************** // 
+  // ****************************************************************************************************** // 
+  // ***************************************        FILTERS        **************************************** // 
+  // 
+  // customToolTip is defined below and filter parameters can be added if seems fit 
+  //
+  // If filter values are changed below, addFilter() should be modified as well 
+  // 
+  // Use setProcessedData() for filtered data. processData is the data given to the line chart 
+  // Insert filter options here:
+  const [filterOptions, setFilterOptions] = useState({
+    filterType: ['Type 1', 'Type 2', 'Type 3'],
+    conditionType: ['Equals', 'Contains', 'Starts with'],
+    valueType: ['Value 1', 'Value 2', 'Value 3']
+  });
   
+  const [selectedFilters, setSelectedFilters] = useState({
+    filterType: '',
+    conditionType: '',
+    valueType: ''
+  });
+
+  // Add filter logic here: 
+
+  
+  
+  // ****************************************************************************************************** // 
+  // ****************************************************************************************************** // 
   
   console.log(moment(1651017600000).format('MMM DD')); // should log something like "Apr 26" for the timestamp corresponding to April 26, 2022
 
+
+  useEffect(() => {
+    const newHeight = minHeight + (filters.length * heightPerFilter);
+    setContainerHeight(newHeight);
+  }, [filters.length]);
+  
 
   // Function to handle search input changes
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -98,8 +135,9 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
       case '30D':
         startTime = moment().subtract(30, 'days').valueOf();
         break;
-      case 'Daily':
+      case '1D': // Daily
         // already set to start of today
+        startTime = moment().subtract(1, 'days').valueOf();
         break;
       case 'Select Date':
         if (selectedDate) {
@@ -114,24 +152,42 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     return { startTime, endTime };
   };
 
+  // Data Filtered by Time
   const { startTime, endTime } = calculateTimeRange();
   const filteredData = data.filter(d => d.rawDate >= startTime && d.rawDate <= endTime);
 
-  const handleTimeScaleChange = (event: SelectChangeEvent) => {
-    setTimeScale(event.target.value as string);
-    // You'll need to adjust the chart data according to the selected time scale
-  };
-
   const getFilteredDataByTimeScale = (data, timeScale) => {
-  // Define the logic to filter or aggregate data based on the timeScale
-  // This could involve grouping the data by week, day, hour, or minute
-  // For example:
-  if (timeScale === 'hourly') {
-    // Aggregate the data by hour
-  }
-  // Return the processed data
-  return data;
-  };
+    const groupedData = {};
+
+    data.forEach(d => {
+        let key;
+        switch (timeScale) {
+            case 'daily':
+                key = moment(d.date).format('MMM DD');
+                break;
+            case 'weekly':
+                key = `Week ${moment(d.date).isoWeek()} of ${moment(d.date).year()}`;
+                break;
+            case 'monthly':
+                key = moment(d.date).format('MMM YYYY');
+                break;
+            case 'hourly':
+                key = moment(d.date).format('MMM DD HH:00');
+                break;
+            default:
+                key = moment(d.date).format('MMM DD');
+                break;
+        }
+
+        if (!groupedData[key]) {
+            groupedData[key] = { ...d, value: 0 };
+        }
+        groupedData[key].value += d.value;
+    });
+
+    return Object.values(groupedData);
+};
+
 
   
   const formatYAxis = (tick: number) => {
@@ -149,15 +205,18 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 
 // Function to apply search and other filters to the data
 const applyFilters = (data: Transaction[]) => {
-    let filteredData = data;
-    // Filter by searchQuery, and others if necessary
-    if (searchQuery) {
-      filteredData = filteredData.filter(
-        t => t.from_address?.includes(searchQuery) || t.to_address?.includes(searchQuery)
-      );
-    }
-    console.log('Filtered Data:', filteredData);
-    return filteredData;
+  if (!searchQuery) return data; // Return original data if no search query
+    return data.filter(t => t.from_address?.includes(searchQuery) || t.to_address?.includes(searchQuery));
+
+    // let filteredData = data;
+    // // Filter by searchQuery, and others if necessary
+    // if (searchQuery) {
+    //   filteredData = filteredData.filter(
+    //     t => t.from_address?.includes(searchQuery) || t.to_address?.includes(searchQuery)
+    //   );
+    // }
+    // console.log('Filtered Data:', filteredData);
+    // return filteredData;
   };
 
   const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -179,19 +238,101 @@ const applyFilters = (data: Transaction[]) => {
   const filteredDataWithRequiredProps = filteredData.map((d): Transaction => ({
     block_timestamp: d.rawDate,
     date: d.formattedDate, 
+    //rawDate: d.rawDate,
+    //formattedDate: moment(d.rawDate).isValid() ? moment(d.rawDate).format('MMM DD') : 'Invalid date',
     value: d.value,
     // Add default or actual values for fromAddress and toAddress if needed
     from_address: d.from_address ?? 'N/A', // Use nullish coalescing to provide a default
     to_address: d.to_address ?? 'N/A',
   }));
 
-  const processedData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, timeScale);
+  const calculateStartTime = () => {
+    switch (timeRange) {
+      case '1Y': return moment().subtract(1, 'years').startOf('day').valueOf();
+      case '6M': return moment().subtract(6, 'months').startOf('day').valueOf();
+      case '90D': return moment().subtract(90, 'days').startOf('day').valueOf();
+      case '30D': return moment().subtract(30, 'days').startOf('day').valueOf();
+      case '1D': return moment().subtract(1, 'days').startOf('day').valueOf();
+      case 'Select Date':
+        return selectedDate ? moment(selectedDate).startOf('day').valueOf() : moment().startOf('day').valueOf();
+      default: return moment().subtract(1, 'years').startOf('day').valueOf();
+    }
+  };
+
+  // Filter Data by 
+  // let processedData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, timeScale);
+  // Filtered data for rendering in the LineChart
+  const displayedData = applyFilters(filteredDataWithRequiredProps);
+
+  useEffect(() => {
+    const startTime = calculateStartTime();
+    const endTime = moment().endOf('day').valueOf();
+
+    const transactions = walletData.transactions.map(t => ({
+      block_timestamp: t.block_timestamp,
+      date: moment(t.block_timestamp).format('YYYY-MM-DD'),  // Standardizing date format
+      value: t.decimal_value,
+      from_address: t.from_address ?? 'N/A',
+      to_address: t.to_address ?? 'N/A',
+    }));
+
+    const timeFilteredData = transactions.filter(t => {
+      const date = moment(t.block_timestamp).valueOf();
+      return date >= startTime && date <= endTime;
+    });
+
+    const searchFilteredData = searchQuery ? timeFilteredData.filter(t => 
+      t.from_address.includes(searchQuery) || t.to_address.includes(searchQuery)
+    ) : timeFilteredData;
+
+    setProcessedData(searchFilteredData);
+  }, [walletData, timeRange, selectedDate, searchQuery]);
+
+  const handleTimeScaleChange = (event: SelectChangeEvent) => {
+    setTimeScale(event.target.value as string);
+    const newData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, event.target.value);
+    // setProcessedData(newData);
+  };
+
+  const commonSelectStyles = {
+    color: 'white',
+    borderColor: 'grey',
+    '& .MuiListItem-button:hover': {
+      backgroundColor: 'darkgrey',
+    },
+    '.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'pink',
+    },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#cacaca9f' },
+    '&:Mui-hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'pink',
+    },
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          bgcolor: '#333',
+          color: 'white',
+          borderColor: 'grey',
+          '& .MuiMenuItem-root': {
+            '&:hover': {
+              bgcolor: '#e76772',
+            },
+            '&.Mui-selected': {
+              bgcolor: '#e76772',
+            },
+          },
+        },
+      },
+    }
+  };
+  
+
 
   // Function to handle adding a new filter
   const addFilter = () => {
     setFilters(filters => [
         ...filters,
-        { id: `filter-${filters.length}`, filterType: '', conditionType: '', valueType: '' }, // Initialize with empty strings or appropriate defaults
+        { id: `filter-${filters.length}`, filterType: 'Type 1', conditionType: 'Equals', valueType: 'Value 1' }, // Initialize with empty strings or appropriate defaults
       ]);
     setContainerHeight(currentHeight => currentHeight + 50); // Adjust height increment as needed
   };
@@ -216,53 +357,64 @@ const applyFilters = (data: Transaction[]) => {
     };
     setFilters(newFilters);
   };
+
+  const handleFilterChange = (index, key, value) => {
+    const updatedFilters = filters.map((filter, i) => 
+      i === index ? { ...filter, [key]: value } : filter
+    );
+    setFilters(updatedFilters);
+  };
   
   // Function to render each filter UI
-  const renderFilter = (filter: FilterType, index: number) => {
-    return (
-      <div key={filter.id} className="filter-set">
-        <div className="filter-block">
+  const renderFilter = (filter, index) => (
+    <div key={filter.id} className="filter-set">
+      <div className="filter-block">
         <FormControl variant="outlined" margin="dense" fullWidth>
-        <InputLabel>Filter Type</InputLabel>
-        <Select
-          value={filter.filterType || ''}
-          onChange={e => handleFilterTypeChange(e, index, 'filterType')}
-          label="Filter Type"
-        >
-          {/* Options for filter type */}
-        </Select>
-      </FormControl>
-      <FormControl variant="outlined" margin="dense" fullWidth>
-        <InputLabel>Condition Type</InputLabel>
-        <Select
-          value={filter.conditionType || ''}
-          onChange={(e) => handleFilterTypeChange(e, index, 'conditionType')}
-          label="Condition Type"
-        >
-          {/* Options for condition type */}
-        </Select>
-      </FormControl>
-      <FormControl variant="outlined" margin="dense" fullWidth>
-        <InputLabel>Value Type</InputLabel>
-        <Select
-          value={filter.valueType|| ''}
-          onChange={(e) => handleFilterTypeChange(e, index, 'valueType')}
-          label="Value Type"
-        >
-          {/* Options for value type */}
-        </Select>
-      </FormControl>
-
-        {/* Include other dropdowns for filter criteria */}
-        {/* ... */}
-        
+          <InputLabel>Filter Type</InputLabel>
+          <Select
+            value={filter.filterType}
+            onChange={(e) => handleFilterChange(index, 'filterType', e.target.value)}
+            label="Filter Type"
+            sx={commonSelectStyles}
+          >
+            {filterOptions.filterType.map(option => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl variant="outlined" margin="dense" fullWidth>
+          <InputLabel>Condition Type</InputLabel>
+          <Select
+            value={filter.conditionType}
+            onChange={(e) => handleFilterChange(index, 'conditionType', e.target.value)}
+            label="Condition Type"
+            sx={commonSelectStyles}
+          >
+            {filterOptions.conditionType.map(option => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl variant="outlined" margin="dense" fullWidth>
+          <InputLabel>Value Type</InputLabel>
+          <Select
+            value={filter.valueType}
+            onChange={(e) => handleFilterChange(index, 'valueType', e.target.value)}
+            label="Value Type"
+            sx={commonSelectStyles}
+          >
+            {filterOptions.valueType.map(option => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <IconButton style={{ marginRight: '8px', color: 'whitesmoke'}} onClick={() => removeFilter(filter.id)}>
           <DeleteIcon />
         </IconButton>
       </div>
-      </div>
-    );
-  };
+    </div>
+  );
+  
 
   const renderDatePicker = () => {
     return (
@@ -300,6 +452,8 @@ const applyFilters = (data: Transaction[]) => {
   const handleTimeRangeChange = (event: SelectChangeEvent<string>) => {
     setTimeRange(event.target.value as string);
   };
+
+  // Choose what data from wallet is displayed on graph 
   const handleChartChange = (event: SelectChangeEvent<string>) => {
     setChartType(event.target.value as string);
   };
@@ -365,13 +519,12 @@ const applyFilters = (data: Transaction[]) => {
           className="filter-input"
           style={{ width: 'auto', maxWidth: '200px', flexGrow: 1 }} 
           InputLabelProps={{
-            style: { color: 'grey', fontSize: '1rem' , height: '20px'}, // Set the color and size of the label
+            style: { color: 'grey', fontSize: '1rem' , height: '30px'}, // Set the color and size of the label
           }}
           sx={{
             '& label': {
             color: 'white', // Color of the label
-            fontSize: '1em', // Size of the label
-            
+            fontSize: '1em', // Size of the label\
           },
             input: { color: 'white' },
             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#f78a93b0' },
@@ -473,7 +626,8 @@ const applyFilters = (data: Transaction[]) => {
     value={timeScale}
     onChange={handleTimeScaleChange}
     label="Time Scale"
-    style={{ color: 'white' , height: '41px'}}
+    
+    style={{ color: 'white' , height: '41px', borderColor: 'grey'}}
     sx={{
         height: '45px',
         color: 'white',
@@ -485,7 +639,11 @@ const applyFilters = (data: Transaction[]) => {
         '.Mui-focused .MuiOutlinedInput-notchedOutline': {
           borderColor: 'pink', // Border color when the select is focused
         },
+        '& .MuiOutlinedInput-notchedOutline': { borderColor: '#cacaca9f' },
         // ... other styles
+        '&:Mui-hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: 'pink',
+        },
       }}
       MenuProps={{
         PaperProps: {
@@ -574,7 +732,7 @@ const applyFilters = (data: Transaction[]) => {
   </div>
       <ResponsiveContainer width="100%" height={400} >
       {filteredDataWithRequiredProps.length > 0 ? (
-        <LineChart data={getFilteredDataByTimeScale(processedData, timeScale)} margin={{ top: 5, right: 35, left: 15, bottom: 25 }}>
+        <LineChart data={processedData} margin={{ top: 5, right: 15, left: 15, bottom: 25 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
           <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} />
@@ -583,6 +741,7 @@ const applyFilters = (data: Transaction[]) => {
         </LineChart>
         ) : (
             <div className="no-data-message">No data to display</div>
+            
           )}
       </ResponsiveContainer>
       </Stack>
