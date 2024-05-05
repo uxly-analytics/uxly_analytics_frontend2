@@ -3,6 +3,7 @@ import DisplayMultipleBalance from "./MultipleWalletComponents/DisplayMultipleBa
 import MultipleTransactionDetailsTable from "./MultipleWalletComponents/MultipleTransactionDetailsTable";
 import BalanceDistribution from "./MultipleWalletComponents/BalanceDistribution";
 import BoxWrapper from "../../HomeComponents/BoxWrapper/BoxWrapper";
+import MultipleWalletFilterGraph from "./MultipleWalletComponents/TransactionGraph/TransacationGraph";
 
 interface WalletData {
   address: string;
@@ -28,6 +29,10 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
         <DisplayMultipleBalance wallets={wallets} />
         <BalanceDistribution wallets={wallets}/>
         <MultipleTransactionDetailsTable wallets={wallets} />
+        <MultipleWalletFilterGraph
+          wallets={wallets}
+          //address={walletData.address}
+        />
       </>
     );
   };
