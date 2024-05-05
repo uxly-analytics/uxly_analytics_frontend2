@@ -23,6 +23,7 @@ interface GraphProps {
         decimal_value: number;
         from_address?: string;
         to_address?: string;
+        gas_price?: string;
       }>;
   };
   address: string;
@@ -52,6 +53,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const timeRanges = ['1Y', '6M', '90D', '30D', '1D', 'Select Date'];
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
   const [processedData, setProcessedData] = useState<Transaction[]>([]);
+  const [data, setData] = useState([]);
 
 
   const chartTypes = ['Transactions', 'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
@@ -104,14 +106,17 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     setSearchQuery(event.target.value);
   };
 
-  // Convert your data to the format required by Recharts
-  const data = walletData.transactions.map(t => ({
-    rawDate: moment(t.block_timestamp).valueOf(), // Keep the raw timestamp for comparison
-    formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
-    value: t.decimal_value,
-    from_address: t.from_address ?? 'N/A',
-    to_address: t.to_address ?? 'N/A',
-  }));
+  useEffect(() => {
+    // Convert your data to the format required by Recharts based on the selected chart type
+    const transformedData = walletData.transactions.map(t => ({
+        rawDate: moment(t.block_timestamp).valueOf(),
+        formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
+        value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value, // Directly handle the logic here
+        from_address: t.from_address ?? 'N/A',
+        to_address: t.to_address ?? 'N/A',
+    }));
+    setData(transformedData);
+  }, [walletData.transactions, chartType]);
 
   const handleDateChange = (date: Moment | null) => {
     setSelectedDate(date);
@@ -271,7 +276,7 @@ const applyFilters = (data: Transaction[]) => {
     const transactions = walletData.transactions.map(t => ({
       block_timestamp: t.block_timestamp,
       date: moment(t.block_timestamp).format('YYYY-MM-DD'),  // Standardizing date format
-      value: t.decimal_value,
+      value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value,
       from_address: t.from_address ?? 'N/A',
       to_address: t.to_address ?? 'N/A',
     }));
@@ -286,7 +291,7 @@ const applyFilters = (data: Transaction[]) => {
     ) : timeFilteredData;
 
     setProcessedData(searchFilteredData);
-  }, [walletData, timeRange, selectedDate, searchQuery]);
+  }, [walletData, timeRange, selectedDate, searchQuery, chartType]);
 
   const handleTimeScaleChange = (event: SelectChangeEvent) => {
     setTimeScale(event.target.value as string);
