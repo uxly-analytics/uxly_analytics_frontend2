@@ -734,13 +734,13 @@ const applyFilters = (data: Transaction[]) => {
       {filteredDataWithRequiredProps.length > 0 ? (
         <LineChart data={processedData} margin={{ top: 5, right: 15, left: 15, bottom: 25 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} />
+          <XAxis dataKey="date" color='white' tick={{ fill: 'white' }}/>
+          <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} tick={{ fill: 'white' }}/>
           <Tooltip content={<CustomTooltip />} />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
+          <Line type="monotone" dataKey="value" stroke="red"/>
         </LineChart>
         ) : (
-            <div className="no-data-message">No data to display</div>
+            <div className="no-data-message">No Data To Display</div>
             
           )}
       </ResponsiveContainer>
