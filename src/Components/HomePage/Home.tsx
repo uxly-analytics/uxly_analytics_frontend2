@@ -11,6 +11,7 @@ import { Grid, Typography } from "@mui/material";
 import WalletInfo from "./SearchComponents/DisplayWallet/Components/WalletInfo";
 import WalletAge from "./SearchComponents/DisplayWallet/Components/WalletAge";
 import AudienceGrowth from "./SearchComponents/DisplayWallet/Components/AudienceGrowth";
+import { da } from "date-fns/locale";
 
 interface Chain {
   value: string;
@@ -38,23 +39,23 @@ function Home() {
     setSelectedChain(newChain);
   };
 
-  const handleSearchSubmit = async (searchValue: string, chain: Chain) => {
+  const handleSearchSubmit = async (addresses: string[], chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
     setSearchSubmitted(true); // Set the search as submitted\
     setIsSearchInHeader(true);
-    console.log("Address ", searchValue);
+    console.log("Address ", addresses);
     console.log("Chain: ", chain.label, chain.value);
 
     // Split the searchValue by commas and trim whitespace from each address
-  const uniqueAddresses = searchValue.split(',').map(addr => addr.trim());
-    setSearchInput({ address: uniqueAddresses, chain });
+   // const uniqueAddresses = Array.from(new Set(addresses));
+    setSearchInput({ address: addresses, chain });
     try {
-      if (uniqueAddresses.length === 1) {
-        setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
+      if (addresses.length === 1) {
+        const data = await Service.getWalletData(addresses[0], chain.value);
+        setData(data);
       } else {
-        setData(
-          await Service.getMultipleWalletData(uniqueAddresses, chain.value)
-        );
+        const data = Service.getMultipleWalletData(addresses, chain.value);
+        setData(data);
       }
     } catch (error) {
       console.error("Error Fetching Data: ", error);
@@ -77,7 +78,7 @@ function Home() {
         </Typography>
         <Search 
           className={isSearchInHeader ? "search-in-header" : "search-default"}
-          onSearchSubmit={(searchValue) => handleSearchSubmit(searchValue, selectedChain)}
+          onSubmit={handleSearchSubmit}
           onChainSelected={setSelectedChain}        
         />
         <Typography variant="h4" color="white" paddingTop={2} mb={-20}>Get Web3 Wallet Data

@@ -1,19 +1,19 @@
 import React, { useState, ChangeEvent , useEffect} from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 
-import { TextField, FormControl, InputLabel, Select, MenuItem, Stack , Button, IconButton, colors} from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Stack , Button, IconButton, colors, ThemeProvider, createTheme } from '@mui/material';
 import '../../../HomeComponents/home.css'; // assuming you have a home.css where you will put the CSS
 import { SelectChangeEvent } from '@mui/material';
 import moment, { Moment }  from 'moment';
 import 'chartjs-adapter-moment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-import { DatePicker } from '@mui/lab'; 
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateRangePicker } from '@mui/x-date-pickers-pro';
+import { DatePicker, LocalizationProvider, PickersDay  } from '@mui/x-date-pickers'; //'@mui/lab'; 
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextFieldProps } from '@mui/material/TextField';
-import { VerticalAlignCenter } from '@mui/icons-material';
-
+import { Height, VerticalAlignCenter } from '@mui/icons-material';
+import { StreamChartRechartLine } from '@/Components/StreamsPage/StreamChartRechart';
 
 
 interface GraphProps {
@@ -37,7 +37,7 @@ interface FilterType {
   }
 
 type Transaction = {
-    block_timestamp: number;
+    block_timestamp?: number;
     date: string; 
     value: number;
     from_address?: string | null;
@@ -46,20 +46,26 @@ type Transaction = {
 
 const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const [filters, setFilters] = useState<FilterType[]>([]);
-  const [timeRange, setTimeRange] = useState<string>('1Y');
   const [chartType, setChartType] = useState<string>('Transactions');
   const [searchQuery, setSearchQuery] = useState('');
-  const timeRanges = ['1Y', '6M', '90D', '30D', '1D', 'Select Date'];
-  const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
   const [processedData, setProcessedData] = useState<Transaction[]>([]);
-
+  const [showGrid, setShowGrid] = useState(true);
 
   const chartTypes = ['Transactions', 'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
   const [containerHeight, setContainerHeight] = useState(600); // Initial height  
   const minHeight = 600; // Base height for no filters
   const heightPerFilter = 50; // Height added per filter
   const dynamicHeight = minHeight + (filters.length * heightPerFilter);
-  const [timeScale, setTimeScale] = useState('daily');
+
+  const [timeRange, setTimeRange] = useState<string>('1Y');
+  const timeRanges = ['1Y', '6M', '90D', '30D', '1D', 'Select Date'];
+  const [selectedDate, setSelectedDate] = useState(new Date()); //useState<Date | null>(null); //useState<Moment | null>(null);
+  const [timeScale, setTimeScale] = useState('1D');
+  const [dateRange, setDateRange] = useState<[Date, Date]>([new Date(), new Date()]);
+
+  const [startDate, setStartDate] = useState(new Date());
+  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [endDate, setEndDate] = useState(new Date());
 
   // ****************************************************************************************************** // 
   // ****************************************************************************************************** // 
@@ -85,7 +91,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 
   // Add filter logic here: 
 
-  
+
   
   // ****************************************************************************************************** // 
   // ****************************************************************************************************** // 
@@ -113,31 +119,30 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     to_address: t.to_address ?? 'N/A',
   }));
 
-  const handleDateChange = (date: Moment | null) => {
-    setSelectedDate(date);
-    // Process the selected date and update your chart data accordingly
+  const handleDateChange = (newDate: Date | null) => {
+    if (newDate) setSelectedDate(newDate);
   };
 
-  const calculateTimeRange = () => {
-    let endTime = moment().endOf('day').valueOf(); // End of today
-    let startTime = moment().startOf('day').valueOf(); // Start of today for daily data
+  useEffect(() => {
+    const now = moment();
+    let startTime, endTime;
   
     switch (timeRange) {
       case '1Y':
-        startTime = moment().subtract(1, 'years').valueOf();
+        startTime = now.subtract(1, 'years').startOf('day').valueOf();
         break;
       case '6M':
-        startTime = moment().subtract(6, 'months').valueOf();
+        startTime = now.subtract(6, 'months').startOf('day').valueOf();
         break;
       case '90D':
-        startTime = moment().subtract(90, 'days').valueOf();
+        startTime = now.subtract(90, 'days').startOf('day').valueOf();
         break;
       case '30D':
-        startTime = moment().subtract(30, 'days').valueOf();
+        startTime = now.subtract(30, 'days').startOf('day').valueOf();
         break;
-      case '1D': // Daily
-        // already set to start of today
-        startTime = moment().subtract(1, 'days').valueOf();
+      case '1D':
+        startTime = now.subtract(1, 'days').startOf('day').valueOf();
+        endTime = now.endOf('day').valueOf();
         break;
       case 'Select Date':
         if (selectedDate) {
@@ -146,9 +151,65 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
         }
         break;
       default:
-        // Default to 1 year if nothing else is specified
-        startTime = moment().subtract(1, 'years').valueOf();
+        startTime = now.subtract(1, 'years').startOf('day').valueOf();
+        endTime = now.endOf('day').valueOf();
     }
+  
+    console.log(`Filtering from ${moment(startTime).format('YYYY-MM-DD')} to ${moment(endTime).format('YYYY-MM-DD')}`);
+  
+    const filteredTransactions = walletData.transactions.filter(t => {
+      return t.block_timestamp >= startTime && t.block_timestamp <= endTime;
+    });
+  
+    console.log(`Filtered ${filteredTransactions.length} transactions`);
+  
+    const processedData = filteredTransactions.map(t => ({
+      ...t,
+      date: moment(t.block_timestamp).format('MMM DD'),
+      value: t.decimal_value,
+    }));
+  
+    setProcessedData(processedData);
+  }, [walletData, timeRange, selectedDate]);  // Update when these dependencies change
+
+  
+  
+
+  const calculateTimeRange = () => {
+    const now = moment();  // Using moment() to handle current time
+  let startTime = now.startOf('day').valueOf();  // Default to start of today (for daily view)
+  let endTime = now.endOf('day').valueOf();  // End of today
+  
+    switch (timeRange) {
+      case '1Y':
+      startTime = now.subtract(1, 'year').startOf('day').valueOf();
+      break;
+    case '6M':
+      startTime = now.subtract(6, 'months').startOf('day').valueOf();
+      break;
+    case '90D':
+      startTime = now.subtract(90, 'days').startOf('day').valueOf();
+      break;
+    case '30D':
+      startTime = now.subtract(30, 'days').startOf('day').valueOf();
+      break;
+    case '1D':
+      // Already set to today's start and end
+      break;
+      //  startTime = moment().subtract(1, 'days').valueOf();
+       // break;
+      case 'Select Date':
+        if (selectedDate) {
+          startTime = moment(selectedDate).startOf('day').valueOf();
+          endTime = moment(selectedDate).endOf('day').valueOf();
+        }
+        break;
+      default:
+        // Default to 1 year if nothing else is specified
+        break; //startTime = moment().subtract(1, 'years').valueOf();
+    }
+    console.log(`Time Range: ${timeRange}, Start: ${startTime}, End: ${endTime}`);
+  
     return { startTime, endTime };
   };
 
@@ -202,6 +263,11 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 };
 
   <YAxis width={80} tickFormatter={formatYAxis} />
+
+// Adjust XAxis tick formatting based on the selected time scale
+const formatXAxis = (date) => {
+  return formatDate(date, timeScale);
+};
 
 // Function to apply search and other filters to the data
 const applyFilters = (data: Transaction[]) => {
@@ -288,9 +354,21 @@ const applyFilters = (data: Transaction[]) => {
     setProcessedData(searchFilteredData);
   }, [walletData, timeRange, selectedDate, searchQuery]);
 
-  const handleTimeScaleChange = (event: SelectChangeEvent) => {
+
+/***********TESTING***********/
+  useEffect(() => {
+    console.log("Processed Data updated:", processedData);
+  }, [processedData]);
+  
+  
+
+  const handleDateRangeChange = (newRange: [Date, Date] | null) => {
+    setDateRange(newRange);
+  };
+
+  const handleTimeScaleChange = ( event: SelectChangeEvent<string> ) => {
     setTimeScale(event.target.value as string);
-    const newData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, event.target.value);
+   // const newData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, event.target.value);
     // setProcessedData(newData);
   };
 
@@ -369,7 +447,7 @@ const applyFilters = (data: Transaction[]) => {
   const renderFilter = (filter, index) => (
     <div key={filter.id} className="filter-set">
       <div className="filter-block">
-        <FormControl variant="outlined" margin="dense" fullWidth>
+        <FormControl variant="outlined" margin="dense" fullWidth >
           <InputLabel>Filter Type</InputLabel>
           <Select
             value={filter.filterType}
@@ -415,42 +493,217 @@ const applyFilters = (data: Transaction[]) => {
     </div>
   );
   
-
-  const renderDatePicker = () => {
-    return (
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <DatePicker
-          label="Select Date"
-          value={selectedDate}
-          onChange={handleDateChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              sx={{
-                svg: { color: 'white' },
-                input: { color: 'white' },
-                label: { color: 'white' },
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'white'
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'white'
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'white'
-                },
-              }}
-            />
-          )}
-        />
-      </LocalizationProvider>
-    );
+  const customDatePickerStyles = {
+    "& .MuiInputBase-root": {
+      color: "white", // Changes the text color
+      height: "25px", // Specific height for the input field
+      width: "auto",   // Adjust width to fit content
+    "& input": {
+      color: "white",  // Ensures text color is consistently white
+    }
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#ffffff68", // Border color
+    },
+    "& .MuiSvgIcon-root": {
+      color: "white", // Icon color
+    },
+    "& .MuiInputLabel-root": {
+      color: "white", // Label color
+      marginTop: "-15px",
+      transform: 'translate(16px, -10px) scale(1)', // Adjust label positioning if necessary
+    "&.Mui-focused": {
+      color: "pink", // Change label color when focused
+      width: "40px",
+    }
+    },
+    width: "62.5%",
+    marginRight: "-5px",
+    marginLeft:"0px",
+    
+    
+    "& .MuiInputLabel-root.Mui-focused": { color: "#979797" }, //styles the label
+    "& .MuiOutlinedInput-root": {
+    "&:hover > fieldset": { borderColor: "#C7C8CD" },
+                     height: "34px",
+                     borderRadius: "6px",
+                     color: "white",
+                     borderColor: "grey",
+                     marginTop: "-15px",
+                    },
   };
 
+  // Create a theme instance to customize the DatePicker
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#ff69b4', // Example of setting a custom primary color
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            color: 'white', // Ensures text color is white
+          },
+        },
+      },
+      // Customizing the TextField used within DatePicker
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& label.Mui-focused': {
+              color: 'pink',
+            },
+            '& .MuiInput-underline:after': {
+              borderBottomColor: 'pink',
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'white',
+              },
+              '&:hover fieldset': {
+                borderColor: 'white',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'pink',
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Handle changes for two separate DatePickers simulating a DateRangePicker
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const renderDatePicker = () => {
+      return (
+        <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <div className="date-range-picker-container">
+          {timeRange === '1D' ? (
+            <DatePicker
+              label="Select Date"
+              className="my-datepicker"
+              value={selectedDate}
+              onChange={setSelectedDate /*handleDateChange*/}
+              sx={customDatePickerStyles}
+            />
+          ) : (
+          <DateRangePicker
+            className="date-range-picker"
+            value={dateRange}
+            onChange={handleDateRangeChange}
+            sx={customDatePickerStyles}
+            
+          />
+
+          )}
+          </div>
+      </LocalizationProvider>
+    </ThemeProvider>
+      );
+  }
 
 
-  const handleTimeRangeChange = (event: SelectChangeEvent<string>) => {
-    setTimeRange(event.target.value as string);
+// Helper function to format date based on the selected time scale
+const formatDate = (timestamp, scale) => {
+  switch (scale) {
+    case 'weekly':
+      return `Week ${moment(timestamp).isoWeek()} of ${moment(timestamp).year()}`;
+    case 'monthly':
+      return moment(timestamp).format('MMM YYYY');
+    case 'daily':
+      return moment(timestamp).format('MMM DD');
+    case 'hourly':
+      return moment(timestamp).format('HH:mm');
+    case 'minute':
+      return moment(timestamp).format('HH:mm');
+    default:
+      return moment(timestamp).format('MMM DD');
+  }
+};
+
+const updateTimeScale = (range) => {
+  switch(range) {
+    case '1Y':
+    case '6M':
+    case '90D':
+    case '30D':
+      setTimeScale('daily');  // Example: Use 'daily' for these ranges
+      break;
+    case '1D':
+      setTimeScale('hourly');  // Example: Use 'hourly' for daily data
+      break;
+    default:
+      setTimeScale('daily');  // Default fallback
+  }
+}
+
+useEffect(() => {
+  updateTimeScale(timeRange);
+}, [timeRange]);
+
+const updateDataBasedOnTimeRange = (range) => {
+  let start, end;
+
+  switch (range) {
+    case '1D':
+      start = moment().subtract(1, 'days').startOf('day').valueOf();
+      end = moment().subtract(1, 'days').endOf('day').valueOf();
+      break;
+    case '30D':
+      start = moment().subtract(30, 'days').startOf('day').valueOf();
+      break;
+    case '90D':
+      start = moment().subtract(90, 'days').startOf('day').valueOf();
+      break;
+    case '6M':
+      start = moment().subtract(6, 'months').startOf('month').valueOf();
+      break;
+    case '1Y':
+      start = moment().subtract(1, 'year').startOf('year').valueOf();
+      break;
+    case 'Select Date':
+      start = selectedDate ? moment(selectedDate).startOf('day').valueOf() : moment().startOf('day').valueOf();
+      end = selectedDate ? moment(selectedDate).endOf('day').valueOf() : moment().endOf('day').valueOf();
+      break;
+    default:
+      start = moment().subtract(1, 'years').startOf('day').valueOf();
+  }
+
+  end = end || moment().valueOf(); // Ensure there's an end date
+
+  const filteredData = walletData.transactions.filter(t => {
+    const txDate = moment(t.block_timestamp).valueOf();
+    return txDate >= start && txDate <= end;
+  }).map(t => ({
+    ...t,
+    date: moment(t.block_timestamp).format('YYYY-MM-DD'),
+    value: t.decimal_value
+  }));
+
+  setProcessedData(filteredData);
+  console.log("Updated Data for range:", range, filteredData);
+};
+
+
+
+  const handleTimeRangeChange = (newRange: string) => {
+    setTimeRange(newRange);
+    const newScale = newRange === '1D' ? 'hourly' : 'daily';
+    setTimeScale(newScale);
+    updateDataBasedOnTimeRange(newRange); // Function to update data based on the selected time range
+    // updateTimeScale(newRange);  // Update time scale based on the new range
+  // Trigger data update here if necessary
   };
 
   // Choose what data from wallet is displayed on graph 
@@ -458,16 +711,29 @@ const applyFilters = (data: Transaction[]) => {
     setChartType(event.target.value as string);
   };
 
+  /************** Testing **************** */
+  useEffect(() => {
+    console.log("Processed Data:", processedData); // Log to see what data is finally being used in the graph.
+  }, [processedData]);
+
+  // After filtering
+console.log("Filtered Data:", filteredDataWithRequiredProps);
+console.log("Displayed Data:", displayedData);
+
+
+
   return (
     <div className="graph-container" style={{ minHeight: `${dynamicHeight}px` }}>
       <Stack spacing={2} direction="column">
       <div className="filters-container">
-
+        {/* Container for Transactions and Search */}
+    <div className="transactions-search-container">
+        <Stack> 
           <Select
             label="Select Chart Type"
             value={chartType}
             onChange={handleChartChange}
-            style={{ width: 'auto', flexGrow: .1, marginLeft: '-10px', marginTop: '1px'}} 
+            style={{ width: 'auto', flexGrow: .1, marginLeft: '-10px', marginTop: '-10px'}} 
             sx={{
                 height: '45px',
                 color: 'white',
@@ -509,22 +775,36 @@ const applyFilters = (data: Transaction[]) => {
             <MenuItem value="Gas fees USD">Gas fees USD</MenuItem>
           </Select> 
 
+          
+  <div className="checkbox-container">
+  <input
+    type="checkbox"
+    id="toggleGrid"
+    checked={showGrid}
+    onChange={(e) => setShowGrid(e.target.checked)}
+  />
+  <label htmlFor="toggleGrid">Toggle Grid</label>
+</div>
+
+</Stack>
+
         <TextField
           id="search-input"
-          label="Search"
+          label="Search Address"
           variant="outlined"
           value={searchQuery}
           onChange={handleSearchChange} 
           size="medium"
           className="filter-input"
-          style={{ width: 'auto', maxWidth: '200px', flexGrow: 1 }} 
+          style={{ width: 'auto', maxWidth: '200px', flexGrow: 1, marginTop: '-37px'}} 
           InputLabelProps={{
-            style: { color: 'grey', fontSize: '1rem' , height: '30px'}, // Set the color and size of the label
+            style: { color: 'grey', fontSize: '1rem' , height: '20px'}, // Set the color and size of the label
           }}
           sx={{
             '& label': {
             color: 'white', // Color of the label
             fontSize: '1em', // Size of the label\
+            
           },
             input: { color: 'white' },
             '& .MuiOutlinedInput-notchedOutline': { borderColor: '#f78a93b0' },
@@ -576,6 +856,7 @@ const applyFilters = (data: Transaction[]) => {
             }
         }}
         />
+        </div>
         <FormControl variant="outlined" 
                     size="small" 
                     sx={{
@@ -605,29 +886,38 @@ const applyFilters = (data: Transaction[]) => {
                       }}
         >
         </FormControl>
-
-        <Stack marginRight="50px" marginTop='7px' spacing={2} direction="column" sx={{ minWidth: 550 }}>
-            <Button variant="outlined" onClick={addFilter}>+ Add Filter</Button>
+      {/* Container for the Add Filter button aligned to right */}
+    
+        <Stack marginRight='0px !important' marginTop='-5px' spacing={2} direction="column" sx={{ minWidth: 540, minHeight:70 }}>
+        
+          <Button variant="outlined" onClick={addFilter} >+ Add Filter</Button>
+          
+          {/* Container for dynamically added filters */}
+           <div className="filters-dynamic-container">
             <div className="filter-row">
             {filters.map((filter, index) => renderFilter(filter, index))}
           </div>
+          </div>
           </Stack>
+
       </div>
+      {/***************** END FILTER SECTION ***************** */}
+      {/***************** ****************** ***************** */}
+      {/***************** ****************** ***************** */}
+
 
 
       {/* Time Range Buttons */}
-      <div  style={{ display: 'flex', 
-                     justifyContent: 'flex-end',
-                     marginRight: '5px'}} 
-                     >
-                        <FormControl variant="outlined" style={{ minWidth: 120, color: 'white' }}>
+  <div  style={{ display: 'flex',justifyContent: 'flex-end',marginRight: '25px'}} >
+
+  <FormControl variant="outlined" style={{ minWidth: 120, color: 'white' }}>
   <InputLabel style={{ color: 'white' }}>Time Scale</InputLabel>
   <Select
     value={timeScale}
     onChange={handleTimeScaleChange}
     label="Time Scale"
     
-    style={{ color: 'white' , height: '41px', borderColor: 'grey'}}
+    style={{ color: 'white' , height: '35px', borderColor: 'grey'}}
     sx={{
         height: '45px',
         color: 'white',
@@ -670,75 +960,57 @@ const applyFilters = (data: Transaction[]) => {
     <MenuItem value="minute">Minute</MenuItem>
   </Select>
 </FormControl>
-           <LocalizationProvider dateAdapter={AdapterMoment}>
+           
           {timeRanges.map(range => (
              range !== 'Select Date' ? (
             <Button
               key={range}
               variant={timeRange === range ? 'contained' : 'outlined'}
               color="primary"
-              onClick={() => setTimeRange(range)}
+              onClick={() => handleTimeRangeChange(range)}
               style={{
                 marginLeft: 4,
                 backgroundColor: timeRange === range ? '#ff69b480' : 'transparent', // pink when selected
                 color: timeRange === range ? 'white' : 'pink', // text white when selected, otherwise pink
                 border: `1px solid ${timeRange === range ? '#e76772' : '#e76772'}`, // border color changes when selected
                 fontSize: '16px',
-                height:'40px',
-                minWidth: '2px'
+                height:'35px',
+                minWidth: '10px',
+                width: '40px',
+                padding: '10px',
 
             }}
             >
               {range}
             </Button>
             ) : (
-                <DatePicker
-                  label="Select Date"
-                  value={selectedDate}
-                  onChange={(newValue) => {
-                    setSelectedDate(newValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...renderDatePicker()}
-                      {...params}
-                      InputLabelProps={{
-                        ...params.InputLabelProps,
-                        style: { color: 'white' }, // Set the color of the label
-                      }}
-                      InputProps={{
-                        ...params.InputProps,
-                        style: { color: 'white' }, // Set the color of the input text
-                        endAdornment: (
-                          <React.Fragment>
-                            {params.InputProps.endAdornment}
-                            <IconButton>
-                              <DateRangeIcon style={{ color: 'white' }} /> {/* Adjust the icon color here */}
-                            </IconButton>
-                          </React.Fragment>
-                        ),
-                      }}
-                      style={{
-                        borderColor: 'white', // Set border color
-                        // Additional styles...
-                      }}
-                    />
-                  )}
-                  // ... other props you need
-                />
+              <ThemeProvider theme={theme}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+              {renderDatePicker()}   
+        
+                </LocalizationProvider>
+                </ThemeProvider>
               )
     ))}
-    </LocalizationProvider>
+    
   </div>
       <ResponsiveContainer width="100%" height={400} >
       {filteredDataWithRequiredProps.length > 0 ? (
-        <LineChart data={processedData} margin={{ top: 5, right: 15, left: 15, bottom: 25 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} />
+        <AreaChart data={processedData} margin={{ top: 10, right: 30, left: 5, bottom: 20 }}>
+        <defs>
+          <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#82000080" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="#82000080" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={showGrid ? "black" : "transparent"} />
+          <XAxis dataKey="date" stroke="#ffffff" 
+                 label={{ value: 'Timeline', position: 'insideBottom', offset: -19 , fontSize: '23px'}} 
+                 tickFormatter={(value) => moment(value).format('MMM DD')}  />
+  <YAxis stroke="#ffffff" label={{ value: 'Decimal Value', angle: -90, position: 'insideLeft' , fontSize: '18px' }} /*width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} *//>
           <Tooltip content={<CustomTooltip />} />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
-        </LineChart>
+          <Area type="monotone" dataKey="value" stroke="#ff69b480" fillOpacity={1} fill="url(#colorValue)" />
+        </AreaChart>
         ) : (
             <div className="no-data-message">No data to display</div>
             

@@ -24,12 +24,11 @@ interface Chain {
 
 interface SearchForm {
   className?: string;
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
-  onSearchSubmit: (searchValue: string) => void;
-  onChainSelected: (chain: Chain) => void; 
+  onSubmit: (addresses: string[], chain: Chain) => void
+  onChainSelected: (chain: Chain) => void;
 }
 
-function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: SearchForm): JSX.Element {
+function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Element {
   const [address, setAddress] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain>({ value: "", label: "" });
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
@@ -38,24 +37,18 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
-  const handleChainChange = (newChain: Chain) => {
-    setChain(newChain);
-    onChainSelected(newChain); // This function should be passed from the parent
-  };
-
   function handleAddressChange(e: ChangeEvent<HTMLInputElement>): void {
-    const addresses: string = e.target.value;
-    const addressesArray: string[] = addresses.split(',').map((address) => address.trim());
-    setAddress(addressesArray);
-    setSearchValue(e.target.value);
+    const addresses = e.target.value.split(',').map(addr => addr.trim());
+    setAddress(addresses);
   }
 
+  /*
   // Clears the current search and potentially other related states
   function handleClearSearch(): void {
     setAddress([]);
     setSearchValue('');
     // Any other clear actions
-  }
+  } */
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>): void {
     if (e.target.files && e.target.files.length > 0) {
@@ -67,13 +60,8 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
       reader.onload = (event) => {
         if (event.target && event.target.result) {
           const csvData: string = event.target.result as string;
-          // Split CSV data by newline
-          const lines: string[] = csvData.split("\n");
-          // Process each line
-          const addressesArray: string[] = lines
-            .flatMap((line) => line.split(",").map((item) => item.trim()))
-            .filter((item) => item !== "");
-          setAddress(addressesArray);
+          const addresses = csvData.split("\n").flatMap(line => line.split(",").map(addr => addr.trim()));
+          setAddress(addresses);
         }
       };
 
@@ -83,9 +71,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    if (searchValue.trim()) {
-      onSearchSubmit(searchValue.trim()); // Pass the trimmed search value to the parent
-    }
+    onSubmit(address, chain);
   }
 
   function handleRetry(): void {
@@ -117,7 +103,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             <TextField
               type="text"
               placeholder="Search Wallet Address"
-              value={searchValue} //address.join(',')}
+              value={address.join(',')}
               onChange={handleAddressChange}
               required={!fileUploaded}
               variant="outlined"
@@ -160,7 +146,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
         {address.length > 0 && (
           <Tooltip title="Clear">
             <IconButton
-              onClick={handleClearSearch}
+              onClick={() => setAddress([])} //onClick={handleClearSearch}
               size="small"
               edge="end"
               style={{
@@ -180,7 +166,10 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             </IconButton>
           </Tooltip>
         )}
-        <ChainSelect value={chain} onChange={handleChainChange} />
+        <ChainSelect value={chain} onChange={(newChain) => {
+              setChain(newChain);
+              onChainSelected(newChain);
+            }}  />
       </Box>
                   
                 ),
