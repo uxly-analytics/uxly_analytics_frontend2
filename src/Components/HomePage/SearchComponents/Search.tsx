@@ -33,7 +33,6 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
   const [chain, setChain] = useState<Chain>({ value: "", label: "" });
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>("");
-  const [searchValue, setSearchValue] = useState('');
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
@@ -58,11 +57,24 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
       const reader = new FileReader();
 
       reader.onload = (event) => {
-        if (event.target && event.target.result) {
-          const csvData: string = event.target.result as string;
-          const addresses = csvData.split("\n").flatMap(line => line.split(",").map(addr => addr.trim()));
-          setAddress(addresses);
+        try {
+          if (event.target && event.target.result) {
+            const csvData: string = event.target.result as string;
+            const lines: string[] = csvData.split("\n");
+            const addressesArray: string[] = lines.flatMap(line => line.split(",").map(item => item.trim()));
+            setAddress(addressesArray);
+            onSubmit(addressesArray, chain);  // Trigger search on file load
+            console.log("Parsed Addresses:", addressesArray); // Debugging log
+          }
+        } catch (error) {
+          console.error("Error processing file:", error);
+          // Here you might want to set an error state and display it
         }
+      };
+  
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        // Set error state here
       };
 
       reader.readAsText(uploadedFile);
@@ -71,7 +83,9 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    onSubmit(address, chain);
+    if (!fileUploaded) {
+      onSubmit(address, chain);
+    }
   }
 
   function handleRetry(): void {
@@ -89,8 +103,15 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
     <div className={`center-content ${className}`}> {/* Use this div to ensure everything is centered */}
     <form onSubmit={handleSubmit} className={"search-form"}>
     <Stack spacing={2} alignItems="center">
-      {!fileUploaded && (
-  
+    {fileUploaded ? (
+          <div>
+            <span>{fileName}</span>
+            <Typography variant="subtitle1" color="white">{fileName}</Typography>
+            <button type="button" onClick={handleRetry}>Retry</button>
+          </div>
+        ) : (
+          <>
+           
           <Stack>
             <Typography
               variant="body2"
@@ -186,8 +207,6 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
             </Box>
           </Stack>
           
-      )}
-    {!fileUploaded && (
      <Box mt={2} sx={{ display: 'flex', justifyContent: 'center' }}>
       <button 
       type="submit"
@@ -237,16 +256,8 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
             required={!address.length}
           />
       </Box>
+      </>
     )}
-
-      {fileUploaded && (
-        <div>
-          <span>{fileName}</span>
-          <button type="button" onClick={handleRetry}>
-            Retry
-          </button>
-        </div>
-      )}
       
       </Stack>
     </form>
