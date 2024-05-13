@@ -23,6 +23,7 @@ interface GraphProps {
         decimal_value: number;
         from_address?: string;
         to_address?: string;
+        gas_price?: string;
       }>;
   };
   address: string;
@@ -50,6 +51,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [processedData, setProcessedData] = useState<Transaction[]>([]);
   const [showGrid, setShowGrid] = useState(true);
+  const [data, setData] = useState([]);
 
   const chartTypes = ['Transactions', 'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
   const [containerHeight, setContainerHeight] = useState(600); // Initial height  
@@ -110,14 +112,17 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     setSearchQuery(event.target.value);
   };
 
-  // Convert your data to the format required by Recharts
-  const data = walletData.transactions.map(t => ({
-    rawDate: moment(t.block_timestamp).valueOf(), // Keep the raw timestamp for comparison
-    formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
-    value: t.decimal_value,
-    from_address: t.from_address ?? 'N/A',
-    to_address: t.to_address ?? 'N/A',
-  }));
+  useEffect(() => {
+    // Convert your data to the format required by Recharts based on the selected chart type
+    const transformedData = walletData.transactions.map(t => ({
+        rawDate: moment(t.block_timestamp).valueOf(),
+        formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
+        value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value, // Directly handle the logic here
+        from_address: t.from_address ?? 'N/A',
+        to_address: t.to_address ?? 'N/A',
+    }));
+    setData(transformedData);
+  }, [walletData.transactions, chartType]);
 
   const handleDateChange = (newDate: Date | null) => {
     if (newDate) setSelectedDate(newDate);
@@ -337,7 +342,7 @@ const applyFilters = (data: Transaction[]) => {
     const transactions = walletData.transactions.map(t => ({
       block_timestamp: t.block_timestamp,
       date: moment(t.block_timestamp).format('YYYY-MM-DD'),  // Standardizing date format
-      value: t.decimal_value,
+      value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value,
       from_address: t.from_address ?? 'N/A',
       to_address: t.to_address ?? 'N/A',
     }));
@@ -352,7 +357,7 @@ const applyFilters = (data: Transaction[]) => {
     ) : timeFilteredData;
 
     setProcessedData(searchFilteredData);
-  }, [walletData, timeRange, selectedDate, searchQuery]);
+  }, [walletData, timeRange, selectedDate, searchQuery, chartType]);
 
 
 /***********TESTING***********/
@@ -1006,13 +1011,22 @@ console.log("Displayed Data:", displayedData);
           <CartesianGrid strokeDasharray="3 3" stroke={showGrid ? "black" : "transparent"} />
           <XAxis dataKey="date" stroke="#ffffff" 
                  label={{ value: 'Timeline', position: 'insideBottom', offset: -19 , fontSize: '23px'}} 
-                 tickFormatter={(value) => moment(value).format('MMM DD')}  />
-  <YAxis stroke="#ffffff" label={{ value: 'Decimal Value', angle: -90, position: 'insideLeft' , fontSize: '18px' }} /*width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} *//>
+                 tickFormatter={(tick) => {
+                  const date = moment(tick);
+                  if (timeRange === '90D' || timeRange === '30D') {
+                    return date.format('MMM DD');
+                  }
+                  return date.format('MMM \'YY');
+                }}
+                color='white'
+                tick={{ fill: 'white' }}
+              />
+              <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} tick={{ fill: 'white' }} stroke="#ffffff" label={{ value: 'Decimal Value', angle: -90, position: 'insideLeft' , fontSize: '18px' }} /*width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} *//>
           <Tooltip content={<CustomTooltip />} />
           <Area type="monotone" dataKey="value" stroke="#ff69b480" fillOpacity={1} fill="url(#colorValue)" />
         </AreaChart>
         ) : (
-            <div className="no-data-message">No data to display</div>
+            <div className="no-data-message">No Data To Display</div>
             
           )}
       </ResponsiveContainer>
