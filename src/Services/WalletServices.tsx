@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOST = "https://18.223.123.138.nip.io/";
+const HOST = 'https://18.223.123.138.nip.io';
 //const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
 //const HOST = "http://localhost:3001";
 
