@@ -13,7 +13,7 @@ import { DatePicker, LocalizationProvider, PickersDay  } from '@mui/x-date-picke
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextFieldProps } from '@mui/material/TextField';
 import { Height, VerticalAlignCenter } from '@mui/icons-material';
-import { StreamChartRechartLine } from '@/Components/StreamsPage/StreamChartRechart';
+import { offsetPositive } from 'recharts/types/util/ChartUtils';
 
 
 interface GraphProps {
@@ -41,19 +41,20 @@ type Transaction = {
     block_timestamp?: number;
     date: string; 
     value: number;
+    volume: number; 
     from_address?: string | null;
     to_address?: string | null;
   };
 
 const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const [filters, setFilters] = useState<FilterType[]>([]);
-  const [chartType, setChartType] = useState<string>('Transactions');
+  const [chartType, setChartType] = useState<string>('Transaction Values');
   const [searchQuery, setSearchQuery] = useState('');
   const [processedData, setProcessedData] = useState<Transaction[]>([]);
   const [showGrid, setShowGrid] = useState(true);
   const [data, setData] = useState([]);
 
-  const chartTypes = ['Transactions', 'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
+  const chartTypes = ['Transaction Values', 'Transaction Volumes', 'Gas Prices']; //'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
   const [containerHeight, setContainerHeight] = useState(600); // Initial height  
   const minHeight = 600; // Base height for no filters
   const heightPerFilter = 50; // Height added per filter
@@ -97,27 +98,25 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   
   // ****************************************************************************************************** // 
   // ****************************************************************************************************** // 
-  
-  console.log(moment(1651017600000).format('MMM DD')); // should log something like "Apr 26" for the timestamp corresponding to April 26, 2022
-
-
+ 
+  // **** Effect for dynamic container sizing **** //
   useEffect(() => {
     const newHeight = minHeight + (filters.length * heightPerFilter);
     setContainerHeight(newHeight);
   }, [filters.length]);
   
-
   // Function to handle search input changes
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
+  // Convert data to the format required by Recharts based on the selected chart type
   useEffect(() => {
-    // Convert your data to the format required by Recharts based on the selected chart type
     const transformedData = walletData.transactions.map(t => ({
         rawDate: moment(t.block_timestamp).valueOf(),
         formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
         value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value, // Directly handle the logic here
+        volume: 1,
         from_address: t.from_address ?? 'N/A',
         to_address: t.to_address ?? 'N/A',
     }));
@@ -125,9 +124,27 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   }, [walletData.transactions, chartType]);
 
   const handleDateChange = (newDate: Date | null) => {
-    if (newDate) setSelectedDate(newDate);
-  };
+    setSelectedDate(newDate);
+    if (newDate) {
+        setSelectedDate(newDate);
+        const startTime = moment(newDate).startOf('day').valueOf();
+        const endTime = moment(newDate).endOf('day').valueOf();
 
+        const filteredData = walletData.transactions.filter(t => {
+            const txDate = moment(t.block_timestamp).valueOf();
+            return txDate >= startTime && txDate <= endTime;
+        }).map(t => ({
+            ...t,
+            date: moment(t.block_timestamp).format('YYYY-MM-DD'),
+            value: chartType === 'Gas Prices' ? parseFloat(t.gas_price || '0') : t.decimal_value,
+            volume: 1,
+        }));
+
+        setProcessedData(filteredData);
+    }
+};
+
+/*
   useEffect(() => {
     const now = moment();
     let startTime, endTime;
@@ -171,13 +188,13 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     const processedData = filteredTransactions.map(t => ({
       ...t,
       date: moment(t.block_timestamp).format('MMM DD'),
-      value: t.decimal_value,
+      value: chartType === 'Gas Prices' ? parseFloat(t.gas_price || '0') : t.decimal_value,
+      volume: 1,
     }));
   
     setProcessedData(processedData);
-  }, [walletData, timeRange, selectedDate]);  // Update when these dependencies change
-
-  
+  }, [walletData, timeRange, selectedDate, chartType]);  // Update when these dependencies change
+*/
   
 
   const calculateTimeRange = () => {
@@ -222,6 +239,95 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const { startTime, endTime } = calculateTimeRange();
   const filteredData = data.filter(d => d.rawDate >= startTime && d.rawDate <= endTime);
 
+  useEffect(() => {
+    const calculateTimeRange = () => {
+    const now = moment();
+        let startTime, endTime;
+
+        switch (timeRange) {
+            case '1Y':
+                startTime = now.subtract(1, 'years').startOf('day').valueOf();
+                break;
+            case '6M':
+                startTime = now.subtract(6, 'months').startOf('day').valueOf();
+                break;
+            case '90D':
+                startTime = now.subtract(90, 'days').startOf('day').valueOf();
+                break;
+            case '30D':
+                startTime = now.subtract(30, 'days').startOf('day').valueOf();
+                break;
+            case '1D':
+                startTime = now.subtract(1, 'days').startOf('day').valueOf();
+                endTime = now.endOf('day').valueOf();
+                break;
+            case 'Select Date':
+                if (dateRange) {
+                    const [start, end] = dateRange;
+                    startTime = moment(start).startOf('day').valueOf();
+                    endTime = moment(end).endOf('day').valueOf();
+                }
+                break;
+            default:
+                startTime = now.subtract(1, 'years').startOf('day').valueOf();
+                endTime = now.endOf('day').valueOf();
+        }
+
+        console.log(`Time Range: ${timeRange}, Start: ${startTime}, End: ${endTime}`);
+        return { startTime, endTime };
+    };
+    const { startTime, endTime } = calculateTimeRange();
+  
+    const filteredData = walletData.transactions.filter(t => {
+      const txDate = moment(t.block_timestamp).valueOf();
+      return txDate >= startTime && txDate <= endTime;
+    }).map(t => ({
+      ...t,
+      date: moment(t.block_timestamp).format('YYYY-MM-DD'),
+      value: chartType === 'Gas Prices' ? parseFloat(t.gas_price || '0') : t.decimal_value,
+      volume: 1,
+    }));
+  
+    setProcessedData(filteredData);
+  }, [walletData, timeRange, selectedDate, dateRange, chartType]);
+
+  const getVolumeDataByTimeScale = (data, timeScale) => {
+    const groupedData = {};
+
+    data.forEach(d => {
+      let key;
+      switch (timeScale) {
+        case 'daily':
+          key = moment(d.rawDate).format('YYYY-MM-DD');
+          break;
+        case 'weekly':
+          key = moment(d.rawDate).startOf('isoWeek').format('YYYY-MM-DD');
+          break;
+        case 'monthly':
+          key = moment(d.rawDate).startOf('month').format('YYYY-MM-DD');
+          break;
+        case 'hourly':
+          key = moment(d.rawDate).startOf('hour').format('YYYY-MM-DD HH:00');
+          break;
+        case 'minute':
+          key = moment(d.rawDate).startOf('minute').format('YYYY-MM-DD HH:mm');
+          break;
+        default:
+          key = moment(d.rawDate).format('YYYY-MM-DD');
+          break;
+      }
+
+      if (!groupedData[key]) {
+        groupedData[key] = { date: key, volume: 0 };
+      }
+      groupedData[key].volume += 1;
+     // groupedData[key].value += d.value; // This line can be adjusted if we need the sum of values as well
+    });
+    console.log("Volume Data:", groupedData);
+    return Object.values(groupedData);
+  };
+
+
   const getFilteredDataByTimeScale = (data, timeScale) => {
     const groupedData = {};
 
@@ -229,26 +335,30 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
         let key;
         switch (timeScale) {
             case 'daily':
-                key = moment(d.date).format('MMM DD');
+                key = moment(d.rawDate).format('MM-DD'); //moment(d.date).format('YYYY-MM-DD');
                 break;
             case 'weekly':
-                key = `Week ${moment(d.date).isoWeek()} of ${moment(d.date).year()}`;
+                key = moment(d.rawDate).startOf('isoWeek').format('MM-DD'); //`Week ${moment(d.date).isoWeek()} of ${moment(d.date).year()}`;
                 break;
             case 'monthly':
-                key = moment(d.date).format('MMM YYYY');
+                key = moment(d.rawDate).startOf('month').format('MM-DD'); //  moment(d.date).format('MMM YYYY');
                 break;
             case 'hourly':
-                key = moment(d.date).format('MMM DD HH:00');
+                key = moment(d.rawDate).startOf('hour').format('MM-DD HH:00'); //moment(d.date).format('MMM DD HH:00');
+                break;
+            case 'minute':
+                key = moment(d.rawDate).startOf('minute').format('MM-DD HH:mm');
                 break;
             default:
-                key = moment(d.date).format('MMM DD');
+                key = moment(d.rawDate).format('MMM DD');
                 break;
         }
 
         if (!groupedData[key]) {
-            groupedData[key] = { ...d, value: 0 };
+            groupedData[key] = { date: key, value: 0, volume: 0  };
         }
         groupedData[key].value += d.value;
+        groupedData[key].volume += 1;
     });
 
     return Object.values(groupedData);
@@ -257,17 +367,19 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 
   
   const formatYAxis = (tick: number) => {
-    // Formats the tick values as millions ('M') for better readability
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 2,
-    notation: 'compact', // Use compact notation
-    compactDisplay: 'short' // Use short form for compact notation
-  }).format(tick);
+    if (chartType === 'Transaction Volumes') {
+      return tick.toString();
+    }
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2,
+      notation: 'compact',
+      compactDisplay: 'short',
+    }).format(tick);
 };
 
-  <YAxis width={80} tickFormatter={formatYAxis} />
+ // <YAxis width={80} tickFormatter={formatYAxis} />
 
 // Adjust XAxis tick formatting based on the selected time scale
 const formatXAxis = (date) => {
@@ -296,7 +408,8 @@ const applyFilters = (data: Transaction[]) => {
       return (
         <div className="custom-tooltip">
           <p>{`Date: ${data.date}`}</p>
-          <p>{`Value: $${data.value.toLocaleString('en-US')}`}</p>
+          <p>{chartType === 'Gas Prices' ? `Gas Price: $${data.value.toLocaleString('en-US')}` : 
+              chartType === 'Transaction Volumes' ? `Volume: ${data.volume}` : `Value: $${data.value.toLocaleString('en-US')}`}</p>
           <p>{`From: ${data.from_address}`}</p>
           <p>{`To: ${data.to_address}`}</p>
           {/* ... other info */}
@@ -312,6 +425,7 @@ const applyFilters = (data: Transaction[]) => {
     //rawDate: d.rawDate,
     //formattedDate: moment(d.rawDate).isValid() ? moment(d.rawDate).format('MMM DD') : 'Invalid date',
     value: d.value,
+    volume: d.volume,
     // Add default or actual values for fromAddress and toAddress if needed
     from_address: d.from_address ?? 'N/A', // Use nullish coalescing to provide a default
     to_address: d.to_address ?? 'N/A',
@@ -342,7 +456,8 @@ const applyFilters = (data: Transaction[]) => {
     const transactions = walletData.transactions.map(t => ({
       block_timestamp: t.block_timestamp,
       date: moment(t.block_timestamp).format('YYYY-MM-DD'),  // Standardizing date format
-      value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value,
+      value: chartType === 'Gas Prices' ? parseFloat(t.gas_price ) : t.decimal_value,
+      volume: 1,
       from_address: t.from_address ?? 'N/A',
       to_address: t.to_address ?? 'N/A',
     }));
@@ -363,13 +478,38 @@ const applyFilters = (data: Transaction[]) => {
 /***********TESTING***********/
   useEffect(() => {
     console.log("Processed Data updated:", processedData);
-  }, [processedData]);
+    console.log("Chart Type updated:", chartType);
+  }, [processedData, chartType]);
   
   
 
   const handleDateRangeChange = (newRange: [Date, Date] | null) => {
     setDateRange(newRange);
-  };
+    if (newRange) {
+        const [start, end] = newRange;
+        const startTime = moment(start).startOf('day').valueOf();
+        const endTime = moment(end).endOf('day').valueOf();
+
+        const filteredData = walletData.transactions.filter(t => {
+            const txDate = moment(t.block_timestamp).valueOf();
+            return txDate >= startTime && txDate <= endTime;
+        }).map(t => ({
+            ...t,
+            date: moment(t.block_timestamp).format('YYYY-MM-DD'),
+            value: chartType === 'Gas Prices' ? parseFloat(t.gas_price || '0') : t.decimal_value,
+            volume: 1,
+        }));
+
+        setProcessedData(filteredData);
+    }
+};
+
+
+  useEffect(() => {
+    if (timeRange === 'Select Date') {
+        handleDateRangeChange(dateRange);
+    }
+}, [timeRange, dateRange]);
 
   const handleTimeScaleChange = ( event: SelectChangeEvent<string> ) => {
     setTimeScale(event.target.value as string);
@@ -448,7 +588,8 @@ const applyFilters = (data: Transaction[]) => {
     setFilters(updatedFilters);
   };
   
-  // Function to render each filter UI
+  // Function to render each filter UI 
+  // *************** UPDATE IF FILTERS ARE MODIFIED  *************** // 
   const renderFilter = (filter, index) => (
     <div key={filter.id} className="filter-set">
       <div className="filter-block">
@@ -497,7 +638,9 @@ const applyFilters = (data: Transaction[]) => {
       </div>
     </div>
   );
-  
+  // *************************************************************** //
+
+  // Styles for Date Picker // 
   const customDatePickerStyles = {
     "& .MuiInputBase-root": {
       color: "white", // Changes the text color
@@ -658,55 +801,42 @@ useEffect(() => {
 }, [timeRange]);
 
 const updateDataBasedOnTimeRange = (range) => {
-  let start, end;
-
-  switch (range) {
-    case '1D':
-      start = moment().subtract(1, 'days').startOf('day').valueOf();
-      end = moment().subtract(1, 'days').endOf('day').valueOf();
-      break;
-    case '30D':
-      start = moment().subtract(30, 'days').startOf('day').valueOf();
-      break;
-    case '90D':
-      start = moment().subtract(90, 'days').startOf('day').valueOf();
-      break;
-    case '6M':
-      start = moment().subtract(6, 'months').startOf('month').valueOf();
-      break;
-    case '1Y':
-      start = moment().subtract(1, 'year').startOf('year').valueOf();
-      break;
-    case 'Select Date':
-      start = selectedDate ? moment(selectedDate).startOf('day').valueOf() : moment().startOf('day').valueOf();
-      end = selectedDate ? moment(selectedDate).endOf('day').valueOf() : moment().endOf('day').valueOf();
-      break;
-    default:
-      start = moment().subtract(1, 'years').startOf('day').valueOf();
-  }
-
-  end = end || moment().valueOf(); // Ensure there's an end date
+  const { startTime, endTime } = calculateTimeRange();
 
   const filteredData = walletData.transactions.filter(t => {
     const txDate = moment(t.block_timestamp).valueOf();
-    return txDate >= start && txDate <= end;
+    return txDate >= startTime && txDate <= endTime;
   }).map(t => ({
     ...t,
     date: moment(t.block_timestamp).format('YYYY-MM-DD'),
-    value: t.decimal_value
+    rawDate: t.block_timestamp,
+    formattedDate: moment(t.block_timestamp).format('YYYY-MM-DD'),
+    value: chartType === 'Gas Prices' ? parseFloat(t.gas_price) : t.decimal_value,
+    volume: 1,
+    from_address: t.from_address ?? 'N/A',
+    to_address: t.to_address ?? 'N/A',
   }));
 
   setProcessedData(filteredData);
   console.log("Updated Data for range:", range, filteredData);
 };
 
+useEffect(() => {
+  updateDataBasedOnTimeRange(timeRange);
+}, [walletData, timeRange, selectedDate, searchQuery, chartType]);
 
+useEffect(() => {
+  console.log("Processed Data:", processedData);
+}, [processedData]);
 
   const handleTimeRangeChange = (newRange: string) => {
     setTimeRange(newRange);
-    const newScale = newRange === '1D' ? 'hourly' : 'daily';
-    setTimeScale(newScale);
-    updateDataBasedOnTimeRange(newRange); // Function to update data based on the selected time range
+    //const newScale = newRange === '1D' ? 'hourly' : 'daily';
+    //setTimeScale(newScale);
+    if (newRange !== 'Select Date') {
+      setSelectedDate(null); 
+      updateDataBasedOnTimeRange(newRange); // Function to update data based on the selected time range
+  }// Function to update data based on the selected time range
     // updateTimeScale(newRange);  // Update time scale based on the new range
   // Trigger data update here if necessary
   };
@@ -734,18 +864,22 @@ console.log("Displayed Data:", displayedData);
         {/* Container for Transactions and Search */}
     <div className="transactions-search-container">
         <Stack> 
+        <FormControl variant="outlined" style={{ minWidth: 120, color: 'white'}}>
+        <InputLabel style={{ color: 'white', marginTop:'-5px', marginLeft: '-15px' }}>Transaction History</InputLabel>
           <Select
             label="Select Chart Type"
             value={chartType}
             onChange={handleChartChange}
-            style={{ width: 'auto', flexGrow: .1, marginLeft: '-10px', marginTop: '-10px'}} 
+            style={{ width: 'auto'/*'164px'*/, minWidth: '140px', flexGrow: .1, marginLeft: '-10px', marginTop: '-10px'}} 
             sx={{
                 height: '45px',
+                width: '100px',
                 color: 'white',
                 borderColor: 'grey',
                 // ... other styles
                 '& .MuiListItem-button:hover': {
                   backgroundColor: 'darkgrey', // Background color on hover in the dropdown
+                  width: 'auto',
                 },
                 '.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: 'pink', // Border color when the select is focused
@@ -770,15 +904,12 @@ console.log("Displayed Data:", displayedData);
                   },
                 },
               }}
-          >
-            <MenuItem value="Transactions">Transactions</MenuItem>
-            <MenuItem value="Token transfers">Token transfers</MenuItem>
-            <MenuItem value="NFT transfers">NFT transfers</MenuItem>
-            <MenuItem value="Transaction volume USD">Transaction volume USD</MenuItem>
-            <MenuItem value="Token transaction volume">Token transaction volume</MenuItem>
-            <MenuItem value="Transactions per hour">Transactions per hour</MenuItem>
-            <MenuItem value="Gas fees USD">Gas fees USD</MenuItem>
+          > 
+            <MenuItem value="Transaction Volumes">Volume</MenuItem>
+            <MenuItem value="Transaction Values">Values USD</MenuItem>
+            <MenuItem value="Gas Prices">Gas Prices</MenuItem>
           </Select> 
+          </FormControl>
 
           
   <div className="checkbox-container">
@@ -1000,8 +1131,8 @@ console.log("Displayed Data:", displayedData);
     
   </div>
       <ResponsiveContainer width="100%" height={400} >
-      {filteredDataWithRequiredProps.length > 0 ? (
-        <AreaChart data={processedData} margin={{ top: 10, right: 30, left: 5, bottom: 20 }}>
+      {processedData.length > 0 ? (
+        <AreaChart data={chartType === 'Transaction Volumes' ? getVolumeDataByTimeScale(processedData, timeScale) : processedData} margin={{ top: 10, right: 30, left: 15, bottom: 20 }}>
         <defs>
           <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#82000080" stopOpacity={0.8} />
@@ -1021,9 +1152,17 @@ console.log("Displayed Data:", displayedData);
                 color='white'
                 tick={{ fill: 'white' }}
               />
-              <YAxis width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} tick={{ fill: 'white' }} stroke="#ffffff" label={{ value: 'Decimal Value', angle: -90, position: 'insideLeft' , fontSize: '18px' }} /*width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} *//>
+              <YAxis width={80} tickFormatter={tick => formatYAxis(tick) /*tick => `$${tick.toFixed(2)}`*/} 
+              tick={{ fill: 'white' }} stroke="#ffffff" 
+              label={{ value: chartType === 'Transaction Volumes' ? 'Volume' : 
+                              chartType ==='Transaction Values' ? 'Value' : 'Gas Price', 
+                       angle: -90, position: 'insideLeft', fontSize: '18px',
+                       offset: -8
+                        }} //value: 'Decimal Value', angle: -90, position: 'insideLeft' , fontSize: '18px' }} /*width={80} tickFormatter={tick => `$${tick.toFixed(2)}`} *//
+              /> 
           <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="value" stroke="#ff69b480" fillOpacity={1} fill="url(#colorValue)" />
+          <Area type="monotone" dataKey={ chartType === 'Transaction Volumes' ? 'volume' : 'value' }
+                stroke="#ff69b480" fillOpacity={1} fill="url(#colorValue)" />
         </AreaChart>
         ) : (
             <div className="no-data-message">No Data To Display</div>

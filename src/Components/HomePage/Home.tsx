@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Search from "./SearchComponents/Search";
 import * as Service from "../../Services/WalletServices";
@@ -11,7 +12,6 @@ import { Grid, Typography } from "@mui/material";
 import WalletInfo from "./SearchComponents/DisplayWallet/Components/WalletInfo";
 import WalletAge from "./SearchComponents/DisplayWallet/Components/WalletAge";
 import AudienceGrowth from "./SearchComponents/DisplayWallet/Components/AudienceGrowth";
-import { da } from "date-fns/locale";
 
 interface Chain {
   value: string;
@@ -25,9 +25,7 @@ function Home() {
   } | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isSearchInHeader, setIsSearchInHeader] = useState(false);
-  const [selectedChain, setSelectedChain] = useState<Chain>({ value: '', label: '' });
 
   useEffect(() => {
     if (data !== null) {
@@ -35,27 +33,20 @@ function Home() {
     }
   }, [data]);
 
-  const onChainSelected = (newChain: Chain) => {
-    setSelectedChain(newChain);
-  };
-
-  const handleSearchSubmit = async (addresses: string[], chain: Chain) => {
+  const handleSearchSubmit = async (address: string[], chain: Chain) => {
     setLoading(true); // Set loading state to true when submit starts
-    setSearchSubmitted(true); // Set the search as submitted\
     setIsSearchInHeader(true);
-    console.log("Address ", addresses);
+    console.log("Address ", address);
     console.log("Chain: ", chain.label, chain.value);
-
-    // Split the searchValue by commas and trim whitespace from each address
-   // const uniqueAddresses = Array.from(new Set(addresses));
-    setSearchInput({ address: addresses, chain });
+    const uniqueAddresses = Array.from(new Set(address));
+    setSearchInput({ address: uniqueAddresses, chain });
     try {
-      if (addresses.length === 1) {
-        const data = await Service.getWalletData(addresses[0], chain.value);
-        setData(data);
+      if (uniqueAddresses.length === 1) {
+        setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
       } else {
-        const data = Service.getMultipleWalletData(addresses, chain.value);
-        setData(data);
+        setData(
+          await Service.getMultipleWalletData(uniqueAddresses, chain.value)
+        );
       }
     } catch (error) {
       console.error("Error Fetching Data: ", error);
@@ -65,26 +56,21 @@ function Home() {
 
   return (
     <div className="app-container">
-      <div className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}>
-
-    <section className="header-section">
-      <Header />
-    </section>
-    
-    <div className="center-content" >
+      <section className="header-section">
+        <Header />
+      </section>
+      <div className="center-content">
       <div className={`search-area ${isSearchInHeader ? 'move-up' : ''}`}>
       <Typography variant="subtitle1" color="white" mt={-5} mb={-5}>
           Example wallet ID: 0x26fcbd3afebbe28d0a8684f790c48368d21665b5
         </Typography>
-        <Search 
+      <Search 
           className={isSearchInHeader ? "search-in-header" : "search-default"}
-          onSubmit={handleSearchSubmit}
-          onChainSelected={setSelectedChain}        
+          onSubmit={handleSearchSubmit}      
         />
         <Typography variant="h4" color="white" paddingTop={2} mb={-20}>Get Web3 Wallet Data
         </Typography>
         </div>
-      </div>
       </div>
       <Grid container maxWidth="1198px" mt={4} columnSpacing={3} rowSpacing={4}>
         {loading && <LoadScreen />}
@@ -133,3 +119,4 @@ function Home() {
 }
 
 export default Home;
+

@@ -25,10 +25,9 @@ interface Chain {
 interface SearchForm {
   className?: string;
   onSubmit: (addresses: string[], chain: Chain) => void
-  onChainSelected: (chain: Chain) => void;
 }
 
-function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Element {
+function Search({ className, onSubmit}: SearchForm): JSX.Element {
   const [address, setAddress] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain>({ value: "", label: "" });
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
@@ -37,8 +36,11 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
   const fileInputRef = React.createRef<HTMLInputElement>();
 
   function handleAddressChange(e: ChangeEvent<HTMLInputElement>): void {
-    const addresses = e.target.value.split(',').map(addr => addr.trim());
-    setAddress(addresses);
+    const addresses: string = e.target.value;
+    const addressesArray: string[] = addresses
+      .split(",")
+      .map((address) => address.trim());
+    setAddress(addressesArray);
   }
 
   /*
@@ -60,21 +62,18 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
         try {
           if (event.target && event.target.result) {
             const csvData: string = event.target.result as string;
+            // Split CSV data by newline
             const lines: string[] = csvData.split("\n");
-            const addressesArray: string[] = lines.flatMap(line => line.split(",").map(item => item.trim()));
+            // Process each line
+            const addressesArray: string[] = lines
+              .flatMap((line) => line.split(",").map((item) => item.trim()))
+              .filter((item) => item !== "");
             setAddress(addressesArray);
-            onSubmit(addressesArray, chain);  // Trigger search on file load
-            console.log("Parsed Addresses:", addressesArray); // Debugging log
           }
         } catch (error) {
           console.error("Error processing file:", error);
           // Here you might want to set an error state and display it
         }
-      };
-  
-      reader.onerror = (error) => {
-        console.error("Error reading file:", error);
-        // Set error state here
       };
 
       reader.readAsText(uploadedFile);
@@ -83,9 +82,7 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    if (!fileUploaded) {
-      onSubmit(address, chain);
-    }
+    onSubmit(address, chain);
   }
 
   function handleRetry(): void {
@@ -103,14 +100,6 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
     <div className={`center-content ${className}`}> {/* Use this div to ensure everything is centered */}
     <form onSubmit={handleSubmit} className={"search-form"}>
     <Stack spacing={2} alignItems="center">
-    {fileUploaded ? (
-          <div>
-            <span>{fileName}</span>
-            <Typography variant="subtitle1" color="white">{fileName}</Typography>
-            <button type="button" onClick={handleRetry}>Retry</button>
-          </div>
-        ) : (
-          <>
            
           <Stack>
             <Typography
@@ -189,7 +178,6 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
         )}
         <ChainSelect value={chain} onChange={(newChain) => {
               setChain(newChain);
-              onChainSelected(newChain);
             }}  />
       </Box>
                   
@@ -206,7 +194,16 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
             />
             </Box>
           </Stack>
+      {fileUploaded && (
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="center"> 
+            <Typography variant="subtitle1" color="white">
+              Loaded file: {fileName}
+            </Typography>
+            <button type="button" onClick={handleRetry}>Retry</button>
           
+          </Stack>
+      )}
+
      <Box mt={2} sx={{ display: 'flex', justifyContent: 'center' }}>
       <button 
       type="submit"
@@ -220,8 +217,7 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
         width: '50px', 
         marginRight: '20px',
 
-      }}
-      >Search</button>
+      }} >Search</button>
         <Tooltip 
             title="Upload & search multiple wallet addresses"
             placement="right"
@@ -251,13 +247,11 @@ function Search({ className, onSubmit, onChainSelected}: SearchForm): JSX.Elemen
             ref={fileInputRef}
             type="file"
             onChange={handleFileChange}
-           accept=".csv"
+            accept=".csv"
             style={{ display: 'none' }}
             required={!address.length}
           />
       </Box>
-      </>
-    )}
       
       </Stack>
     </form>

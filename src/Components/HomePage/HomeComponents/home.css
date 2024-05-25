@@ -77,6 +77,26 @@
   background-color: #e76772;
 }
 
+.search-default {
+  /* Default search bar styling */
+  margin-top: 100px; /* Or your desired spacing */
+  transition: margin-top 0.5s ease;
+}
+
+.search-in-header {
+  margin-top: 10px !important; /* Reset margin to move it to the top */
+  z-index: 1001; /* Ensure a high z-index so it's clickable */
+  position: relative; /* Ensure it's positioned correctly */
+}
+
+.header-section.search-in-header {
+  padding-top: 50px; /* For example purposes */
+}
+
+.header-section.search-in-header .search-component {
+  top: -100px !important;  /* This will move the search bar up */
+}
+
 .loaded-data {
   margin-left: 50px;
   width: 100%;
