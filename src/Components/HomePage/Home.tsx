@@ -8,9 +8,9 @@ import LoadScreen from "./HomeComponents/LoadScreen";
 import "./HomeComponents/home.css";
 import { Grid, Typography } from "@mui/material";
 
-import WalletInfo from "./SearchComponents/DisplayWallet/Components/WalletInfo";
-import WalletAge from "./SearchComponents/DisplayWallet/Components/WalletAge";
-import AudienceGrowth from "./SearchComponents/DisplayWallet/Components/AudienceGrowth";
+//import WalletInfo from "./SearchComponents/DisplayWallet/Components/WalletInfo";
+//import WalletAge from "./SearchComponents/DisplayWallet/Components/WalletAge";
+//import AudienceGrowth from "./SearchComponents/DisplayWallet/Components/AudienceGrowth";
 
 interface Chain {
   value: string;
@@ -69,9 +69,6 @@ function Home() {
             {Array.isArray(data) ? (
               data.length !== 0 ? (
                 <>
-                  <WalletInfo wallets={data}/>
-                  <WalletAge />
-                  <AudienceGrowth />
                   <DisplayMultipleWallet
                     wallets={data}
                     chain={searchInput?.chain || { value: "", label: "" }}
