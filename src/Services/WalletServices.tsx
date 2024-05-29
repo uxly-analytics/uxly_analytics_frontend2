@@ -1,8 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
- //const HOST = "http://18.223.123.138:5000/";
-//const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
- const HOST = "http://localhost:3001";
+
+const HOST = 'https://18.223.123.138.nip.io';
+// const HOST = 'http://18.223.123.138:5000/';
+// const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
+// const HOST = 'http://localhost:3001';
 
 interface WalletData {
   address: string;
@@ -44,9 +46,9 @@ export async function getWalletData(
       transactionsData: responses[4].data,
     };
   } catch (error) {
-    console.log("Error: ", error);
+    console.log('Error: ', error);
     return {
-      address: "null",
+      address: 'null',
       networth: {},
       nfts: {},
       tokenBalance: { tokens: [] },
