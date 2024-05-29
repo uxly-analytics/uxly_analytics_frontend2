@@ -13,6 +13,7 @@ interface WalletData {
   tokenBalance: any;
   transactions: any;
   transactionsData: any;
+  botEstimation: number;
 }
 
 export async function getWalletData(
@@ -28,6 +29,7 @@ export async function getWalletData(
       `${HOST}/nft?address=${address}&chain=${chain}`,
       `${HOST}/100transactions?address=${address}&chain=${chain}`,
       `${HOST}/aggregate-transactions?address=${address}&chain=${chain}`,
+      `${HOST}/botEstimation?address=${address}&chain=${chain}`,
     ];
 
     const responses = await Promise.all(urls.map((url) => axios.get(url)));
@@ -44,6 +46,7 @@ export async function getWalletData(
       nfts: responses[2].data,
       transactions: responses[3].data,
       transactionsData: responses[4].data,
+      botEstimation: responses[5].data,
     };
   } catch (error) {
     console.log('Error: ', error);
@@ -54,6 +57,7 @@ export async function getWalletData(
       tokenBalance: { tokens: [] },
       transactions: {},
       transactionsData: {},
+      botEstimation: 0,
     };
   }
 }
@@ -76,6 +80,7 @@ export async function getMultipleWalletData(
         tokenBalance: response.data.walletStats.tokenBalance.tokens,
         transactions: response.data.walletStats.transactions,
         transactionsData: response.data.walletStats.transactionsData,
+        botEstimation: response.data.walletStats.botEstimation,
       });
     } catch (error) {
       console.log(`Error fetching wallet data for address ${address}:`, error);

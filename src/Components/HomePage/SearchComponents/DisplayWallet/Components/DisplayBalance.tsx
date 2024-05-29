@@ -9,6 +9,7 @@ interface WalletData {
       total_networth_usd: string;
       chains: ChainNetWorth[];
   };
+  botEstimation: number;
 }
 
 interface ChainNetWorth{
@@ -28,10 +29,11 @@ const DisplayBalance: React.FC<{ walletData: WalletData }> = ({
     const nativeBalance: number[] = chains.map(chain => parseFloat(chain.native_balance_formatted));
     const nativeBalanceUSD: number[] = chains.map(chain => parseFloat(chain.native_balance_usd));
     const tokenBalance: number [] = chains.map(chain => parseFloat(chain.token_balance_usd));
+    const botEstimation : number = walletData.botEstimation;
   
   return (
     <Grid item xs={12}>
-      <NetworthGraph labels = {labels} chainNetWorth = {chainNetWorth} total={walletData.networth.total_networth_usd}/>
+      <NetworthGraph labels = {labels} chainNetWorth = {chainNetWorth} total={walletData.networth.total_networth_usd} botEstimation={botEstimation}/>
       <br/>
       <NativeBalanceGraph
           labels={labels}

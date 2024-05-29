@@ -13,6 +13,7 @@ interface WalletData {
   tokenBalance: any;
   transactions: any;
   transactionsData: any;
+  botEstimation: number;
 }
 
 interface DisplayWalletDataProps {
