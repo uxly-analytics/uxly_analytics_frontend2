@@ -165,9 +165,9 @@ const NativeBalanceGraph: React.FC<NativeBalanceGraphProps> = ({ labels, nativeB
         <Grid item xs={12}>
             <BoxWrapper
                 title="Chain Networth Details"
-                titleSX={{ textAlign: "center" }}
+                titleSX={{ textAlign: "center" , fontSize: '30px'}}
             >
-            <Button onClick={toggleView} style={{ position: "relative", width: "150px", color: "#da6167"}}>
+            <Button onClick={toggleView} style={{ fontSize: '20px', marginTop: '-50px',position: "relative", width: "150px", color: "#d87378"}}>
               {isListView ? "Graph View" : "List View"} {/* Toggle button text based on view */}
             </Button>
             {isListView ? (

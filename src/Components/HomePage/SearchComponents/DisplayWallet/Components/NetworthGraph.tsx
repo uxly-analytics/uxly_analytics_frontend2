@@ -157,7 +157,7 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
         <Grid item xs={6}>
           <BoxWrapper
             title={"Wallet Value:"}
-            titleSX={{ textAlign: "center" }}
+            titleSX={{ textAlign: "center",}}
             value={`$${totalNetworth}`}
           />
         </Grid>
@@ -172,9 +172,9 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
       <br/>
       <BoxWrapper
         title="Networth by Chain (USD)"
-        titleSX={{ textAlign: "center" }}
+        titleSX={{ textAlign: "center" , fontSize: '30px'}}
       >
-        <Button onClick={toggleView} style={{ position: "relative", width: "150px", color: "#da6167"}}>
+        <Button onClick={toggleView} style={{ fontSize: '20px', marginTop: '-50px', position: "relative", width: "150px", color: "#d87378"}}>
           {isListView ? "Graph View" : "List View"} {/* Toggle button text based on view */}
         </Button>
         {isListView ? (
