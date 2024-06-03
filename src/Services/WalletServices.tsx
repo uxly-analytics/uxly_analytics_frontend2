@@ -10,8 +10,83 @@ interface WalletData {
   networth: any;
   nfts: any;
   tokenBalance: any;
-  transactions: any;
+  transactions: any[];
   transactionsData: any;
+}
+
+interface AddressQueryResult {
+  address: string;
+}
+
+export async function queryAddress(address: string) {
+  try {
+    const response = await axios.get<AddressQueryResult[]>(
+      `${HOST}/query-address?address=${address}`,
+    );
+    console.log(response);
+    console.log('response data is of type: ', typeof response.data);
+    const result: AddressQueryResult[] = response.data;
+
+    console.log('type of our returning result is: ', typeof result);
+    return result;
+  } catch (error) {
+    console.log('Error querying address: ', error);
+    return error;
+  }
+}
+
+export async function addAddressToDatabase(address: string) {
+  try {
+    const response = await axios.get(`${HOST}/add-address?address=${address}`);
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log('Error adding address to database: ', error);
+    return error;
+  }
+}
+
+export async function getWalletDataFromDb(
+  address: string,
+  chain: string,
+): Promise<WalletData> {
+  try {
+    const startTime = Date.now();
+
+    const urls = [
+      `${HOST}/wallet-networth?address=${address}`,
+      `${HOST}/token-balance?address=${address}&chain=${chain}`,
+      `${HOST}/nft?address=${address}&chain=${chain}`,
+      `${HOST}/db-transactions?address=${address}&chain=${chain}`,
+      `${HOST}/aggregate-transactions?address=${address}&chain=${chain}`,
+    ];
+
+    const responses = await Promise.all(urls.map((url) => axios.get(url)));
+
+    const endTime = Date.now();
+
+    console.log(`Requests took ${endTime - startTime}ms`);
+
+    console.log(responses);
+    return {
+      address: address,
+      networth: responses[0].data,
+      tokenBalance: responses[1].data,
+      nfts: responses[2].data,
+      transactions: responses[3].data,
+      transactionsData: responses[4].data,
+    };
+  } catch (error) {
+    console.log('Error: ', error);
+    return {
+      address: 'null',
+      networth: {},
+      nfts: {},
+      tokenBalance: { tokens: [] },
+      transactions: [],
+      transactionsData: {},
+    };
+  }
 }
 
 export async function getWalletData(
@@ -51,7 +126,7 @@ export async function getWalletData(
       networth: {},
       nfts: {},
       tokenBalance: { tokens: [] },
-      transactions: {},
+      transactions: [],
       transactionsData: {},
     };
   }
