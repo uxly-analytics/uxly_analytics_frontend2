@@ -51,6 +51,9 @@ export async function getWalletDataFromDb(
   chain: string,
 ): Promise<WalletData> {
   try {
+    if (chain.length === 0) {
+      chain = '0x1';
+    }
     const startTime = Date.now();
 
     const urls = [
