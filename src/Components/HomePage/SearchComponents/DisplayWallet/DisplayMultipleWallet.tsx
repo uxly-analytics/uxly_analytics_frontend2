@@ -32,7 +32,7 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
         <MultipleTransactionDetailsTable wallets={wallets} />
         <FilterGraph
           walletData={wallets[0]}
-          address={allWalletAddresses}
+          address={wallets[0].address}
         />
       </>
     );

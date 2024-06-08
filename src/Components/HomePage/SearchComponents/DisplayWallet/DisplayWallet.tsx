@@ -36,7 +36,7 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         />
         <FilterGraph
           walletData={walletData}
-          address={[walletData.address]}
+          address={walletData.address}
         />
         <DisplayNFTs walletData={walletData} />
         {walletData.tokenBalance && Array.isArray(walletData.tokenBalance) && (

@@ -77,6 +77,26 @@
   background-color: #e76772;
 }
 
+.search-default {
+  /* Default search bar styling */
+  margin-top: 100px; /* Or your desired spacing */
+  transition: margin-top 0.5s ease;
+}
+
+.search-in-header {
+  margin-top: 10px !important; /* Reset margin to move it to the top */
+  z-index: 1001; /* Ensure a high z-index so it's clickable */
+  position: relative; /* Ensure it's positioned correctly */
+}
+
+.header-section.search-in-header {
+  padding-top: 50px; /* For example purposes */
+}
+
+.header-section.search-in-header .search-component {
+  top: -100px !important;  /* This will move the search bar up */
+}
+
 .loaded-data {
   margin-left: 50px;
   width: 100%;
@@ -289,40 +309,38 @@ display: flex;
 .graph-container {
    /* Match with the transaction table styles */
    padding: 20px;
-   margin-top: 20px; /* Or as needed to match the table */
-   margin-left: 23px;
-   margin-right: 0px;
-   margin-bottom: 20px;
+   margin: 20px 0px 20px 24px;
    background-color: #2c2c2c;
    border: 2px solid #f78a93b0; 
    border-radius: 15px;
    /* Make sure the container takes full width */
    width: 98%;  /*1175px; */
    display: flex;
-   justify-content: center;
+   justify-content: space-between;
    flex-direction: column; /* Ensure stacking of children */
-   align-items: flex-start;
+   align-items: stretch;
    box-sizing: border-box;
    min-height: 700px;
+   position: relative;
    /* overflow: hidden; */
 }
 
 /* For dynamically increasing height */
 .graph-container > * {
   margin-bottom: 10px; /* Adjust space between children */
-}
+} 
 
 .filters-container {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-right: 20px;
-  padding: 20px; /* Padding around filters */
+  padding:  20px; /* Padding around filters */
   background-color: #333; /* Dark background for the filter area */
   display: flex; /* To lay out children in a row */
-  justify-content: flex-start; /* Space out children */
+  justify-content: space-between; /* Space out children */
   align-items: center; /* Align children vertically */
   gap: 10px; /* Space between filter elements */
   width: 100% !important; 
-  height: calc(100% - 100px);
+  height: calc(100% - 50px) !important;
   border-radius: 15px;
   flex-wrap: wrap;
 }
@@ -339,7 +357,7 @@ display: flex;
   align-items: center; /* Align items in a row for each filter block */
   gap: 10px; /* Space between filter dropdowns and delete icon */
   width: 100%; /* Take the full width of the container */
-  margin-bottom: 0px; /* Space between each filter-block */
+  margin-bottom: 10px; /* Space between each filter-block */
 }
 
 /* For the text input inside filters */
@@ -353,17 +371,37 @@ display: flex;
   flex: 1;
 }
 
+/* Styling for the input where the label floats above */
+.filters-container .MuiInputLabel-shrink {
+  transform: translate(14px, -2px) scale(0.75); /* Adjusts the shrinking behavior of the label */
+}
+
 .filters-container .MuiInputLabel-root {
   color: white; /* Or any color you prefer */
-  
+  top: -12px; /* Moves the label slightly upwards */
+  color: #EEEEEE; /* Light color for visibility */
+  font-size: 1rem;
+}
+
+.filters-container .MuiInputBase-root {
+  padding:15px; /* Adjust padding to give more space and better alignment */
+  align-items: center; /* Ensures the input text itself is centered */
+  height: 30px; /* Sets a fixed height for easier control */
 }
 
 .filters-container .MuiOutlinedInput-notchedOutline {
-  border-color: white;
+  border-color: rgba(255, 255, 255, 0.355);
 }
 
 .filters-container .MuiOutlinedInput-notchedOutline {
-  border-color: white !important;
+  border-color: rgba(255, 255, 255, 0.406) !important;
+}
+/* General styling for input fields within the filters-container */
+.filters-container .MuiTextField-root {
+  /* This adjusts the overall alignment and spacing around the text field */
+  margin: 0;
+  display: flex;
+  align-items: center; /* Ensures vertical centering */
 }
 
 .filters-container .MuiSelect-select {
@@ -382,7 +420,8 @@ display: flex;
 
 .filter-set .MuiFormControl-root {
   flex: 1; /* Each filter dropdown will take equal space */
-  min-width: 120px; /* Or any minimum width that looks good */
+  min-width: 100px; /* Or any minimum width that looks good */
+  
 }
 
 /* Fix the width of selects if needed */
@@ -391,11 +430,20 @@ display: flex;
 }
 
 .filter-input {
-  width: 150px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  text-align: center;
 }
 
 .filter-input, .time-range-select {
   flex-grow: 1; /* Allows input to grow */
+}
+
+.filter-input, .select-input {
+  width: auto; /* Adjust width to fit content */
+  margin: 0 8px; /* Margins to ensure spacing around elements */
+  flex-grow: 1; /* Allows the input fields to grow and fill space */
 }
 
 .filter-button-container {
@@ -405,6 +453,19 @@ display: flex;
 .add-filter-btn {
   margin-left: auto; /* Push the button towards the end of the filters-container */
   padding: 8px 16px; /* Adjust padding to control the size of the button */
+}
+
+.add-filter-btn-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 10px; /* Ensures padding from the right */
+}
+
+.filters-dynamic-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .time-range-select {
@@ -418,16 +479,16 @@ display: flex;
 
 
 .graph-border {
-  border: 3px solid white;
+  border: 3px solid rgba(255, 255, 255, 0.584);
   border-radius: 15px;
   /* Other styles for the border like padding or margins if necessary */
 }
 
 .custom-tooltip {
-  background: grey;
+  background: rgba(0, 0, 0, 0.414);
   padding: 10px;
   border-radius: 5px;
-  color: white;
+  color: rgba(255, 255, 255, 0.492);
   margin-right: 20px; 
   max-width: calc(100% - 40px); 
 }
@@ -484,11 +545,18 @@ display: flex;
   height: 100% !important; /* Ensuring it fills the parent height */
   width: 100% !important;  /*Ensuring it fills the parent width */
 }
-
+/********* FILTER DROP DOWNS *********/
 /* Override MUI input text color */
 .MuiInputBase-input {
   color: white; /* Set the color of input text */
+  color: #cacaca9f
 }
+.MuiInputBase-root {
+  /* Decrease the size of the input fields */
+  height: 36px; /* Adjust based on your preference */
+  font-size: 1 rem; /* Smaller font size */
+}
+
 
 /* Override MUI select component styles */
 .MuiOutlinedInput-notchedOutline {
@@ -509,12 +577,24 @@ display: flex;
 .time-range-select .MuiSelect-select {
   color: white !important; /* White text for inputs and selects */
   font-size: 1rem; /* Larger text for visibility */
-  height: 12px;
+  height: 8px;
+}
+
+.MuiPickersDay-root {
+  /* Styling for the date numbers */
+  color: white !important;
+}
+
+.MuiPaper-root {
+  /* Background color for the dropdown */
+  background-color: #333 !important;
+  color: white !important; /* Ensures the text color is white */
 }
 
 /* Specific styles for the dropdown menu */
 .MuiPaper-root .MuiMenu-paper .MuiMenu-list {
   background-color: #555 !important; /* Darker background for dropdown */
+
 }
 
 /* Styles for dropdown items */
@@ -541,6 +621,7 @@ display: flex;
 /* Style the text inside the dropdown */
 .filter-set .MuiInputBase-input {
   color: #eee; /* Off-white text */
+  border-color: #82000080 !important;
 }
 
 /* Style the labels */
@@ -551,4 +632,127 @@ display: flex;
 /* Apply off-white border to notched outline */
 .filter-set .MuiOutlinedInput-notchedOutline {
   border-color: grey; /* Off-white border */
+}
+
+.transactions-search-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will space items properly across the container */
+  width: 43%; /* Full width of the container */
+  padding: 10px 20px; /* Adjust padding to better fit your design */
+  box-sizing: border-box;
+  border-bottom: 2px solid #f78a93b0; 
+  margin-top: 38px!important;
+  margin-left: 25px;
+  align-content: flex-start;
+  height: 70px; /* Set a fixed height */
+  flex-shrink: 0;
+  position: absolute; /* Positioned absolutely relative to graph-container */
+  top: 0; /* Align to the top of the graph-container */
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  z-index: 2;
+}
+
+/* not being used, may want tto delete */
+.toggle-grid-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Aligns the checkbox to the left */
+  margin-left: auto; /* Pushes the checkbox to the right */
+  padding-right: 20px; /* Padding on the right for spacing */
+}
+
+/* CheckBox for Filter */
+.checkbox-container {
+  display: flex;
+  align-items: flex;
+  margin-top: 5px;  
+  margin-right: auto;
+  margin-left: 0px !important; 
+  margin-top: 3px;
+  margin-bottom: 0px;
+  justify-content: center; 
+}
+
+.checkbox-container label {
+  margin-left: 8px;
+  color: #ffffff68; 
+
+}
+
+.checkbox-container input[type="checkbox"]:checked {
+  accent-color: #e76772; /* Sets the checkbox color when checked */
+}
+
+
+/* date picker */
+
+.my-datepicker{
+  width: 350px !important; /* Ensure all numbers are visible */
+  color: white;
+  margin-right: -65px !important;
+}
+
+.my-datepicker .MuiInputBase-root {
+  height: 35px !important; /* Adjust height as needed */
+  width: 155px !important; /* Ensure all numbers are visible */
+  margin-right: -100px !important;
+  margin-left: 5px;
+  margin-top: -13px !important;
+  position: relative;
+  color: white;
+}
+
+.my-datepicker .MuiOutlinedInput-notchedOutline {
+  border-color: white;
+}
+
+.my-datepicker .MuiSvgIcon-root {
+  color: white;
+}
+
+.my-datepicker .MuiInputLabel-root{
+    width: 70 !important; 
+
+}
+
+.date-range-picker-container {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  position: relative; /* To position absolute elements inside */
+  margin-right: -10px; /* Ensures it doesn't stick to the edge */
+  padding-top: 13px;
+
+  margin-right: 195px;
+  margin-left: 0px;
+  color: white;
+  width: 10px;
+}
+
+.date-range-picker-container .MuiInputLabel-root {
+  width: 200px;
+  font-size: small;
+  color: white;
+}
+
+.date-range-picker {
+  width: auto; /* Adjust width as needed */
+  display: flex;
+  gap: 36px !important; /* Reduce gap between date inputs */
+  width: 10px;
+}
+
+.date-range-picker  .MuiInputBase-root {
+  height: 35px; /* Adjust height as needed */
+  width: 108px !important; /* Ensure all numbers are visible */
+  margin-right: -35px !important;
+  position: relative;
+  color: white;
+  margin-left: -4px;
+}
+
+.date-range-picker .MuiOutlinedInput-notchedOutline {
+  border-color: white;
 }

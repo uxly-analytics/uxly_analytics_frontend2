@@ -24,38 +24,32 @@ interface Chain {
 
 interface SearchForm {
   className?: string;
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
-  onSearchSubmit: (searchValue: string) => void;
-  onChainSelected: (chain: Chain) => void; 
+  onSubmit: (addresses: string[], chain: Chain) => void
 }
 
-function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: SearchForm): JSX.Element {
+function Search({ className, onSubmit}: SearchForm): JSX.Element {
   const [address, setAddress] = useState<string[]>([]);
   const [chain, setChain] = useState<Chain>({ value: "", label: "" });
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>("");
-  const [searchValue, setSearchValue] = useState('');
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
-  const handleChainChange = (newChain: Chain) => {
-    setChain(newChain);
-    onChainSelected(newChain); // This function should be passed from the parent
-  };
-
   function handleAddressChange(e: ChangeEvent<HTMLInputElement>): void {
     const addresses: string = e.target.value;
-    const addressesArray: string[] = addresses.split(',').map((address) => address.trim());
+    const addressesArray: string[] = addresses
+      .split(",")
+      .map((address) => address.trim());
     setAddress(addressesArray);
-    setSearchValue(e.target.value);
   }
 
+  /*
   // Clears the current search and potentially other related states
   function handleClearSearch(): void {
     setAddress([]);
     setSearchValue('');
     // Any other clear actions
-  }
+  } */
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>): void {
     if (e.target.files && e.target.files.length > 0) {
@@ -65,15 +59,20 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
       const reader = new FileReader();
 
       reader.onload = (event) => {
-        if (event.target && event.target.result) {
-          const csvData: string = event.target.result as string;
-          // Split CSV data by newline
-          const lines: string[] = csvData.split("\n");
-          // Process each line
-          const addressesArray: string[] = lines
-            .flatMap((line) => line.split(",").map((item) => item.trim()))
-            .filter((item) => item !== "");
-          setAddress(addressesArray);
+        try {
+          if (event.target && event.target.result) {
+            const csvData: string = event.target.result as string;
+            // Split CSV data by newline
+            const lines: string[] = csvData.split("\n");
+            // Process each line
+            const addressesArray: string[] = lines
+              .flatMap((line) => line.split(",").map((item) => item.trim()))
+              .filter((item) => item !== "");
+            setAddress(addressesArray);
+          }
+        } catch (error) {
+          console.error("Error processing file:", error);
+          // Here you might want to set an error state and display it
         }
       };
 
@@ -83,9 +82,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    if (searchValue.trim()) {
-      onSearchSubmit(searchValue.trim()); // Pass the trimmed search value to the parent
-    }
+    onSubmit(address, chain);
   }
 
   function handleRetry(): void {
@@ -103,8 +100,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
     <div className={`center-content ${className}`}> {/* Use this div to ensure everything is centered */}
     <form onSubmit={handleSubmit} className={"search-form"}>
     <Stack spacing={2} alignItems="center">
-      {!fileUploaded && (
-  
+           
           <Stack>
             <Typography
               variant="body2"
@@ -117,7 +113,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             <TextField
               type="text"
               placeholder="Search Wallet Address"
-              value={searchValue} //address.join(',')}
+              value={address.join(',')}
               onChange={handleAddressChange}
               required={!fileUploaded}
               variant="outlined"
@@ -160,7 +156,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
         {address.length > 0 && (
           <Tooltip title="Clear">
             <IconButton
-              onClick={handleClearSearch}
+              onClick={() => setAddress([])} //onClick={handleClearSearch}
               size="small"
               edge="end"
               style={{
@@ -180,7 +176,9 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             </IconButton>
           </Tooltip>
         )}
-        <ChainSelect value={chain} onChange={handleChainChange} />
+        <ChainSelect value={chain} onChange={(newChain) => {
+              setChain(newChain);
+            }}  />
       </Box>
                   
                 ),
@@ -196,9 +194,16 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             />
             </Box>
           </Stack>
+      {fileUploaded && (
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="center"> 
+            <Typography variant="subtitle1" color="white">
+              Loaded file: {fileName}
+            </Typography>
+            <button type="button" onClick={handleRetry}>Retry</button>
           
+          </Stack>
       )}
-    {!fileUploaded && (
+
      <Box mt={2} sx={{ display: 'flex', justifyContent: 'center' }}>
       <button 
       type="submit"
@@ -212,8 +217,7 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
         width: '50px', 
         marginRight: '20px',
 
-      }}
-      >Search</button>
+      }} >Search</button>
         <Tooltip 
             title="Upload & search multiple wallet addresses"
             placement="right"
@@ -243,21 +247,11 @@ function Search({ className, onSubmit , onSearchSubmit , onChainSelected }: Sear
             ref={fileInputRef}
             type="file"
             onChange={handleFileChange}
-           accept=".csv"
+            accept=".csv"
             style={{ display: 'none' }}
             required={!address.length}
           />
       </Box>
-    )}
-
-      {fileUploaded && (
-        <div>
-          <span>{fileName}</span>
-          <button type="button" onClick={handleRetry}>
-            Retry
-          </button>
-        </div>
-      )}
       
       </Stack>
     </form>
