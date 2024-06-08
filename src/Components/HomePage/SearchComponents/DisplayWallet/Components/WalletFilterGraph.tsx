@@ -14,6 +14,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextFieldProps } from '@mui/material/TextField';
 import { Height, VerticalAlignCenter } from '@mui/icons-material';
 import { offsetPositive } from 'recharts/types/util/ChartUtils';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 
 interface GraphProps {
@@ -26,16 +28,18 @@ interface GraphProps {
         gas_price?: string;
       }>;
   };
-  address: string;
+  address: string[];
 }
 
 interface FilterType {
-    id: string;
-    filterType?: string; // Adding this to match the value used in the Select component
-    conditionType?: string; // Assuming conditions like "is", "equals", "contains", etc.
-    valueType?: string; 
-    // Add other properties for the filters here as needed
-  }
+  id: string;
+  filterType?: string; // Adding this to match the value used in the Select component
+  conditionType?: string; // Assuming conditions like "is", "equals", "contains", etc.
+  valueType?: string; 
+  selectedAddresses: { [key: string]: boolean };
+  isOpen: boolean;
+  // Add other properties for the filters here as needed
+}
 
 type Transaction = {
     block_timestamp?: number;
@@ -46,8 +50,32 @@ type Transaction = {
     to_address?: string | null;
   };
 
-const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
-  const [filters, setFilters] = useState<FilterType[]>([]);
+const FilterGraph: React.FC<GraphProps> = ({ walletData, address }) => {
+  // after applying filters, this is the new transformed data
+  const [newWalletData, setNewWalletData] = useState(walletData);
+  // state for keeping track of filter (need to refine)
+  const [filterToOrFrom, setFilterToOrFrom] = useState<boolean>();
+  useEffect(() => {
+    setNewWalletData({ ...walletData });
+    setFilterToOrFrom(false);
+  }, []); // Empty dependency array to run only once when the component mounts
+
+  const generateUniqueId = () => Math.random().toString(36).substr(2, 9);
+
+  const [filters, setFilters] = useState<FilterType[]>([
+    {
+      id: generateUniqueId(),
+      filterType: '',
+      conditionType: '',
+      valueType: '',
+      selectedAddresses: address.reduce((acc, addr) => {
+        acc[addr] = true;
+        return acc;
+      }, {}),
+      isOpen: false,
+    }
+  ]);
+
   const [chartType, setChartType] = useState<string>('Transaction Values');
   const [searchQuery, setSearchQuery] = useState('');
   const [processedData, setProcessedData] = useState<Transaction[]>([]);
@@ -69,7 +97,6 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [endDate, setEndDate] = useState(new Date());
-
   // ****************************************************************************************************** // 
   // ****************************************************************************************************** // 
   // ***************************************        FILTERS        **************************************** // 
@@ -80,12 +107,13 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   // 
   // Use setProcessedData() for filtered data. processData is the data given to the line chart 
   // Insert filter options here:
-  const [filterOptions, setFilterOptions] = useState({
-    filterType: ['Type 1', 'Type 2', 'Type 3'],
-    conditionType: ['Equals', 'Contains', 'Starts with'],
-    valueType: ['Value 1', 'Value 2', 'Value 3']
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [walletFilter, setWalletFilter] = useState({
+    filterType: ['From Address', 'To Address'],
+    conditionType: ['Is'],
+    valueType: {}
   });
-  
+
   const [selectedFilters, setSelectedFilters] = useState({
     filterType: '',
     conditionType: '',
@@ -93,7 +121,21 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   });
 
   // Add filter logic here: 
+  const [selectedAddresses, setSelectedAddresses] = useState(address.reduce((acc, addr) => {
+    acc[addr] = true; // Initialize all checkboxes to be checked
+    return acc;
+  }, {}));
 
+  useEffect(() => {
+    setSelectedAddresses(address);
+  }, [address, setSelectedAddresses]);
+
+  useEffect(() => {
+    setWalletFilter(prevFilter => ({
+      ...prevFilter,
+      valueType: selectedAddresses,
+    }));
+  }, [setWalletFilter, selectedAddresses]);
 
   
   // ****************************************************************************************************** // 
@@ -112,7 +154,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 
   // Convert data to the format required by Recharts based on the selected chart type
   useEffect(() => {
-    const transformedData = walletData.transactions.map(t => ({
+    const transformedData = newWalletData.transactions.map(t => ({
         rawDate: moment(t.block_timestamp).valueOf(),
         formattedDate: moment(t.block_timestamp).isValid() ? moment(t.block_timestamp).format('MMM DD') : 'Invalid date',
         value: chartType === 'Gas fees USD' ? parseFloat(t.gas_price || '0') : t.decimal_value, // Directly handle the logic here
@@ -121,7 +163,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
         to_address: t.to_address ?? 'N/A',
     }));
     setData(transformedData);
-  }, [walletData.transactions, chartType]);
+  }, [newWalletData.transactions, chartType]);
 
   const handleDateChange = (newDate: Date | null) => {
     setSelectedDate(newDate);
@@ -402,6 +444,22 @@ const applyFilters = (data: Transaction[]) => {
     // return filteredData;
   };
 
+  const applyFilters2 = (data: Transaction[]) => {
+    let filteredData = [...data];
+    filters.forEach(filter => {
+      if (filter.filterType === "From Address") {
+        filteredData = filteredData.filter(transaction =>
+          filter.selectedAddresses[transaction.from_address]
+        );
+      } else if (filter.filterType === "To Address") {
+        filteredData = filteredData.filter(transaction =>
+          filter.selectedAddresses[transaction.to_address]
+        );
+      }
+    });
+    return filteredData;
+  };
+
   const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -453,7 +511,7 @@ const applyFilters = (data: Transaction[]) => {
     const startTime = calculateStartTime();
     const endTime = moment().endOf('day').valueOf();
 
-    const transactions = walletData.transactions.map(t => ({
+    const transactions = newWalletData.transactions.map(t => ({
       block_timestamp: t.block_timestamp,
       date: moment(t.block_timestamp).format('YYYY-MM-DD'),  // Standardizing date format
       value: chartType === 'Gas Prices' ? parseFloat(t.gas_price ) : t.decimal_value,
@@ -471,8 +529,9 @@ const applyFilters = (data: Transaction[]) => {
       t.from_address.includes(searchQuery) || t.to_address.includes(searchQuery)
     ) : timeFilteredData;
 
-    setProcessedData(searchFilteredData);
-  }, [walletData, timeRange, selectedDate, searchQuery, chartType]);
+    const newestData = applyFilters2(searchFilteredData);
+    setProcessedData(newestData);
+  }, [newWalletData, timeRange, selectedDate, searchQuery, chartType]);
 
 
 /***********TESTING***********/
@@ -554,18 +613,27 @@ const applyFilters = (data: Transaction[]) => {
   // Function to handle adding a new filter
   const addFilter = () => {
     setFilters(filters => [
-        ...filters,
-        { id: `filter-${filters.length}`, filterType: 'Type 1', conditionType: 'Equals', valueType: 'Value 1' }, // Initialize with empty strings or appropriate defaults
-      ]);
-    setContainerHeight(currentHeight => currentHeight + 50); // Adjust height increment as needed
+      ...filters,
+      {
+        id: generateUniqueId(),
+        filterType: '',
+        conditionType: '',
+        valueType: '',
+        selectedAddresses: address.reduce((acc, addr) => {
+          acc[addr] = true;
+          return acc;
+        }, {}),
+        isOpen: false,
+      }
+    ]);
   };
 
   // Function to handle removing a filter
-  const removeFilter = (filterId: string) => {
-    setFilters(filters => filters.filter(filter => filter.id !== filterId));
-  // Optionally adjust the container height
-  setContainerHeight(currentHeight => Math.max(minHeight, currentHeight - heightPerFilter));
-};
+  const removeFilter = (index) => {
+    setFilters(filters => filters.filter((_, i) => i !== index));
+    // Optionally adjust the container height
+    setContainerHeight(currentHeight => Math.max(minHeight, currentHeight - heightPerFilter));
+  };
 
   const handleFilterTypeChange = (
     event: SelectChangeEvent, // Update this type if needed
@@ -581,59 +649,87 @@ const applyFilters = (data: Transaction[]) => {
     setFilters(newFilters);
   };
 
-  const handleFilterChange = (index, key, value) => {
-    const updatedFilters = filters.map((filter, i) => 
-      i === index ? { ...filter, [key]: value } : filter
-    );
-    setFilters(updatedFilters);
+  const handleFilterChange = (index: number, key: keyof FilterType, value: any) => {
+    setFilters(prevFilters => {
+      const updatedFilters = [...prevFilters];
+      updatedFilters[index] = { ...updatedFilters[index], [key]: value };
+      return updatedFilters;
+    });
   };
   
+  // Get selected addresses as a string
+  const getSelectedAddressesString = (selectedAddresses: { [key: string]: boolean }) => {
+    return Object.keys(selectedAddresses)
+      .filter(key => selectedAddresses[key])
+      .map(key => key.slice(0, 7)) // Take the first 7 characters of each address
+      .join(', ');
+  };
+
   // Function to render each filter UI 
   // *************** UPDATE IF FILTERS ARE MODIFIED  *************** // 
   const renderFilter = (filter, index) => (
     <div key={filter.id} className="filter-set">
       <div className="filter-block">
-        <FormControl variant="outlined" margin="dense" fullWidth >
+        <FormControl variant="outlined" margin="dense" fullWidth disabled={isSubmitted}>
           <InputLabel>Filter Type</InputLabel>
           <Select
             value={filter.filterType}
             onChange={(e) => handleFilterChange(index, 'filterType', e.target.value)}
             label="Filter Type"
-            sx={commonSelectStyles}
           >
-            {filterOptions.filterType.map(option => (
-              <MenuItem key={option} value={option}>{option}</MenuItem>
-            ))}
+            <MenuItem value="From Address">From Address</MenuItem>
+            <MenuItem value="To Address">To Address</MenuItem>
           </Select>
         </FormControl>
-        <FormControl variant="outlined" margin="dense" fullWidth>
+        <FormControl variant="outlined" margin="dense" fullWidth disabled={isSubmitted}>
           <InputLabel>Condition Type</InputLabel>
           <Select
             value={filter.conditionType}
             onChange={(e) => handleFilterChange(index, 'conditionType', e.target.value)}
             label="Condition Type"
-            sx={commonSelectStyles}
           >
-            {filterOptions.conditionType.map(option => (
-              <MenuItem key={option} value={option}>{option}</MenuItem>
-            ))}
+            <MenuItem value="Is">Is</MenuItem>
           </Select>
         </FormControl>
-        <FormControl variant="outlined" margin="dense" fullWidth>
+        <FormControl variant="outlined" margin="dense" fullWidth disabled={isSubmitted}>
           <InputLabel>Value Type</InputLabel>
           <Select
-            value={filter.valueType}
+            value={getSelectedAddressesString(filter.selectedAddresses)}
             onChange={(e) => handleFilterChange(index, 'valueType', e.target.value)}
             label="Value Type"
             sx={commonSelectStyles}
+            onClose={() => handleFilterChange(index, 'isOpen', false)}
+            onOpen={() => handleFilterChange(index, 'isOpen', true)}
+            open={filter.isOpen}
+            renderValue={() => getSelectedAddressesString(filter.selectedAddresses)}
           >
-            {filterOptions.valueType.map(option => (
-              <MenuItem key={option} value={option}>{option}</MenuItem>
+            {address.map((wallet, idx) => (
+              <MenuItem key={idx} value={wallet} disableRipple>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={filter.selectedAddresses[wallet]}
+                      className="checkbox-root"
+                      onChange={(e) => {
+                        e.stopPropagation(); // Prevent closing the dropdown
+                        const newSelectedAddresses = {
+                          ...filter.selectedAddresses,
+                          [wallet]: !filter.selectedAddresses[wallet],
+                        };
+                        handleFilterChange(index, 'selectedAddresses', newSelectedAddresses);
+                      }}
+                      disabled={isSubmitted}
+                    />
+                  }
+                  label={<span className="wallet-label">{wallet}</span>}
+                  onClick={(e) => e.stopPropagation()} // Prevent closing the dropdown
+                />
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
-        <IconButton style={{ marginRight: '8px', color: 'whitesmoke'}} onClick={() => removeFilter(filter.id)}>
-          <DeleteIcon />
+        <IconButton onClick={() => removeFilter(index)}>
+          <DeleteIcon style={{color:'white'}}/>
         </IconButton>
       </div>
     </div>
