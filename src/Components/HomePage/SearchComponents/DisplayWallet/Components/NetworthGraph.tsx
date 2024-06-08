@@ -18,6 +18,7 @@ interface NetworthProps {
   labels: string[];
   chainNetWorth: number[];
   total: string;
+  botEstimation: number;
 }
 
 const NumberComponent = ({ numberString }: { numberString: string }): string => {
@@ -33,7 +34,7 @@ const NumberComponent = ({ numberString }: { numberString: string }): string => 
   return addCommasToNumberString(numberString);
 };
 
-const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }) => {
+const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total, botEstimation }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart>();
   const [isListView, setIsListView] = useState(false);
@@ -154,18 +155,25 @@ const NetworthGraph: React.FC<NetworthProps> = ({ labels, chainNetWorth, total }
   return (
     <Grid item xs={12}>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <BoxWrapper
             title={"Wallet Value:"}
-            titleSX={{ textAlign: "center",}}
+            titleSX={{ textAlign: "center" }}
             value={`$${totalNetworth}`}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <BoxWrapper
             title={"Wallet Age"}
             titleSX={{ textAlign: "center" }}
             value={`Mature`}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <BoxWrapper
+            title={"Bot Possibility:"}
+            titleSX={{ textAlign: "center",}}
+            value={`${botEstimation.toFixed(1)}%`}
           />
         </Grid>
       </Grid>
