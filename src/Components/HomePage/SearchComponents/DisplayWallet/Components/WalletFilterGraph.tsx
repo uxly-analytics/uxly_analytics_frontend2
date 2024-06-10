@@ -7,7 +7,7 @@ import { SelectChangeEvent } from '@mui/material';
 import moment, { Moment }  from 'moment';
 import 'chartjs-adapter-moment';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DateRangePicker } from '@mui/x-date-pickers-pro';
+// import { DateRangePicker } from '@mui/x-date-pickers-pro'; // MUI premium feature 
 import { DatePicker, LocalizationProvider, PickersDay  } from '@mui/x-date-pickers'; //'@mui/lab'; 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
@@ -677,34 +677,34 @@ const applyFilters = (data: Transaction[]) => {
     setEndDate(date);
   };
 
-  const renderDatePicker = () => {
-      return (
-        <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <div className="date-range-picker-container">
-          {timeRange === '1D' ? (
-            <DatePicker
-              label="Select Date"
-              className="my-datepicker"
-              value={selectedDate}
-              onChange={setSelectedDate /*handleDateChange*/}
-              sx={customDatePickerStyles}
-            />
-          ) : (
-          <DateRangePicker
-            className="date-range-picker"
-            value={dateRange}
-            onChange={handleDateRangeChange}
-            sx={customDatePickerStyles}
+  // const renderDatePicker = () => {
+  //     return (
+  //       <ThemeProvider theme={theme}>
+  //     <LocalizationProvider dateAdapter={AdapterDateFns}>
+  //       <div className="date-range-picker-container">
+  //         {timeRange === '1D' ? (
+  //           <DatePicker
+  //             label="Select Date"
+  //             className="my-datepicker"
+  //             value={selectedDate}
+  //             onChange={setSelectedDate /*handleDateChange*/}
+  //             sx={customDatePickerStyles}
+  //           />
+  //         ) : (
+  //         <DateRangePicker
+  //           className="date-range-picker"
+  //           value={dateRange}
+  //           onChange={handleDateRangeChange}
+  //           sx={customDatePickerStyles}
             
-          />
+  //         />
 
-          )}
-          </div>
-      </LocalizationProvider>
-    </ThemeProvider>
-      );
-  }
+  //         )}
+  //         </div>
+  //     </LocalizationProvider>
+  //   </ThemeProvider>
+  //     );
+  // }
 
 
 // Helper function to format date based on the selected time scale
@@ -1067,7 +1067,7 @@ console.log("Displayed Data:", displayedData);
             ) : (
               <ThemeProvider theme={theme}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-              {renderDatePicker()}   
+              {/* {renderDatePicker()}    */}
         
                 </LocalizationProvider>
                 </ThemeProvider>
