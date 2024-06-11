@@ -64,7 +64,7 @@ function Home() {
           className={isSearchInHeader ? "search-in-header" : "search-default"}
           onSubmit={handleSearchSubmit}      
         />
-        <Typography variant="h4" color="white" paddingTop={2} mb={-20}>Get Web3 Wallet Data
+        <Typography variant="h4" color="white" paddingTop={2} mb={-15}>Get Web3 Wallet Data
         </Typography>
         </div>
       </div>
