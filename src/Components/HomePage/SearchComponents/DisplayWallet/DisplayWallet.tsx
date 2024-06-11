@@ -4,14 +4,23 @@ import DisplayNFTs from "./Components/DisplayNFTs";
 import TransactionTable from "./Components/TransactionTable";
 import "./displaywallet.css";
 import TokenBalance from "./Components/TokenBalance";
-import FilterGraph from "./Components/WalletFilterGraph";
+
+interface WalletTransaction {
+  fromAddress: string;
+  toAddress: string;
+  value: number;
+  decimalValue: number;
+  blockTimestamp: number;
+  blockHash: string;
+  gasPrice: string;
+}
 
 interface WalletData {
   address: string;
   networth: any;
   nfts: any;
   tokenBalance: any;
-  transactions: any;
+  transactions: WalletTransaction[];
   transactionsData: any;
 }
 
@@ -31,10 +40,6 @@ const DisplayWalletData: React.FC<DisplayWalletDataProps> = ({
         <DisplayBalance walletData={walletData} />
         {/* Left column */}
         <TransactionTable
-          walletData={walletData}
-          address={walletData.address}
-        />
-        <FilterGraph
           walletData={walletData}
           address={walletData.address}
         />

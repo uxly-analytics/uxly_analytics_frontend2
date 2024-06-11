@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import BoxWrapper from '../../../../HomePage/HomeComponents/BoxWrapper/BoxWrapper';
 import Chart from 'chart.js/auto';
@@ -35,6 +35,7 @@ interface BalanceDistributionProps {
 
 const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) => {
     const chartRefs = useRef<Record<string, Chart | null>>({});
+    const [topChains, setTopChains] = useState<TopChain[]>([]);
 
     useEffect(() => {
         const destroyCharts = () => {
@@ -60,7 +61,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
         });
 
         // Sort chains based on total net worth
-        const topChains: TopChain[] = Object.keys(chainsNetworth)
+        const calculatedTopChains: TopChain[] = Object.keys(chainsNetworth)
             .map(chain => ({
                 chain,
                 networth_usd: chainsNetworth[chain].toString(),
@@ -78,7 +79,7 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
             .slice(0, 4);
 
         // Calculate balance ranges for each chain
-        topChains.forEach(chain => {
+        calculatedTopChains.forEach(chain => {
             wallets.forEach(wallet => {
                 wallet.networth.chains.forEach(chainData => {
                     if (chainData.chain === chain.chain) {
@@ -101,18 +102,26 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
             });
         });
 
+        setTopChains(calculatedTopChains);
+    }, [wallets]);
+
+    useEffect(() => {
         // Render charts for top chains
         topChains.forEach((chain, index) => {
             const canvas = document.getElementById(`chain${index + 1}-graph`) as HTMLCanvasElement;
 
             if (canvas) {
+                if (chartRefs.current[chain.chain]) {
+                    chartRefs.current[chain.chain]!.destroy();
+                }
+
                 chartRefs.current[chain.chain] = new Chart(canvas, {
                     type: 'bar',
                     data: {
                         labels: Object.keys(chain.balanceRanges),
                         datasets: [
                             {
-                                label: `${chain.chain} Balance Distribution`,
+                                label: `${chain.chain}`,
                                 data: Object.values(chain.balanceRanges),
                                 backgroundColor: 'rgba(75, 192, 192, 1)',
                                 borderColor: 'white',
@@ -133,11 +142,17 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
                                   text: "Users",
                                   color: "white",
                                 },
+                                border:{
+                                    color: "white",
+                                }
                             },
                             x: {
                               ticks: {
                                 color: "white",
-                              }
+                              },
+                              border:{
+                                color: "white",
+                            }
                             },
                         },
                         plugins: {
@@ -159,16 +174,16 @@ const BalanceDistribution: React.FC<BalanceDistributionProps> = ({ wallets }) =>
         });
 
         return () => {
-            destroyCharts();
+            Object.values(chartRefs.current).forEach(chart => chart?.destroy());
         };
-    }, [wallets]);
+    }, [topChains]);
 
     return (
       <Grid container spacing={2} style={{marginLeft: "0px", marginTop: "10px"}}>
-            {Array.from({ length: 4 }, (_, index) => (
+            {topChains.map((chain, index) => (
               <Grid item xs={6} key={index}>
                 <BoxWrapper
-                title="Balance Distribution Stats"
+                title={`${chain.chain}'s Distribution Stats`}
                 titleSX={{ textAlign: "center" }}
                 >
                   <Box minHeight={300} maxHeight={800} mt={3}>

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Box, Checkbox, FormControlLabel, FormGroup, Grid, Button, TextField } from '@mui/material';
-import BoxWrapper from '../../../HomeComponents/BoxWrapper/BoxWrapper';
+import BoxWrapper from '../../../../HomePage/HomeComponents/BoxWrapper/BoxWrapper';
 import './displaymultiplewallet.css';
 
 interface WalletData {
