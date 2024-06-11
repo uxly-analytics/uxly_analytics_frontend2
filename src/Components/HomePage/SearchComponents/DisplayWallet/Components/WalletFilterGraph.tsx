@@ -1,15 +1,15 @@
 import React, { useState, ChangeEvent , useEffect} from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 
-import { TextField, FormControl, InputLabel, Select, MenuItem, Stack , Button, IconButton, colors, ThemeProvider, createTheme } from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Stack , Button, IconButton, ThemeProvider, createTheme } from '@mui/material';
 import '../../../HomeComponents/home.css'; // assuming you have a home.css where you will put the CSS
 import { SelectChangeEvent } from '@mui/material';
-import moment, { Moment }  from 'moment';
+import moment  from 'moment';
 import 'chartjs-adapter-moment';
 import DeleteIcon from '@mui/icons-material/Delete';
 // import { DateRangePicker } from '@mui/x-date-pickers-pro'; // MUI premium feature 
-import { DatePicker, LocalizationProvider, PickersDay  } from '@mui/x-date-pickers'; //'@mui/lab'; 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// import {  LocalizationProvider} from '@mui/x-date-pickers'; //'@mui/lab'; 
+// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 
 interface GraphProps {
@@ -59,14 +59,14 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
   const dynamicHeight = minHeight + (filters.length * heightPerFilter);
 
   const [timeRange, setTimeRange] = useState<string>('1Y');
-  const timeRanges = ['1Y', '6M', '90D', '30D', '1D', 'Select Date'];
+  const timeRanges = ['1Y', '6M', '90D', '30D', '1D']; // removed , 'Select Date'
   const [selectedDate, setSelectedDate] = useState(new Date()); //useState<Date | null>(null); //useState<Moment | null>(null);
   const [timeScale, setTimeScale] = useState('1D');
   const [dateRange, setDateRange] = useState<[Date, Date]>([new Date(), new Date()]);
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [openDatePicker, setOpenDatePicker] = useState(false);
-  const [endDate, setEndDate] = useState(new Date());
+  //const [startDate, setStartDate] = useState(new Date());
+  //const [openDatePicker, setOpenDatePicker] = useState(false);
+ // const [endDate, setEndDate] = useState(new Date());
 
   // ****************************************************************************************************** // 
   // ****************************************************************************************************** // 
@@ -121,26 +121,26 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
     setData(transformedData);
   }, [walletData.transactions, chartTypes]);
 
-  const handleDateChange = (newDate: Date | null) => {
-    setSelectedDate(newDate);
-    if (newDate) {
-        setSelectedDate(newDate);
-        const startTime = moment(newDate).startOf('day').valueOf();
-        const endTime = moment(newDate).endOf('day').valueOf();
+//   const handleDateChange = (newDate: Date | null) => {
+//     setSelectedDate(newDate);
+//     if (newDate) {
+//         setSelectedDate(newDate);
+//         const startTime = moment(newDate).startOf('day').valueOf();
+//         const endTime = moment(newDate).endOf('day').valueOf();
 
-        const filteredData = walletData.transactions.filter(t => {
-            const txDate = moment(t.blockTimestamp).valueOf();
-            return txDate >= startTime && txDate <= endTime;
-        }).map(t => ({
-            ...t,
-            date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
-            value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice || '0') : t.decimalValue,
-            volume: 1,
-        }));
+//         const filteredData = walletData.transactions.filter(t => {
+//             const txDate = moment(t.blockTimestamp).valueOf();
+//             return txDate >= startTime && txDate <= endTime;
+//         }).map(t => ({
+//             ...t,
+//             date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
+//             value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice || '0') : t.decimalValue,
+//             volume: 1,
+//         }));
 
-        setProcessedData(filteredData);
-    }
-};
+//         setProcessedData(filteredData);
+//     }
+// };
 
   const calculateTimeRange = () => {
     const now = moment();  // Using moment() to handle current time
@@ -165,12 +165,12 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
       break;
       //  startTime = moment().subtract(1, 'days').valueOf();
        // break;
-      case 'Select Date':
-        if (selectedDate) {
-          startTime = moment(selectedDate).startOf('day').valueOf();
-          endTime = moment(selectedDate).endOf('day').valueOf();
-        }
-        break;
+      // case 'Select Date':
+      //   if (selectedDate) {
+      //     startTime = moment(selectedDate).startOf('day').valueOf();
+      //     endTime = moment(selectedDate).endOf('day').valueOf();
+      //   }
+      //   break;
       default:
         // Default to 1 year if nothing else is specified
         break; //startTime = moment().subtract(1, 'years').valueOf();
@@ -206,13 +206,13 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
                 startTime = now.subtract(1, 'days').startOf('day').valueOf();
                 endTime = now.endOf('day').valueOf();
                 break;
-            case 'Select Date':
-                if (dateRange) {
-                    const [start, end] = dateRange;
-                    startTime = moment(start).startOf('day').valueOf();
-                    endTime = moment(end).endOf('day').valueOf();
-                }
-                break;
+            // case 'Select Date':
+            //     if (dateRange) {
+            //         const [start, end] = dateRange;
+            //         startTime = moment(start).startOf('day').valueOf();
+            //         endTime = moment(end).endOf('day').valueOf();
+            //     }
+            //     break;
             default:
                 startTime = now.subtract(1, 'years').startOf('day').valueOf();
                 endTime = now.endOf('day').valueOf();
@@ -383,8 +383,8 @@ const applyFilters = (data: Transaction[]) => {
       case '90D': return moment().subtract(90, 'days').startOf('day').valueOf();
       case '30D': return moment().subtract(30, 'days').startOf('day').valueOf();
       case '1D': return moment().subtract(1, 'days').startOf('day').valueOf();
-      case 'Select Date':
-        return selectedDate ? moment(selectedDate).startOf('day').valueOf() : moment().startOf('day').valueOf();
+      // case 'Select Date':
+      //   return selectedDate ? moment(selectedDate).startOf('day').valueOf() : moment().startOf('day').valueOf();
       default: return moment().subtract(1, 'years').startOf('day').valueOf();
     }
   };
@@ -461,38 +461,6 @@ const applyFilters = (data: Transaction[]) => {
    // const newData = getFilteredDataByTimeScale(filteredDataWithRequiredProps, event.target.value);
     // setProcessedData(newData);
   };
-
-  const commonSelectStyles = {
-    color: 'white',
-    borderColor: 'grey',
-    '& .MuiListItem-button:hover': {
-      backgroundColor: 'darkgrey',
-    },
-    '.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'pink',
-    },
-    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#cacaca9f' },
-    '&:Mui-hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'pink',
-    },
-    MenuProps: {
-      PaperProps: {
-        sx: {
-          bgcolor: '#333',
-          color: 'white',
-          borderColor: 'grey',
-          '& .MuiMenuItem-root': {
-            '&:hover': {
-              bgcolor: '#e76772',
-            },
-            '&.Mui-selected': {
-              bgcolor: '#e76772',
-            },
-          },
-        },
-      },
-    }
-  };
   
 
 
@@ -532,7 +500,81 @@ const applyFilters = (data: Transaction[]) => {
     );
     setFilters(updatedFilters);
   };
-  
+
+  // Styling for filters 
+  const commonSelectStyles = {
+    color: 'white',
+    borderColor: 'grey',
+    '& .MuiListItem-button:hover': {
+      backgroundColor: 'darkgrey',
+    },
+    '.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'pink',
+    },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#cacaca9f' },
+    '&:Mui-hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'pink',
+    },
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          bgcolor: '#333',
+          color: 'white',
+          borderColor: 'grey',
+          '& .MuiMenuItem-root': {
+            '&:hover': {
+              bgcolor: '#e76772',
+            },
+            '&.Mui-selected': {
+              bgcolor: '#e76772',
+            },
+          },
+        },
+      },
+    }
+  };
+  // Create a theme instance to customize the DatePicker
+  const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#ff69b4', // Example of setting a custom primary color
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: 'white', // Ensures text color is white
+        },
+      },
+    },
+    // Customizing the TextField used within DatePicker
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& label.Mui-focused': {
+            color: 'pink',
+          },
+          '& .MuiInput-underline:after': {
+            borderBottomColor: 'pink',
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'white',
+            },
+            '&:hover fieldset': {
+              borderColor: 'white',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'pink',
+            },
+          },
+        },
+      },
+    },
+  },
+  });
+
   // Function to render each filter UI 
   // *************** UPDATE IF FILTERS ARE MODIFIED  *************** // 
   const renderFilter = (filter, index) => (
@@ -586,96 +628,54 @@ const applyFilters = (data: Transaction[]) => {
   // *************************************************************** //
 
   // Styles for Date Picker // 
-  const customDatePickerStyles = {
-    "& .MuiInputBase-root": {
-      color: "white", // Changes the text color
-      height: "25px", // Specific height for the input field
-      width: "auto",   // Adjust width to fit content
-    "& input": {
-      color: "white",  // Ensures text color is consistently white
-    }
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#ffffff68", // Border color
-    },
-    "& .MuiSvgIcon-root": {
-      color: "white", // Icon color
-    },
-    "& .MuiInputLabel-root": {
-      color: "white", // Label color
-      marginTop: "-15px",
-      transform: 'translate(16px, -10px) scale(1)', // Adjust label positioning if necessary
-    "&.Mui-focused": {
-      color: "pink", // Change label color when focused
-      width: "40px",
-    }
-    },
-    width: "62.5%",
-    marginRight: "-5px",
-    marginLeft:"0px",
+  // const customDatePickerStyles = {
+  //   "& .MuiInputBase-root": {
+  //     color: "white", // Changes the text color
+  //     height: "25px", // Specific height for the input field
+  //     width: "auto",   // Adjust width to fit content
+  //   "& input": {
+  //     color: "white",  // Ensures text color is consistently white
+  //   }
+  //   },
+  //   "& .MuiOutlinedInput-notchedOutline": {
+  //     borderColor: "#ffffff68", // Border color
+  //   },
+  //   "& .MuiSvgIcon-root": {
+  //     color: "white", // Icon color
+  //   },
+  //   "& .MuiInputLabel-root": {
+  //     color: "white", // Label color
+  //     marginTop: "-15px",
+  //     transform: 'translate(16px, -10px) scale(1)', // Adjust label positioning if necessary
+  //   "&.Mui-focused": {
+  //     color: "pink", // Change label color when focused
+  //     width: "40px",
+  //   }
+  //   },
+  //   width: "62.5%",
+  //   marginRight: "-5px",
+  //   marginLeft:"0px",
     
     
-    "& .MuiInputLabel-root.Mui-focused": { color: "#979797" }, //styles the label
-    "& .MuiOutlinedInput-root": {
-    "&:hover > fieldset": { borderColor: "#C7C8CD" },
-                     height: "34px",
-                     borderRadius: "6px",
-                     color: "white",
-                     borderColor: "grey",
-                     marginTop: "-15px",
-                    },
-  };
-
-  // Create a theme instance to customize the DatePicker
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#ff69b4', // Example of setting a custom primary color
-      },
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            color: 'white', // Ensures text color is white
-          },
-        },
-      },
-      // Customizing the TextField used within DatePicker
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            '& label.Mui-focused': {
-              color: 'pink',
-            },
-            '& .MuiInput-underline:after': {
-              borderBottomColor: 'pink',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'white',
-              },
-              '&:hover fieldset': {
-                borderColor: 'white',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'pink',
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  //   "& .MuiInputLabel-root.Mui-focused": { color: "#979797" }, //styles the label
+  //   "& .MuiOutlinedInput-root": {
+  //   "&:hover > fieldset": { borderColor: "#C7C8CD" },
+  //                    height: "34px",
+  //                    borderRadius: "6px",
+  //                    color: "white",
+  //                    borderColor: "grey",
+  //                    marginTop: "-15px",
+  //                   },
+  // };
 
   // Handle changes for two separate DatePickers simulating a DateRangePicker
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
+  // const handleStartDateChange = (date) => {
+  //   setStartDate(date);
+  // };
 
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
+  // const handleEndDateChange = (date) => {
+  //   setEndDate(date);
+  // };
 
   // const renderDatePicker = () => {
   //     return (
@@ -708,7 +708,9 @@ const applyFilters = (data: Transaction[]) => {
 
 
 // Helper function to format date based on the selected time scale
-const formatDate = (timestamp, scale) => {
+
+
+const formatDate = (timestamp, scale) => { // Format for time scale
   switch (scale) {
     case 'weekly':
       return `Week ${moment(timestamp).isoWeek()} of ${moment(timestamp).year()}`;
@@ -741,7 +743,7 @@ const updateTimeScale = (range) => {
   }
 }
 
-useEffect(() => {
+useEffect(() => { // Effect for updating time scale 
   updateTimeScale(timeRange);
 }, [timeRange]);
 
@@ -770,9 +772,9 @@ useEffect(() => {
   updateDataBasedOnTimeRange(timeRange);
 }, [walletData, timeRange, selectedDate, searchQuery, chartType]);
 
-useEffect(() => {
-  console.log("Processed Data:", processedData);
-}, [processedData]);
+// useEffect(() => {
+//   console.log("Processed Data:", processedData);
+// }, [processedData]);
 
   const handleTimeRangeChange = (newRange: string) => {
     setTimeRange(newRange);
@@ -1043,7 +1045,7 @@ console.log("Displayed Data:", displayedData);
 </FormControl>
            
           {timeRanges.map(range => (
-             range !== 'Select Date' ? (
+            // range !== 'Select Date' ? (
             <Button
               key={range}
               variant={timeRange === range ? 'contained' : 'outlined'}
@@ -1064,14 +1066,14 @@ console.log("Displayed Data:", displayedData);
             >
               {range}
             </Button>
-            ) : (
-              <ThemeProvider theme={theme}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-              {/* {renderDatePicker()}    */}
+          //  ) : (
+              // <ThemeProvider theme={theme}>
+              // <LocalizationProvider dateAdapter={AdapterDateFns}>
+              // {renderDatePicker()}   
         
-                </LocalizationProvider>
-                </ThemeProvider>
-              )
+              //   </LocalizationProvider>
+              //   </ThemeProvider>
+            //  )
     ))}
     
   </div>
