@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Search from './SearchComponents/Search';
 import * as Service from '../../Services/WalletServices';
@@ -38,8 +37,12 @@ function Home() {
   } | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isSearchInHeader, setIsSearchInHeader] = useState(false);
-
+  const [selectedChain, setSelectedChain] = useState<Chain>({
+    value: '',
+    label: '',
+  });
 
   useEffect(() => {
     if (data !== null) {
@@ -52,15 +55,13 @@ function Home() {
   };
 
   const handleSearchSubmit = async (addresses: string[], chain: Chain) => {
-
     setLoading(true); // Set loading state to true when submit starts
+    setSearchSubmitted(true); // Set the search as submitted\
     setIsSearchInHeader(true);
-
     console.log('Addresses: ', addresses);
     console.log('Chain: ', chain.label, chain.value);
 
     const uniqueAddresses = addresses.map((addr) => addr.trim());
-
     setSearchInput({ address: uniqueAddresses, chain });
 
     const addressExistsPromises = uniqueAddresses.map((address) =>
@@ -124,7 +125,7 @@ function Home() {
           className={isSearchInHeader ? "search-in-header" : "search-default"}
           onSubmit={handleSearchSubmit}      
         />
-        <Typography variant="h4" color="white" paddingTop={2} mb={-15}>Get Web3 Wallet Data
+        <Typography variant="h4" color="white" paddingTop={2} mb={-20}>Get Web3 Wallet Data
         </Typography>
         </div>
       </div>
@@ -172,4 +173,3 @@ function Home() {
 }
 
 export default Home;
-
