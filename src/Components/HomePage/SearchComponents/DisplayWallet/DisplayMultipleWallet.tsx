@@ -5,13 +5,22 @@ import MultipleTransactionDetailsTable from "./MultipleWalletComponents/Multiple
 import BalanceDistribution from "./MultipleWalletComponents/BalanceDistribution";
 import WalletsFilter from "./MultipleWalletComponents/WalletsFilter";
 import WalletInfo from "./Components/WalletInfo";
+import FilterGraph from "./Components/WalletFilterGraph";
 
 interface WalletData {
   address: string;
   networth: any;
   nft: any;
   tokenBalance: any;
-  transactions: any;
+  transactions: Array<{
+    fromAddress: string;
+    toAddress: string;
+    value: number;
+    decimalValue: number;
+    blockTimestamp: number;
+    blockHash: string;
+    gasPrice: string;
+  }>;
   transactionsData: any;
 }
 
@@ -40,6 +49,9 @@ const DisplayMultipleWallet: React.FC<DisplayMultipleWalletProps> = ({
           <WalletInfo wallets={filteredWallets} />
         </Grid>
       </Grid>
+      <FilterGraph
+        wallets={filteredWallets}
+      />
       <DisplayMultipleBalance wallets={filteredWallets} />
       <BalanceDistribution wallets={filteredWallets} />
       <MultipleTransactionDetailsTable wallets={filteredWallets} />

@@ -15,21 +15,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 
 
-interface GraphProps {
- walletData: {
-   transactions: Array<{
-     fromAddress: string;
-     toAddress: string;
-     value: number;
-     decimalValue: number;
-     blockTimestamp: number;
-     blockHash: string;
-     gasPrice: string;
-   }>;
- };
- address: string;
+interface walletData {
+    address: string;
+    transactions: Array<{
+      fromAddress: string;
+      toAddress: string;
+      value: number;
+      decimalValue: number;
+      blockTimestamp: number;
+      blockHash: string;
+      gasPrice: string;
+    }>;
 }
 
+interface FilterGraphProps {
+  wallets: walletData[];
+}
 
 interface FilterType {
    id: string;
@@ -50,14 +51,13 @@ type Transaction = {
  };
 
 
-const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
+const FilterGraph: React.FC<FilterGraphProps> = ({ wallets }) => {
  const [filters, setFilters] = useState<FilterType[]>([]);
  const [chartType, setChartType] = useState<string>('Transaction Values');
  const [searchQuery, setSearchQuery] = useState('');
  const [processedData, setProcessedData] = useState<Transaction[]>([]);
  const [showGrid, setShowGrid] = useState(true);
  const [data, setData] = useState([]);
-
 
  const chartTypes = ['Transaction Values', 'Transaction Volumes', 'Gas Prices']; //'Token transfers', 'NFT transfers','Transaction volume USD', 'Token transaction volume', 'Transactions per hour','Gas fees USD'];
  const [containerHeight, setContainerHeight] = useState(600); // Initial height 
@@ -120,16 +120,18 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 
  // Convert data to the format required by Recharts based on the selected chart type
  useEffect(() => {
-   const transformedData = walletData.transactions.map(t => ({
+   const transformedData = wallets.flatMap(wallet =>
+    wallet.transactions.map(t => ({
        rawDate: moment(t.blockTimestamp).valueOf(),
        formattedDate: moment(t.blockTimestamp).isValid() ? moment(t.blockTimestamp).format('MMM DD') : 'Invalid date',
        value: chartType === 'Gas fees USD' ? parseFloat(t.gasPrice || '0') : t.decimalValue, // Directly handle the logic here
        volume: 1,
        fromAddress: t.fromAddress ?? 'N/A',
        toAddress: t.toAddress ?? 'N/A',
-   }));
+      }))
+      );
    setData(transformedData);
- }, [walletData.transactions, chartTypes]);
+ }, [wallets, chartTypes]);
 
 
 //   const handleDateChange = (newDate: Date | null) => {
@@ -140,7 +142,7 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
 //         const endTime = moment(newDate).endOf('day').valueOf();
 
 
-//         const filteredData = walletData.transactions.filter(t => {
+//         const filteredData = wallets.transactions.filter(t => {
 //             const txDate = moment(t.blockTimestamp).valueOf();
 //             return txDate >= startTime && txDate <= endTime;
 //         }).map(t => ({
@@ -238,17 +240,19 @@ const FilterGraph: React.FC<GraphProps> = ({ walletData }) => {
        return { startTime, endTime };
    };
    const { startTime, endTime } = calculateTimeRange();
-    const filteredData = walletData.transactions.filter(t => {
+    const filteredData = wallets.flatMap(wallet =>
+      wallet.transactions.filter(t => {
      const txDate = moment(t.blockTimestamp).valueOf();
      return txDate >= startTime && txDate <= endTime;
    }).map(t => ({
      ...t,
-     date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
+     date: moment(t.blockTimestamp).format('YYYY-MM-DD HH:mm:ss'),
      value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice || '0') : t.decimalValue,
      volume: 1,
-   }));
+    }))
+    );
     setProcessedData(filteredData);
- }, [walletData, timeRange, selectedDate, dateRange, chartType]);
+ }, [wallets, timeRange, selectedDate, dateRange, chartType]);
 
 
  const getVolumeDataByTimeScale = (data, timeScale) => {
@@ -431,14 +435,16 @@ const applyFilters = (data: Transaction[]) => {
    const endTime = moment().endOf('day').valueOf();
 
 
-   const transactions = walletData.transactions.map(t => ({
+   const transactions = wallets.flatMap(wallet =>
+    wallet.transactions.map(t => ({
      blockTimestamp: t.blockTimestamp,
-     date: moment(t.blockTimestamp).format('YYYY-MM-DD'),  // Standardizing date format
+     date: moment(t.blockTimestamp).format('YYYY-MM-DD HH:mm:ss'), // Standardizing date format
      value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice ) : t.decimalValue,
      volume: 1,
      fromAddress: t.fromAddress ?? 'N/A',
      toAddress: t.toAddress ?? 'N/A',
-   }));
+    }))
+    );
 
 
    const timeFilteredData = transactions.filter(t => {
@@ -453,7 +459,7 @@ const applyFilters = (data: Transaction[]) => {
 
 
    setProcessedData(searchFilteredData);
- }, [walletData, timeRange, selectedDate, searchQuery, chartType]);
+ }, [wallets, timeRange, selectedDate, searchQuery, chartType]);
 
 
 
@@ -466,37 +472,39 @@ const applyFilters = (data: Transaction[]) => {
  
 
 
- const handleDateRangeChange = (newRange: [Date, Date] | null) => {
-   setDateRange(newRange);
-   if (newRange) {
-       const [start, end] = newRange;
-       const startTime = moment(start).startOf('day').valueOf();
-       const endTime = moment(end).endOf('day').valueOf();
+//  const handleDateRangeChange = (newRange: [Date, Date] | null) => {
+//    setDateRange(newRange);
+//    if (newRange) {
+//        const [start, end] = newRange;
+//        const startTime = moment(start).startOf('day').valueOf();
+//        const endTime = moment(end).endOf('day').valueOf();
 
 
-       const filteredData = walletData.transactions.filter(t => {
-           const txDate = moment(t.blockTimestamp).valueOf();
-           return txDate >= startTime && txDate <= endTime;
-       }).map(t => ({
-           ...t,
-           date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
-           value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice || '0') : t.decimalValue,
-           volume: 1,
-       }));
+//        const filteredData = wallets.flatMap(wallet =>
+//         wallet.transactions.map(t => ({
+//            const txDate = moment(t.blockTimestamp).valueOf();
+//            return txDate >= startTime && txDate <= endTime;
+//        }).map(t => ({
+//            ...t,
+//            date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
+//            value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice || '0') : t.decimalValue,
+//            volume: 1,
+//           }))
+//           );
 
 
-       setProcessedData(filteredData);
-   }
-};
+//        setProcessedData(filteredData);
+//    }
+// };
 
 
 
 
- useEffect(() => {
-   if (timeRange === 'Select Date') {
-       handleDateRangeChange(dateRange);
-   }
-}, [timeRange, dateRange]);
+//  useEffect(() => {
+//    if (timeRange === 'Select Date') {
+//        handleDateRangeChange(dateRange);
+//    }
+// }, [timeRange, dateRange]);
 
 
  const handleTimeScaleChange = ( event: SelectChangeEvent<string> ) => {
@@ -779,7 +787,7 @@ const formatDate = (timestamp, scale) => { // Format for time scale
    case 'hourly':
      return moment(timestamp).format('HH:mm');
    case 'minute':
-     return moment(timestamp).format('HH:mm');
+     return moment(timestamp).format('HH:mm:ss');
    default:
      return moment(timestamp).format('MMM DD');
  }
@@ -795,7 +803,7 @@ const updateTimeScale = (range) => {
      setTimeScale('daily');  // Example: Use 'daily' for these ranges
      break;
    case '1D':
-     setTimeScale('hourly');  // Example: Use 'hourly' for daily data
+     setTimeScale('minute');  // Example: Use 'hourly' for daily data
      break;
    default:
      setTimeScale('daily');  // Default fallback
@@ -812,19 +820,21 @@ const updateDataBasedOnTimeRange = (range) => {
  const { startTime, endTime } = calculateTimeRange();
 
 
- const filteredData = walletData.transactions.filter(t => {
-   const txDate = moment(t.blockTimestamp).valueOf();
-   return txDate >= startTime && txDate <= endTime;
- }).map(t => ({
+ const filteredData = wallets.flatMap(wallet =>
+  wallet.transactions.filter(t => {
+    const txDate = moment(t.blockTimestamp).valueOf();
+    return txDate >= startTime && txDate <= endTime;
+  }).map(t => ({
    ...t,
-   date: moment(t.blockTimestamp).format('YYYY-MM-DD'),
+   date: moment(t.blockTimestamp).format('YYYY-MM-DD HH:mm:ss'),
    rawDate: t.blockTimestamp,
-   formattedDate: moment(t.blockTimestamp).format('YYYY-MM-DD'),
+   formattedDate: moment(t.blockTimestamp).format('YYYY-MM-DD HH:mm:ss'),
    value: chartType === 'Gas Prices' ? parseFloat(t.gasPrice) : t.decimalValue,
    volume: 1,
    fromAddress: t.fromAddress ?? 'N/A',
    toAddress: t.toAddress ?? 'N/A',
- }));
+  }))
+  );
 
 
  setProcessedData(filteredData);
@@ -834,7 +844,7 @@ const updateDataBasedOnTimeRange = (range) => {
 
 useEffect(() => {
  updateDataBasedOnTimeRange(timeRange);
-}, [walletData, timeRange, selectedDate, searchQuery, chartType]);
+}, [wallets, timeRange, selectedDate, searchQuery, chartType]);
 
 
 // useEffect(() => {
@@ -1172,11 +1182,11 @@ console.log("Displayed Data:", displayedData);
                 label={{ value: 'Timeline', position: 'insideBottom', offset: -19 , fontSize: '23px'}}
                 tickFormatter={(tick) => {
                  const date = moment(tick);
-                 if (timeRange === '90D' || timeRange === '30D') {
-                   return date.format('MMM DD');
-                 }
-                 return date.format('MMM \'YY');
-               }}
+                 if (timeRange === '1D') {
+                  return timeScale === 'hourly' ? date.format('HH:mm') : date.format('HH:mm:ss');
+                }
+                return timeRange === '90D' || timeRange === '30D' ? date.format('MMM DD') : date.format('MMM \'YY');
+              }}
                color='white'
                tick={{ fill: 'white' }}
              />
