@@ -1,13 +1,30 @@
 
-import React, { useState, useEffect } from "react";
-import Search from "./SearchComponents/Search";
-import * as Service from "../../Services/WalletServices";
-import DisplayWalletData from "./SearchComponents/DisplayWallet/DisplayWallet";
-import DisplayMultipleWallet from "./SearchComponents/DisplayWallet/DisplayMultipleWallet";
-import Header from "./HomeComponents/HomeHeader";
-import LoadScreen from "./HomeComponents/LoadScreen";
-import "./HomeComponents/home.css";
-import { Grid, Typography } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import Search from './SearchComponents/Search';
+import * as Service from '../../Services/WalletServices';
+import DisplayWalletData from './SearchComponents/DisplayWallet/DisplayWallet';
+import DisplayMultipleWallet from './SearchComponents/DisplayWallet/DisplayMultipleWallet';
+import Header from './HomeComponents/HomeHeader';
+import LoadScreen from './HomeComponents/LoadScreen';
+import './HomeComponents/home.css';
+import { Grid, Typography } from '@mui/material';
+
+import WalletInfo from './SearchComponents/DisplayWallet/Components/WalletInfo';
+import WalletAge from './SearchComponents/DisplayWallet/Components/WalletAge';
+import AudienceGrowth from './SearchComponents/DisplayWallet/Components/AudienceGrowth';
+
+interface AddressData {
+  address: string;
+}
+
+interface AddressQueryResponse {
+  config: object;
+  data: AddressData[];
+  headers: object;
+  request: object;
+  status: number;
+  statusText: string;
+}
 
 interface Chain {
   value: string;
@@ -23,30 +40,73 @@ function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSearchInHeader, setIsSearchInHeader] = useState(false);
 
+
   useEffect(() => {
     if (data !== null) {
       console.log(data);
     }
   }, [data]);
 
-  const handleSearchSubmit = async (address: string[], chain: Chain) => {
+  const onChainSelected = (newChain: Chain) => {
+    setSelectedChain(newChain);
+  };
+
+  const handleSearchSubmit = async (addresses: string[], chain: Chain) => {
+
     setLoading(true); // Set loading state to true when submit starts
     setIsSearchInHeader(true);
-    console.log("Address ", address);
-    console.log("Chain: ", chain.label, chain.value);
-    const uniqueAddresses = Array.from(new Set(address));
+
+    console.log('Addresses: ', addresses);
+    console.log('Chain: ', chain.label, chain.value);
+
+    const uniqueAddresses = addresses.map((addr) => addr.trim());
+
     setSearchInput({ address: uniqueAddresses, chain });
+
+    const addressExistsPromises = uniqueAddresses.map((address) =>
+      Service.queryAddress(address)
+    );
+
     try {
-      if (uniqueAddresses.length === 1) {
-        setData(await Service.getWalletData(uniqueAddresses[0], chain.value));
+      const results = await Promise.all(addressExistsPromises);
+      const addressesToFetch = uniqueAddresses.filter((address, index) => {
+        const result = results[index];
+        if (result === null || result === undefined) {
+          return true;
+        } else if (typeof result === 'string' || Array.isArray(result)) {
+          return result.length === 0;
+        } else if (typeof result === 'object') {
+          return Object.keys(result).length === 0;
+        }
+        return false;
+      });
+
+      if (addressesToFetch.length > 0) {
+        try {
+          if (addressesToFetch.length === 1) {
+            setData(await Service.getWalletData(addressesToFetch[0], chain.value));
+            Service.addAddressToDatabase(addressesToFetch[0]);
+          } else {
+            setData(await Service.getMultipleWalletData(addressesToFetch, chain.value));
+          }
+        } catch (error) {
+          console.error('Error Fetching Data: ', error);
+        }
       } else {
-        setData(
-          await Service.getMultipleWalletData(uniqueAddresses, chain.value)
-        );
+        try {
+          if (uniqueAddresses.length === 1) {
+            setData(await Service.getWalletDataFromDb(uniqueAddresses[0], chain.value));
+          } else {
+            setData(await Service.getMultipleWalletData(uniqueAddresses, chain.value));
+          }
+        } catch (error) {
+          console.error('Error Fetching Data: ', error);
+        }
       }
     } catch (error) {
-      console.error("Error Fetching Data: ", error);
+      console.error('Error Checking Addresses: ', error);
     }
+
     setLoading(false); // Set loading state to false when submit finishes
   };
 

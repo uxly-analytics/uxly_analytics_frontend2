@@ -23,27 +23,25 @@ const Streams: React.FC = () => {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isSearchInHeader, setIsSearchInHeader] = useState(false);
 
-// Call this function when the search is submitted
-const handleSearchSubmit = (searchValue: string) => {
-  setSearchSubmitted(true); // Set the search as submitted\
-  setIsSearchInHeader(true); 
-  console.log('Search submitted with value:', searchValue);
-  // ... perform search or other actions ...
-};
+  // Call this function when the search is submitted
+  const handleSearchSubmit = (searchValue: string) => {
+    setSearchSubmitted(true); // Set the search as submitted\
+    setIsSearchInHeader(true);
+    console.log('Search submitted with value:', searchValue);
+    // ... perform search or other actions ...
+  };
 
   useEffect(() => {
-    const socket = io('wss://uxly-analytics-717cfb342dbd.herokuapp.com', {
+    const socket = io('https://18.223.123.138.nip.io', {
       transports: ['websocket'],
     });
     console.log(isSearchInHeader);
 
     // Make streams api active if it is not inactive
-    axios
-      .get('https://uxly-analytics-717cfb342dbd.herokuapp.com/restart-stream')
-      .then((res) => {
-        console.log('Streams API is active');
-        console.log(res.data);
-      });
+    axios.get('https://18.223.123.138.nip.io/restart-stream').then((res) => {
+      console.log('Streams API is active');
+      console.log(res.data);
+    });
 
     socket.on('connect', () => {
       console.log(`Socket connected: ${socket.id}`);
@@ -105,23 +103,24 @@ const handleSearchSubmit = (searchValue: string) => {
   }, [isSearchInHeader]); // The empty dependency array ensures the effect runs only once on mount
 
   return (
-      <div className="app-container">
-      <div className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}>
-    <section className="header-section">
-      <StreamsHeader />
-    </section>
+    <div className="app-container">
+      <div
+        className={`app-container ${isSearchInHeader ? 'search-active' : ''}`}
+      >
+        <section className="header-section">
+          <StreamsHeader />
+        </section>
 
         <div className={`search-area ${isSearchInHeader ? 'move-up' : ''}`}>
-      <Search
-        className={isSearchInHeader ? "search-in-header" : "search-default"}
-        onSearchSubmit={handleSearchSubmit}
-      />
-  
+          <Search
+            className={isSearchInHeader ? 'search-in-header' : 'search-default'}
+            onSearchSubmit={handleSearchSubmit}
+          />
+
           <Typography variant="h4" color="white" paddingTop={2}>
-          Stream Web3 Smart Contracts
+            Stream Web3 Smart Contracts
           </Typography>
-      
-      </div>
+        </div>
       </div>
       <div className="relative mt-[-70px]">
         {loading ? (

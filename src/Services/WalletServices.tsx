@@ -1,16 +1,96 @@
-import axios from "axios";
+import axios from 'axios';
 
- //const HOST = "http://18.223.123.138:5000/";
-//const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
 const HOST = 'https://18.223.123.138.nip.io';
+// const HOST = 'http://18.223.123.138:5000/';
+// const HOST = "https://uxly-analytics-717cfb342dbd.herokuapp.com/";
+// const HOST = 'http://localhost:3001';
+
 
 interface WalletData {
   address: string;
   networth: any;
   nfts: any;
   tokenBalance: any;
-  transactions: any;
+  transactions: any[];
   transactionsData: any;
+}
+
+interface AddressQueryResult {
+  address: string;
+}
+
+export async function queryAddress(address: string) {
+  try {
+    const response = await axios.get<AddressQueryResult[]>(
+      `${HOST}/query-address?address=${address}`,
+    );
+    console.log(response);
+    console.log('response data is of type: ', typeof response.data);
+    const result: AddressQueryResult[] = response.data;
+
+    console.log('type of our returning result is: ', typeof result);
+    return result;
+  } catch (error) {
+    console.log('Error querying address: ', error);
+    return error;
+  }
+}
+
+export async function addAddressToDatabase(address: string) {
+  try {
+    const response = await axios.get(`${HOST}/add-address?address=${address}`);
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log('Error adding address to database: ', error);
+    return error;
+  }
+}
+
+export async function getWalletDataFromDb(
+  address: string,
+  chain: string,
+): Promise<WalletData> {
+  try {
+    if (chain.length === 0) {
+      chain = '0x1';
+    }
+    const startTime = Date.now();
+
+    const urls = [
+      `${HOST}/wallet-networth?address=${address}`,
+      `${HOST}/token-balance?address=${address}&chain=${chain}`,
+      `${HOST}/nft?address=${address}&chain=${chain}`,
+      `${HOST}/db-transactions?address=${address}&chain=${chain}`,
+      `${HOST}/aggregate-transactions?address=${address}&chain=${chain}`,
+    ];
+
+    const responses = await Promise.all(urls.map((url) => axios.get(url)));
+
+    const endTime = Date.now();
+
+    console.log(`Requests took ${endTime - startTime}ms`);
+
+    console.log(responses);
+    return {
+      address: address,
+      networth: responses[0].data,
+      tokenBalance: responses[1].data,
+      nfts: responses[2].data,
+      transactions: responses[3].data,
+      transactionsData: responses[4].data,
+    };
+  } catch (error) {
+    console.log('Error: ', error);
+    return {
+      address: 'null',
+      networth: {},
+      nfts: {},
+      tokenBalance: { tokens: [] },
+      transactions: [],
+      transactionsData: {},
+    };
+  }
 }
 
 export async function getWalletData(
@@ -44,13 +124,13 @@ export async function getWalletData(
       transactionsData: responses[4].data,
     };
   } catch (error) {
-    console.log("Error: ", error);
+    console.log('Error: ', error);
     return {
-      address: "null",
+      address: 'null',
       networth: {},
       nfts: {},
       tokenBalance: { tokens: [] },
-      transactions: {},
+      transactions: [],
       transactionsData: {},
     };
   }
